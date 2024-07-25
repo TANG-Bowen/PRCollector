@@ -35,7 +35,8 @@ A collection mission can be described as follows:
     prmbb.setRootSrcPath(filePath);
     prmbb.searchByCreated(fromDate, toDate);
     prmbb.searchByIsClosed();
-    prmbb.downloadChangedFiles(0, 40);//set upper and lower limits for the number of changed files
+    prmbb.downloadChangedFiles(0 , 40);//set upper and lower limits for the number of changed files
+    prmbb.downloadCommitNum(0 , 20);//set upper and lower limits for the number of commits
     prmbb.writeFile(true);//set whether output Json files or not
     prmbb.deleteSrcFile(true);//set whether delete the source files after the collection or not
     prmbb.freeMemory(true);//when the large number of PRs in collection mission, you may need this to free up memory space
