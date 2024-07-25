@@ -44,6 +44,22 @@ public class FilesChanged {
 		this.cde.printCodeElement();
 	  
 	}
+	
+	void printPrFilesChanged()
+	{
+		System.out.println();
+		System.out.println("PrFilesChanged instId: "+this.instId);
+		System.out.println(" hasJavaSrc : "+ this.hasJavaSrcFile);
+		if(this.diffFileUnits.isEmpty()==false)
+		{
+			for(DiffFileUnit dfui : this.diffFileUnits)
+			{
+				dfui.printDiffFileUnit();
+			}
+			System.out.println(" Total DifffileUnits : "+this.diffFileUnits.size());
+		}
+		this.cde.printPRCodeElement();
+	}
 
 	public PullRequest getPr() {
 		return pr;

@@ -27,6 +27,8 @@ public class PRModelBuilderBundle {
 	String rootSrcPath="";
 	int changedFilesMin=0;
 	int changedFilesMax=-9999;
+	int commitMin=0;
+	int commitMax=-9999;
 	boolean writeFile=false;
 	boolean deleteSrcFile = false;
 	boolean freeMemory=false;
@@ -61,6 +63,7 @@ public class PRModelBuilderBundle {
 					PRModelBuilder mdlBuilderi = new PRModelBuilder(this.token,this.repoName,ghpri.getNumber());
 					mdlBuilderi.setRootSrcPath(this.getRootSrcPath());
 					mdlBuilderi.downloadFilterChangedFiles(changedFilesMin, changedFilesMax);
+					mdlBuilderi.downloadFilterCommitNum(commitMin, commitMax);
 					mdlBuilderi.downloadBannedLabels(downloadBannedLabels);
 					mdlBuilderi.writeFile(writeFile);
 					mdlBuilderi.deleteSrcFile(deleteSrcFile);
@@ -283,6 +286,7 @@ public class PRModelBuilderBundle {
 		LocalDate updateDate = LocalDate.parse(updated);
 		this.prSearch.updatedBefore(updateDate, inclusive);
 	}
+	
 
 	public String getToken() {
 		return token;
@@ -375,6 +379,12 @@ public class PRModelBuilderBundle {
 	{
 		this.changedFilesMin= min;
 		this.changedFilesMax= max;
+	}
+	
+	public void downloadCommitNum(int min , int max)
+	{
+		this.commitMin= min;
+		this.commitMax= max;
 	}
 	
 	public void downloadBannedLabels(ArrayList<String> labels)

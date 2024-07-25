@@ -6,14 +6,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,11 +23,13 @@ import org.jsoup.select.Elements;
 import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHCommitStatus;
+import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHIssueEvent;
 import org.kohsuke.github.GHLabel;
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHPullRequestCommitDetail;
+import org.kohsuke.github.GHPullRequestFileDetail;
 import org.kohsuke.github.GHPullRequestReview;
 import org.kohsuke.github.GHPullRequestReviewComment;
 import org.kohsuke.github.GHRepository;
@@ -51,9 +53,11 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 
+import customExceptions.commitMissingException;
 import jprTool.JsonFileWriter;
 import jxp3model.ChangedFileUnit;
 import jxp3model.ChangedProjectUnit;
+import jxp3model.CodeElement;
 import jxp3model.Jxp3ModelBuilder;
 
 
@@ -76,11 +80,16 @@ public class PRModelBuilder {
 	Jxp3ModelBuilder j3mdb ;
 	
 	HashSet<GHLabel> repoLabels;
+	ArrayList<GHPullRequestFileDetail> ghprFinalFiles;
+	ArrayList<GHFilesChangedUnit> ghFilesChangedUnits;
 	int downloadChangedFiles_min=0;
 	int downloadChangedFiles_max=-9999;
+	int commitMin=0;
+	int commitMax=-9999;
 	ArrayList<String> downloadBannedLabels;
-	boolean download_ChangedFiles=false;
-	boolean download_BannedLabels=false;
+	boolean download_ChangedFiles=true;
+	boolean download_CommitNum=true;
+	boolean download_BannedLabels=true;
 	boolean writeFile =false;
 	boolean deleteSrcFile = false;
 	public boolean exceptionDone = false;
@@ -93,6 +102,8 @@ public class PRModelBuilder {
 		this.prNum = prNum;
 		this.repoLabels = new HashSet<>();
 		this.downloadBannedLabels= new ArrayList<>();
+		this.ghprFinalFiles = new ArrayList<>();
+		this.ghFilesChangedUnits = new ArrayList<>();
 	}
 	
 	public void build() throws IOException
@@ -105,8 +116,11 @@ public class PRModelBuilder {
 			if(!this.exceptionDone)
 			{
 			this.checkChangedFilesFlag();
+			this.checkCommitNumFlag();
 			}
 			if(this.download_ChangedFiles)
+			{
+			if(this.download_CommitNum)
 			{
 			if(!this.exceptionDone) 
 			{
@@ -150,11 +164,17 @@ public class PRModelBuilder {
 			this.buildCommits();
 			System.out.println("Commits builded");
 			}
-			//this.pr.printConversation();//
 			
 			if (this.pr.isSrcRetrievable()) {
-				if (this.download_ChangedFiles) {
-					if (this.download_BannedLabels == false) {
+					if (this.download_BannedLabels) {
+						if(!this.exceptionDone)
+						{
+						  this.buildGHPRFinalFilesChanged();
+						}
+						if(!this.exceptionDone)
+						{
+						  this.buildGHFilesChangedUnits();
+						}
 						if(!this.exceptionDone)
 						{
 						this.buildFilesChanged();
@@ -169,8 +189,14 @@ public class PRModelBuilder {
 						{
 						this.buildDiffFileUnitIsTest();
 						}
+						if(!this.exceptionDone)
+						{
+							this.buildPrFilesChanged();
+							System.out.println("PrFilesChanged builded");
+						}
+						this.removeRepetitiveDiffFileUnitInPRFilesChanged();
 					}
-				}
+				
 			}
 			if (this.writeFile) {
 				if (!this.exceptionDone) {
@@ -187,8 +213,12 @@ public class PRModelBuilder {
 				}
 			}
 			}else {
+				System.out.println("Not build for out num of commits");
+			}
+			}else {
 				System.out.println("Not build for out num of files changed");
 			}
+			
 		}else {
 			System.out.println("Repeated file exits : " + this.repository.getName()+"  ---  "+this.ghpr.getNumber());
 		}
@@ -1176,10 +1206,13 @@ public class PRModelBuilder {
 	void buildFilesChanged()
 	{
 		int filesChangedCounter = -1;
-		for(Commit cmiti : this.pr.commits)
+		boolean commitNotMissing = false;
+		for(int i=0;i<this.pr.commits.size();i++)
 		{
+			Commit cmiti = this.pr.commits.get(i);
 			if(!cmiti.commitType.equals("merge") && !cmiti.commitType.equals("initial"))
 			{
+			
 			FilesChanged flcg = new FilesChanged(this.pr);
 			String srcBeforePath = this.prDir.getAbsolutePath() + File.separator + "before_"+cmiti.shortSha;
 			flcg.srcBeforeDir = this.buildFile(srcBeforePath);
@@ -1195,6 +1228,7 @@ public class PRModelBuilder {
 			String C_gitCheckout_Branch = "git checkout "+ this.pr.headBranch+" ;";
 			String C_gitCheckout_Commit = "git checkout "+ cmiti.sha +" ;";
 			String C_gitCheckout_BeforeCommit = "git checkout "+"HEAD~"+" --"+" ;";
+			String C_gitCheckout_BeforeMergeCommit = "git checkout "+"HEAD~1^2 --"+" ;";
 			String command = "cd ;" +
 			          C_gitClone_After +
 			          C_cdAfterPath +
@@ -1206,9 +1240,20 @@ public class PRModelBuilder {
 			          C_gitCheckout_Branch +
 			          C_gitCheckout_Commit +
 			          C_gitCheckout_BeforeCommit;
+			String commandChangeToCommit = "cd ;"+ 
+			                            C_cdAfterPath + 
+			                            C_gitCheckout_Commit + 
+			                            "cd ;" + 
+			                            C_cdBeforePath + 
+			                            C_gitCheckout_Commit + 
+			                            C_gitCheckout_BeforeCommit;
 			
 			this.srcDownload(command);
-			
+			System.out.println("Download Over !!!");
+			try {
+				commitNotMissing = this.checkCommitExist(commandChangeToCommit);
+			if(commitNotMissing)
+			{
 			String C_gitDiff = "git diff " + flcg.srcBeforeDir + " " + flcg.srcAfterDir;
 			String commandDiff = "cd ;" + C_gitDiff;
 			this.excDiff(commandDiff, flcg);
@@ -1217,33 +1262,315 @@ public class PRModelBuilder {
 			flcg.instId = "filesChanged"+filesChangedCounter;
 			cmiti.flcg = flcg;
 			flcg.cmit = cmiti;
+			}else {
+				System.out.println("Commit missing found !!!");
+				throw new commitMissingException("fatal: reference is not a tree:");
+			}
+			}catch(Exception e)
+			{
+				this.recordException(e);
+			}
+			}
+			if(this.exceptionDone)
+			{
+				break;
 			}
 		}
-		
-		if(this.pr.commits.size()>1 && !this.hasMergeCommit())
+	}
+	
+	void buildPrFilesChanged()
+	{
+		if(!this.pr.commits.isEmpty())
 		{
-		  FilesChanged flcgPr = new FilesChanged(this.pr); // filesChanged for PR		  
-		  Commit cmitFirst = this.getFirstProcessingCommit(this.pr.commits);
-		  Commit cmitLast = this.getLastProcessingCommit(this.pr.commits);
-		  if(cmitFirst !=null && cmitLast !=null)
-		  {
-		  flcgPr.srcBeforeDir = cmitFirst.flcg.srcBeforeDir;
-		  flcgPr.srcAfterDir = cmitLast.flcg.srcAfterDir;
-		  flcgPr.srcBeforeDirName = "before_"+cmitFirst.shortSha;
-		  flcgPr.srcAfterDirName = "after_"+cmitLast.shortSha;
-		  String C_gitDiff = "git diff " + flcgPr.srcBeforeDir + " " + flcgPr.srcAfterDir;
-		  String commandDiff = "cd ;" + C_gitDiff;
-		  this.excDiff(commandDiff, flcgPr);
-		  this.buildDiffFileUnitElements(flcgPr);
-		  filesChangedCounter++;
-		  flcgPr.instId = "filesChanged"+filesChangedCounter;
-		  }
-		  this.pr.flcg = flcgPr;
-		}else if(this.pr.commits.size() == 1) {
-			this.pr.flcg = this.pr.commits.get(0).flcg;
+			if(this.pr.commits.size() > 1)
+			{
+				FilesChanged flcgPr = new FilesChanged(this.pr);
+				CodeElement cdePr = new CodeElement(flcgPr, this.pr);
+				flcgPr.cde = cdePr;
+				flcgPr.instId="prFilesChanged";
+				cdePr.setInstId("prCodeElement");
+				for(Commit cmiti : this.pr.commits)
+				{
+					if(!cmiti.commitType.equals("merge") && !cmiti.commitType.equals("initial"))
+					{
+					  if(!this.ghFilesChangedUnits.isEmpty() && !cmiti.flcg.diffFileUnits.isEmpty())
+					  {
+						  for(DiffFileUnit dfui : cmiti.flcg.diffFileUnits) 
+						  {
+							  if(this.inFinalFilesChanged(dfui))
+							  {
+								  flcgPr.diffFileUnits.add(dfui);
+							  }
+							  
+						  }
+						  
+					  }
+					if(flcgPr.hasJavaSrcFile==false)
+					{
+					  flcgPr.hasJavaSrcFile = cmiti.flcg.hasJavaSrcFile;
+					}
+					
+					if (!cmiti.flcg.cde.getCgProjectUnits().isEmpty()) {
+						for (ChangedProjectUnit cgpjui : cmiti.flcg.cde.getCgProjectUnits()) {
+							if (!cgpjui.getCgFileUnits().isEmpty()) {
+								for (ChangedFileUnit cgfui : cgpjui.getCgFileUnits()) {
+									if (this.inFinalFilesChanged(cgfui)) {
+										if (!this.inPrCdeCgFileUnits(cdePr, cgfui)) {
+											cdePr.getCgFileUnits().add(cgfui);
+										}
+									}
+								}
+							}
+						}
+					}
+
+					}
+				}
+				this.pr.flcg = flcgPr;
+			}else if(this.pr.commits.size() ==1)
+			{
+				try {
+				this.pr.flcg = this.pr.commits.get(0).flcg;
+				this.pr.flcg.instId="prFilesChanged";
+				this.pr.flcg.cde.setInstId("prCodeElement");
+				if(!this.pr.commits.get(0).flcg.cde.getCgProjectUnits().isEmpty())
+				{
+					for(ChangedProjectUnit cgpjui : this.pr.commits.get(0).flcg.cde.getCgProjectUnits())
+					{
+						this.pr.flcg.cde.getCgFileUnits().addAll(cgpjui.getCgFileUnits());
+					}
+				}
+				}catch(Exception e)
+				{
+					this.recordException(e);
+				}
+			}
 		}
+	}
+	
+	
+	
+	void buildGHPRFinalFilesChanged()
+	{
+		try {
+			if(!ghpr.listFiles().toList().isEmpty())
+			{
+				for(GHPullRequestFileDetail ghfdi : ghpr.listFiles().toList())
+				{
+					this.ghprFinalFiles.add(ghfdi);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			this.recordException(e);
+		}
+	}
 		
+	void buildGHFilesChangedUnits()
+	{
+		if(!this.ghprFinalFiles.isEmpty())
+		{
+			for(GHPullRequestFileDetail ghfdi : this.ghprFinalFiles)
+			{
+				if(!ghfdi.getStatus().equals("removed"))
+				{
+				try {
+					GHContent content = this.repository.getFileContent(ghfdi.getFilename(), this.ghpr.getHead().getSha());
+		            
+					BufferedReader reader = new BufferedReader(new InputStreamReader(content.read()));
+					String s="";
+					String alls="";
+					while((s = reader.readLine())!=null)
+					{
+						alls += s;
+					}
+					GHFilesChangedUnit ghfcui = new GHFilesChangedUnit(content.getPath(), alls);
+					this.ghFilesChangedUnits.add(ghfcui);
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					this.recordException(e);
+				}
+				}else if (ghfdi.getStatus().equals("removed"))
+				{
+					String removedPath="";
+					String removedContent="";
+					for(GHPullRequestCommitDetail ghctdi : ghpr.listCommits() )
+					{
+						try {
+							GHCommit ghcmti = this.repository.getCommit(ghctdi.getSha());
+							for(GHCommit.File file : ghcmti.listFiles())
+							{
+								if(file.getFileName().equals(ghfdi.getFilename()) && file.getStatus().equals("removed"))
+								{
+									removedPath = file.getFileName();
+									removedContent = file.getPatch();
+									GHFilesChangedUnit ghfcui = new GHFilesChangedUnit(removedPath,removedContent);
+									this.ghFilesChangedUnits.add(ghfcui);
+								}
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							this.recordException(e);
+						}
+						
+					}
+				}
+			}
+		}
+	}
+	
+	void printGHFilesChangedUnits()
+	{
+		if(!this.ghFilesChangedUnits.isEmpty())
+		{
+			for(GHFilesChangedUnit ghfcui : this.ghFilesChangedUnits)
+			{
+				System.out.println("  GHFilesChangedUnit Path :"+ghfcui.filePath);
+				System.out.println("  GHFilesChangedUnit Content :"+ghfcui.fileContent);
+			}
+		}
+	}
+	
+	boolean inFinalFilesChanged(DiffFileUnit dfua)
+	{
+		if(!this.ghFilesChangedUnits.isEmpty())
+		{
+			for(GHFilesChangedUnit ghfcui : this.ghFilesChangedUnits)
+			{
+				if(dfua.fileType.equals("add") || dfua.fileType.equals("change"))
+				{
+					if(ghfcui.getFilepath().equals(dfua.relativePath) && ghfcui.getFileContent().contains(dfua.diffBodyAdd))
+					{
+						return true;
+					}	
+				}else if(dfua.fileType.equals("delete"))
+				{
+					if(ghfcui.getFilepath().equals(dfua.relativePath) && ghfcui.getFileContent().contains(dfua.diffBodyDelete))
+					{
+						return true;
+					}
+				}	
+			}
+		}
+		return false;
+	}
+	
+	boolean inFinalFilesChanged(ChangedFileUnit cgfua)
+	{
+		if(!this.ghFilesChangedUnits.isEmpty())
+		{
+			String exLineSource="";
+			if(cgfua.getType().equals("add") || cgfua.getType().equals("change"))
+			{
+				String[] ss = cgfua.getSourceAfter().split("\n");
+				for(int i=0;i<ss.length;i++)
+				{
+					exLineSource += ss[i];
+				}
+			}else if(cgfua.getType().equals("delete"))
+			{
+				String[] ss = cgfua.getSourceBefore().split("\n");
+				for(int i=0;i<ss.length;i++)
+				{
+					exLineSource += ss[i];
+				}
+			}
+			for(GHFilesChangedUnit ghfcui : this.ghFilesChangedUnits)
+			{
+				if(cgfua.getType().equals("add") || cgfua.getType().equals("change"))
+				{
+					if(cgfua.getPathAfter().contains(ghfcui.filePath) && ghfcui.fileContent.equals(exLineSource))
+					{
+						return true;
+					}
+				}else if(cgfua.getType().equals("delete"))
+				{
+					if(cgfua.getPathBefore().contains(ghfcui.filePath) && ghfcui.fileContent.equals(exLineSource))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	boolean inPrCdeCgFileUnits(CodeElement cde, ChangedFileUnit cgfua)
+	{
+		if(!cde.getCgFileUnits().isEmpty())
+		{
+			for(ChangedFileUnit cgfui : cde.getCgFileUnits())
+			{		
+				if(Objects.equals(cgfui.getPathBefore(), cgfua.getPathBefore()) && Objects.equals(cgfui.getPathAfter(), cgfua.getPathAfter()))
+				{
+					if(Objects.equals(cgfui.getSourceBefore(), cgfua.getSourceBefore()) && Objects.equals(cgfui.getSourceAfter(), cgfua.getSourceAfter()))
+					{
+						return true;
+					}
+				}
+			}
 		
+		}
+		return false;
+	}
+	
+	void removeRepetitiveDiffFileUnitInPRFilesChanged()
+	{
+		if(this.pr.flcg != null)
+		{
+			if(!this.pr.flcg.diffFileUnits.isEmpty())
+			{
+				ArrayList<DiffFileUnit> ListA = new ArrayList<>();
+				ArrayList<DiffFileUnit> ListB = new ArrayList<>();
+				ListA.addAll(this.pr.flcg.diffFileUnits);
+				ListB.addAll(this.pr.flcg.diffFileUnits);				
+				
+				for(DiffFileUnit dfuia : ListA)
+				{
+					for(DiffFileUnit dfuib : ListB)
+					{
+						if(dfuia.fileType.equals("add") || dfuia.fileType.equals("change"))
+						{
+							if(dfuib.fileType.equals("add") || dfuib.fileType.equals("change"))
+							{
+								if(dfuia.diffBodyAdd.contains(dfuib.diffBodyAdd) && !dfuia.diffBodyAdd.equals(dfuib.diffBodyAdd))
+								{
+									String[] ssA = dfuia.diffBodyAdd.split(" ");
+									int wordsA = ssA.length;
+									String[] ssB = dfuib.diffBodyAdd.split(" ");
+									int wordsB = ssB.length;
+									if(wordsA > wordsB)
+									{
+									   Iterator<DiffFileUnit> itr = this.pr.flcg.diffFileUnits.iterator();
+									   while(itr.hasNext())
+									   {
+										   DiffFileUnit dfui = itr.next();
+										   if(dfui.relativePath.equals(dfuib.relativePath) && dfui.fileType.equals(dfuib.fileType) && dfui.diffBodyAll.equals(dfuib.diffBodyAll))
+										   {
+											   itr.remove();
+										   }
+									   }
+										
+									}else if(wordsA < wordsB)
+									{
+										Iterator<DiffFileUnit> itr = this.pr.flcg.diffFileUnits.iterator();
+										   while(itr.hasNext())
+										   {
+											   DiffFileUnit dfui = itr.next();
+											   if(dfui.relativePath.equals(dfuia.relativePath) && dfui.fileType.equals(dfuia.fileType) && dfui.diffBodyAll.equals(dfuia.diffBodyAll))
+											   {
+												   itr.remove();
+											   }
+										   }
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	Commit getFirstProcessingCommit(ArrayList<Commit> commits)
@@ -1333,7 +1660,7 @@ public class PRModelBuilder {
 			
 			while ((line = reader.readLine())!=null)
 			{
-				System.out.println(line);//execute message
+				System.out.println(line+"      ************");//execute message
 			}
 			exitCode = process.waitFor();		
 			reader.close();	
@@ -1370,6 +1697,34 @@ public class PRModelBuilder {
 			//e.printStackTrace();
 			this.recordException(e);
 		}
+		
+	}
+	
+	boolean checkCommitExist(String commandChangeToCommit)
+	{
+		int exitCode = 6666;
+		ProcessBuilder processBuilder = new ProcessBuilder("bash","-c",commandChangeToCommit);
+		processBuilder.redirectErrorStream(true);
+		try {
+			Process process = processBuilder.start();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while((line = reader.readLine()) != null)
+			{
+				System.out.println("      "+ line +"****************");
+				if(line.contains("fatal: reference is not a tree:"))
+				{
+					return false;
+					
+				}
+			}
+			exitCode = process.waitFor();
+			reader.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			this.recordException(e);
+		}
+		return true;
 		
 	}
 	
@@ -1817,6 +2172,12 @@ public class PRModelBuilder {
 		this.downloadChangedFiles_max = max;
 	}
 	
+	public void downloadFilterCommitNum(int min, int max)
+	{
+		this.commitMin = min;
+		this.commitMax = max;
+	}
+	
 	public void downloadBannedLabels(ArrayList<String> labels)
 	{
 		this.downloadBannedLabels = labels;
@@ -1827,9 +2188,9 @@ public class PRModelBuilder {
 		int changedFilesNum;
 		try {
 			changedFilesNum = this.ghpr.listFiles().toList().size();
-			if(this.downloadChangedFiles_min <= changedFilesNum && changedFilesNum <=this.downloadChangedFiles_max)
+			if(this.downloadChangedFiles_min > changedFilesNum || changedFilesNum > this.downloadChangedFiles_max)
 			{
-				this.download_ChangedFiles = true;
+				this.download_ChangedFiles = false;
 			}
 			
 		} catch (Exception e) {
@@ -1840,11 +2201,26 @@ public class PRModelBuilder {
 		
 	}
 	
+	void checkCommitNumFlag()
+	{
+		int commitNum;
+		try {
+			commitNum = this.ghpr.listCommits().toList().size();
+			if(this.commitMin > commitNum || commitNum > this.commitMax)
+			{
+				this.download_CommitNum = false;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			this.recordException(e);
+		}
+	}
+	
 	void checkBannedLabelsFlag()
 	{
 		if(!this.downloadBannedLabels.isEmpty())
 		{
-			boolean flag=false;
+			boolean flag=true;
 			for(String lbi : this.downloadBannedLabels)
 			{
 				if(!this.pr.getFinalLabels().isEmpty())
@@ -1853,7 +2229,7 @@ public class PRModelBuilder {
 					{
 						if(lbi.equals(prlbi.getName()))
 						{
-							flag=true;
+							flag=false;
 						}
 					}
 				}
@@ -1877,5 +2253,7 @@ public class PRModelBuilder {
 	{
 		this.writeErrorLogs=f;
 	}
+	
+	
 	
 }

@@ -276,6 +276,7 @@ public class StrEBuilder {
     			 str_cmiti.setSha(cmiti.getSha());
     			 str_cmiti.setShortSha(cmiti.getShortSha());
     			 str_cmiti.setMessage(cmiti.getMessage());
+    			 str_cmiti.setCommitType(cmiti.getCommitType());
     			 str_cmiti.setInstId(cmiti.getInstId());
     			 Str_FilesChanged str_filesChanged = new Str_FilesChanged();
     			 FilesChanged filesChanged = cmiti.getFlcg();
@@ -350,11 +351,56 @@ public class StrEBuilder {
 		 } 
      }
 	 
+	 void buildPrFilesChanged(Str_FilesChanged str_filesChanged, FilesChanged filesChanged)
+	 {
+		 if(filesChanged!=null)
+		 {
+			 str_filesChanged.setHasJavaSrcFile(filesChanged.isHasJavaSrcFile());
+	    	 str_filesChanged.setInstId(filesChanged.getInstId());
+	    	 ArrayList<Str_DiffFileUnit> str_diffFileUnits = new ArrayList<>();
+	    	 ArrayList<DiffFileUnit> diffFileUnits = filesChanged.getDiffFileUnits();
+	    	 if(diffFileUnits.size()!=0)
+	    	 {
+	    		 for(DiffFileUnit dfui : diffFileUnits)
+	    		 {
+	    			 Str_DiffFileUnit str_dfui = new Str_DiffFileUnit();
+	    			 str_dfui.setAbsolutePathBefore(dfui.getAbsolutePathBefore());
+	    			 str_dfui.setAbsolutePathAfter(dfui.getAbsolutePathAfter());
+	    			 str_dfui.setRelativePath(dfui.getRelativePath());
+	    			 str_dfui.setDiffBodyAll(dfui.getDiffBodyAll());
+	    			 str_dfui.setDiffBodyAdd(dfui.getDiffBodyAdd());
+	    			 str_dfui.setDiffBodyDelete(dfui.getDiffBodyDelete());
+	    			 str_dfui.setFileType(dfui.getFileType());
+	    			 str_dfui.setJavaSrcFile(dfui.isJavaSrcFile());
+	    			 str_dfui.setTest(dfui.isTest());
+	    			 
+	    			 ArrayList<Str_DiffLineUnit> str_diffLineUnits = new ArrayList<>();
+	    			 ArrayList<DiffLineUnit> diffLineUnits = dfui.getDiffLineUnits();
+	    			 if(diffLineUnits.size()!=0)
+	    			 {
+	    				 for(DiffLineUnit dfli : diffLineUnits)
+	    				 {
+	    					 Str_DiffLineUnit str_dfli = new Str_DiffLineUnit();
+	    					 str_dfli.setText(dfli.getText());
+	    					 str_dfli.setType(dfli.getType());
+	    					 str_diffLineUnits.add(str_dfli);
+	    				 }
+	    				 str_dfui.setDiffLineUnits(str_diffLineUnits);
+	    			 }
+	    			 		 
+	    			 str_diffFileUnits.add(str_dfui);	 
+	    		 } 		 
+	    		 str_filesChanged.setStr_diffFileUnits(str_diffFileUnits);  		 
+	    	 }
+	    	 this.buildPrCodeElement(str_filesChanged, filesChanged);
+		 }
+	 }
+	 
 	 void buildCodeElement(Str_FilesChanged str_filesChanged , FilesChanged filesChanged)
      {
     	 Str_CodeElement str_codeElement = new Str_CodeElement();
     	 CodeElement codeElement = filesChanged.getCde();
-    	 str_codeElement.setInstId(filesChanged.getInstId());
+    	 str_codeElement.setInstId(codeElement.getInstId());
     	 LinkedHashSet<String> str_pjNameIndex = new LinkedHashSet<>();
     	 LinkedHashSet<String> pjNameIndex = filesChanged.getCde().getPjNameIndex();
     	 if(pjNameIndex.size()!=0)
@@ -369,6 +415,15 @@ public class StrEBuilder {
     	 str_filesChanged.setStr_codeElement(str_codeElement);
     	 
      }
+	 
+	 void buildPrCodeElement(Str_FilesChanged str_filesChanged , FilesChanged filesChanged)
+	 {
+		 Str_CodeElement str_codeElement = new Str_CodeElement();
+    	 CodeElement codeElement = filesChanged.getCde();
+    	 str_codeElement.setInstId(codeElement.getInstId());
+    	 this.buildPrCdeChangedFile(str_codeElement, codeElement);
+    	 str_filesChanged.setStr_codeElement(str_codeElement);
+	 }
 	 
 	 void buildChangedProject(Str_CodeElement str_codeElement, CodeElement codeElement)
      {
@@ -420,6 +475,33 @@ public class StrEBuilder {
     		 str_cgpju.setCgFileUnits(str_cgFileUnits);
     	 }
      }
+	 
+	 void buildPrCdeChangedFile(Str_CodeElement str_codeElement, CodeElement codeElement)
+	 {
+		 ArrayList<Str_ChangedFileUnit> str_cgFileUnits = new ArrayList<>();
+    	 HashSet<ChangedFileUnit> cgFileUnits = new HashSet<>();
+    	 cgFileUnits.addAll(codeElement.getCgFileUnits());
+    	 if(!cgFileUnits.isEmpty())
+    	 {
+    		 for(ChangedFileUnit cgflui : cgFileUnits)
+    		 {
+    			 Str_ChangedFileUnit str_cgflui = new Str_ChangedFileUnit();
+    			 str_cgflui.setInstId(cgflui.getInstId());
+    			 str_cgflui.setName(cgflui.getName());
+    			 str_cgflui.setType(cgflui.getType());
+    			 str_cgflui.setSourceBefore(cgflui.getSourceBefore());
+    			 str_cgflui.setSourceAfter(cgflui.getSourceAfter());
+    			 str_cgflui.setPathBefore(cgflui.getPathBefore());
+    			 str_cgflui.setPathAfter(cgflui.getPathAfter());
+    			 str_cgflui.setTest(cgflui.isTest());
+    			 this.buildChangedClass(str_cgflui, cgflui); 
+    			 str_cgFileUnits.add(str_cgflui);
+    		 }
+    		 
+    		 str_codeElement.setCgFileUnits(str_cgFileUnits);
+    	 }
+    	 
+	 }
 	 
 	 void buildChangedClass(Str_ChangedFileUnit str_cgflu, ChangedFileUnit cgflu)
      {
@@ -565,8 +647,8 @@ public class StrEBuilder {
 		 {
     	   Str_FilesChanged str_flscg = new Str_FilesChanged();
     	   FilesChanged flscg = this.pr.getFlcg();
-    	   this.buildFilesChanged(str_flscg, flscg);
-    	   this.str_pr.str_filesChanged = str_flscg;
+    	   this.buildPrFilesChanged(str_flscg, flscg);
+    	   this.str_pr.str_prFilesChanged = str_flscg;
 		 }else {
 			 Str_FilesChanged str_flscg = new Str_FilesChanged();
 		 }

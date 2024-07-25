@@ -4,6 +4,7 @@
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jxp3model/ChangedFieldUnit.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/prmodel/CollectMisson.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jxp3model/Jxp3ModelBuilder.java
+/Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/prmodel/GHFilesChangedUnit.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jwrmodel/Str_ChangedFileUnit.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jxp3model/ChangedMethodUnit.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jprTool/TestExc_reader.java
@@ -21,6 +22,7 @@
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/prmodel/DiffLineUnit.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jwrmodel/Str_CIStatus.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jwrmodel/Str_ChangedMethodUnit.java
+/Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/customExceptions/commitMissingException.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/jwrmodel/Str_PRLabel.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/prmodel/PRLabel.java
 /Users/tangbowen/eclipse-workspace/PRCollector/src/main/java/prmodel/ReviewEvent.java

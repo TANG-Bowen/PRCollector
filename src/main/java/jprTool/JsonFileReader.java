@@ -694,7 +694,7 @@ public class JsonFileReader {
 	void loadPRFilesChanged(PullRequest pr , Str_PullRequest str_pr)
 	{
 		FilesChanged flcg = new FilesChanged(pr);
-		Str_FilesChanged str_flcg = str_pr.str_filesChanged;
+		Str_FilesChanged str_flcg = str_pr.str_prFilesChanged;
 		this.loadFilesChanged(flcg, str_flcg, pr);
 		pr.setFlcg(flcg);
 		

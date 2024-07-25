@@ -29,7 +29,7 @@ public class Str_PullRequest {
 	public HashSet<Str_Participant> str_participants;
 	public Str_Conversation str_conversation;
 	public ArrayList<Str_Commit> str_commits;
-	public Str_FilesChanged str_filesChanged;
+	public Str_FilesChanged str_prFilesChanged;
 	
 	public HashSet<Str_PRLabel> str_finalLabels;
 	public HashSet<Str_PRLabel> str_addedLabels;

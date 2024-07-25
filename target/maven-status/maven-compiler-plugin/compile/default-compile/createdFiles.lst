@@ -15,7 +15,9 @@ prmodel/PRModelBuilder$2.class
 jwrmodel/Str_CodeLineReview.class
 jprTool/TestExc_reader.class
 prmodel/PRModelBuilder$3.class
+customExceptions/commitMissingException.class
 jwrmodel/Str_ChangedProjectUnit.class
+prmodel/GHFilesChangedUnit.class
 jxp3model/ChangedFileUnit.class
 jxp3model/Jxp3ModelBuilder.class
 jwrmodel/Str_PRLabel.class

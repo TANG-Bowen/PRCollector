@@ -10,6 +10,7 @@ public class Str_Commit {
 	String authorInstId;
 	Date commitDate;
 	String message;
+	String commitType;
 	String instId;
 	Str_FilesChanged filesChanged;
 	ArrayList<Str_CIStatus> cis;
@@ -83,6 +84,14 @@ public class Str_Commit {
 	public void setCis(ArrayList<Str_CIStatus> cis) {
 		this.cis = cis;
 	}
-	
 
+	public String getCommitType() {
+		return commitType;
+	}
+
+	public void setCommitType(String commitType) {
+		this.commitType = commitType;
+	}
+	
+    
 }

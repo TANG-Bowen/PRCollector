@@ -15,6 +15,7 @@ public class CodeElement {
 	FilesChanged flcg;
 	Jxp3ModelBuilder jxpm;
 	ArrayList<ChangedProjectUnit> cgProjectUnits;
+	ArrayList<ChangedFileUnit> cgFileUnits;
 	LinkedHashSet<String> pjNameIndex;
 	String instId="";
 	
@@ -24,6 +25,7 @@ public class CodeElement {
 		this.flcg = flcg;
 		this.jxpm = jxpm;
 		cgProjectUnits = new ArrayList<>();
+		cgFileUnits = new ArrayList<>();
 		pjNameIndex = new LinkedHashSet<>();
 	}
 	
@@ -32,12 +34,29 @@ public class CodeElement {
 		this.pr = pr;
 		this.flcg =flcg;
 		cgProjectUnits = new ArrayList<>();
+		cgFileUnits = new ArrayList<>();
 		pjNameIndex = new LinkedHashSet<>();
 	}
 	
 	void build()
 	{
 		this.buildCgProjectUnits();
+	}
+	
+	void printDiffUnitPath()
+	{
+		if(this.flcg!=null)
+		{
+			if(!this.flcg.getDiffFileUnits().isEmpty())
+			{
+				System.out.println("Diff files total number : "+this.flcg.getDiffFileUnits().size());
+				for(int i = 0; i < this.flcg.getDiffFileUnits().size(); i++)
+				{
+					DiffFileUnit dfui = this.flcg.getDiffFileUnits().get(i);
+					System.out.println("Diff file unit "+ i +"  file type : "+ dfui.getFileType());
+				}
+			}
+		}
 	}
 	
 	void buildCgProjectUnits()
@@ -268,6 +287,20 @@ public class CodeElement {
 		}
 		System.out.println("---=================---------------=====================---------------");
 	}
+	
+	public void printPRCodeElement()
+	{
+		System.out.println();
+		System.out.println("cde instId : "+this.instId);
+		if(!this.cgFileUnits.isEmpty())
+		{
+			for(ChangedFileUnit cgfui : this.cgFileUnits)
+			{
+				cgfui.printCgFlUnit();
+			}
+			System.out.println(" Total changefileUnits : "+this.cgFileUnits.size());
+		}
+	}
 
 	public PullRequest getPr() {
 		return pr;
@@ -307,6 +340,22 @@ public class CodeElement {
 
 	public void setInstId(String instId) {
 		this.instId = instId;
+	}
+
+	public Jxp3ModelBuilder getJxpm() {
+		return jxpm;
+	}
+
+	public void setJxpm(Jxp3ModelBuilder jxpm) {
+		this.jxpm = jxpm;
+	}
+
+	public ArrayList<ChangedFileUnit> getCgFileUnits() {
+		return cgFileUnits;
+	}
+
+	public void setCgFileUnits(ArrayList<ChangedFileUnit> cgFileUnits) {
+		this.cgFileUnits = cgFileUnits;
 	}
 	
 	

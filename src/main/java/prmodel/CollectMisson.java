@@ -15,13 +15,14 @@ public class CollectMisson {
 		String psnToken_tf_1004="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";
 		String filePath="/Users/touhakubun/PRDataset-re";
 		String fromDate="2022-01-01";
-		String toDate="2023-02-13";//2024-01-01
+		String toDate="2022-11-23";//2024-01-01
 		
 		PRModelBuilderBundle mdlBuilderBundle  = new PRModelBuilderBundle(psnToken_tf_1004, repoName_dubbo);
 		mdlBuilderBundle.setRootSrcPath(filePath);
 		mdlBuilderBundle.searchByCreated(fromDate, toDate);
 		mdlBuilderBundle.searchByIsClosed();
 		mdlBuilderBundle.downloadChangedFiles(0, 40);
+		mdlBuilderBundle.downloadCommitNum(0, 20);
 		mdlBuilderBundle.writeFile(true);
 		mdlBuilderBundle.deleteSrcFile(true);
 		mdlBuilderBundle.freeMemory(true);

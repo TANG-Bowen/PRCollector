@@ -7,6 +7,7 @@ public class Str_CodeElement {
 	
 	
 	ArrayList<Str_ChangedProjectUnit> cgProjectUnits;
+	ArrayList<Str_ChangedFileUnit> cgFileUnits;
 	LinkedHashSet<String> pjNameIndex;
 	String instId;
 	
@@ -37,6 +38,14 @@ public class Str_CodeElement {
 
 	public void setInstId(String instId) {
 		this.instId = instId;
+	}
+
+	public ArrayList<Str_ChangedFileUnit> getCgFileUnits() {
+		return cgFileUnits;
+	}
+
+	public void setCgFileUnits(ArrayList<Str_ChangedFileUnit> cgFileUnits) {
+		this.cgFileUnits = cgFileUnits;
 	}
 	
 	
