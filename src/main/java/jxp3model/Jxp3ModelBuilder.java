@@ -41,6 +41,7 @@ public class Jxp3ModelBuilder {
 			cde.instId = "commitCodeElement"+commitCodeElementId;
 			cde.build();
 			cmiti.getFlcg().setCde(cde);
+			cde.unBuild();
 			}
 		}
 		}catch(Exception e)

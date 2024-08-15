@@ -53,6 +53,43 @@ public class ChangedMethodUnit {
 		this.buildCallingAndCalled();
 	}
 	
+	void unBuild()
+	{
+		this.jmtBefore= null;
+		this.jmtAfter= null;
+		if(!this.calledMethodsBefore.isEmpty())
+		{
+			for(JavaMethod jmi : this.calledMethodsBefore)
+			{
+				jmi=null;
+			}
+		}
+		
+		if(!this.calledMethodsAfter.isEmpty())
+		{
+			for(JavaMethod jmi : this.calledMethodsAfter)
+			{
+				jmi = null;
+			}
+		}
+		
+		if(!this.callingMethodsBefore.isEmpty())
+		{
+			for(JavaMethod jmi : this.callingMethodsBefore)
+			{
+				jmi = null;
+			}
+		}
+		
+		if(!this.callingMethodsAfter.isEmpty())
+		{
+			for(JavaMethod jmi : this.callingMethodsAfter)
+			{
+				jmi = null;
+			}
+		}
+	}
+	
 	void buildName()
 	{
 		if(this.type.equals("delete"))

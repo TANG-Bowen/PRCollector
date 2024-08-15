@@ -36,6 +36,26 @@ public class ChangedClassUnit {
 		this.buildCgFields();
 	}
 	
+	void unBuild()
+	{
+		this.jclsBefore= null;
+		this.jclsAfter= null;
+		if(!this.cgMethodUnits.isEmpty())
+		{
+			for(ChangedMethodUnit cgmui : this.cgMethodUnits)
+			{
+				cgmui.unBuild();
+			}
+		}
+		if(!this.cgFieldUnits.isEmpty())
+		{
+			for(ChangedFieldUnit cgfdi : this.cgFieldUnits)
+			{
+				cgfdi.unBuild();
+			}
+		}
+	}
+	
 	void buildName()
 	{
 		if(this.type.equals("delete"))

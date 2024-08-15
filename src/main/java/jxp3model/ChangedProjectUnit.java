@@ -49,6 +49,20 @@ public class ChangedProjectUnit {
 		  
 		
 	}
+	void unBuild()
+	{
+		this.jpjBefore=null;
+		this.jpjAfter=null;
+		this.mbBefore=null;
+		this.mbAfter=null;
+		if(!this.cgFileUnits.isEmpty())
+		{
+			for(ChangedFileUnit cgfui : this.cgFileUnits)
+			{
+				cgfui.unBuild();
+			}
+		}
+	}
 	
 	void buildMdBuilder()
 	{

@@ -324,6 +324,8 @@ public class StrEBuilder {
     			 str_dfui.setDiffBodyAll(dfui.getDiffBodyAll());
     			 str_dfui.setDiffBodyAdd(dfui.getDiffBodyAdd());
     			 str_dfui.setDiffBodyDelete(dfui.getDiffBodyDelete());
+    			 str_dfui.setSourceBefore(dfui.getSourceBefore());
+    			 str_dfui.setSourceAfter(dfui.getSourceAfter());
     			 str_dfui.setFileType(dfui.getFileType());
     			 str_dfui.setJavaSrcFile(dfui.isJavaSrcFile());
     			 str_dfui.setTest(dfui.isTest());

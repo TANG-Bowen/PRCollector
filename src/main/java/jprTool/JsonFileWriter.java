@@ -3,12 +3,17 @@ package jprTool;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import jwrmodel.*;
 import prmodel.*;
@@ -57,9 +62,10 @@ public class JsonFileWriter {
 		}
 	}
 	
-	public JsonFileWriter(PullRequest pr)
+	public JsonFileWriter(PullRequest pr, PRModelBuilder mb)
 	{
 		this.pr =pr;
+		this.mdBuilder=mb;
 	}
 	
 	public void makeFile()
@@ -152,7 +158,7 @@ public class JsonFileWriter {
 					System.out.println("GitSrc_after delete successed !");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					//e.printStackTrace();	
+					e.printStackTrace();	
 					if(this.mdBuilder.getPrDir().exists()==false)
 					{
 						System.out.println("GitSrc_after not exists !");
@@ -171,28 +177,51 @@ public class JsonFileWriter {
 	{
 		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
 			@Override
-			public FileVisitResult visitFile(Path file , BasicFileAttributes attrs)throws IOException
-			{
-				Files.delete(file);
-				return  FileVisitResult.CONTINUE;
-			}
+			 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
 			@Override
-			public  FileVisitResult postVisitDirectory(Path dirt ,IOException exc)throws IOException
-			{
-				Files.delete(dirt);
-				return FileVisitResult.CONTINUE;
-			}
+			 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
 			@Override
-			public FileVisitResult visitFileFailed(Path file, IOException exc)throws IOException
-			{
-				return FileVisitResult.CONTINUE;
-			}
+			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
 		}
 		
-		);		
+		);
 	}
 	
-	
+	public void deleteRetainPrDir(Path directory) throws IOException {
+        Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            	 if (!dir.equals(directory)) {
+                     Files.delete(dir);
+                 } else {
+                     // 先清空目录下所有文件和子目录
+                     try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
+                         for (Path entry : stream) {
+                             Files.delete(entry);
+                         }
+                     } catch (DirectoryNotEmptyException e) {
+                         // 如果目录不为空，继续遍历删除
+                         return FileVisitResult.CONTINUE;
+                     }
+                 }
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
 
 
 }

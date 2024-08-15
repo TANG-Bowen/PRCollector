@@ -2,10 +2,13 @@ package prmodel;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -208,8 +211,11 @@ public class PRModelBuilder {
 					}
 				}else {
 					System.out.println("delete src after error logs");
-					JsonFileWriter jfw = new JsonFileWriter(this.pr);
+					JsonFileWriter jfw = new JsonFileWriter(this.pr,this);
 					jfw.deleteGitSrc();
+					Path prp = Path.of(this.prDir.getAbsolutePath());
+					jfw.deleteRetainPrDir(prp);
+					System.out.println("delete retained src under the pr dir ");
 				}
 			}
 			}else {
@@ -938,7 +944,7 @@ public class PRModelBuilder {
 				if(parentCount == 0)
 				{
 					cmit.commitType = "initial";
-				}else if(parentCount >1)
+				}else if(parentCount >1 || cmit.message.contains("Merge") || cmit.message.contains("merge") || cmit.message.contains("Squash") || cmit.message.contains("squash"))
 				{
 					cmit.commitType = "merge";
 				}else if(cmit.message.startsWith("Revert"))
@@ -1264,6 +1270,8 @@ public class PRModelBuilder {
 			flcg.cmit = cmiti;
 			}else {
 				System.out.println("Commit missing found !!!");
+				cmiti.flcg = flcg;
+				flcg.cmit = cmiti;
 				throw new commitMissingException("fatal: reference is not a tree:");
 			}
 			}catch(Exception e)
@@ -1348,8 +1356,6 @@ public class PRModelBuilder {
 		}
 	}
 	
-	
-	
 	void buildGHPRFinalFilesChanged()
 	{
 		try {
@@ -1375,9 +1381,8 @@ public class PRModelBuilder {
 				if(!ghfdi.getStatus().equals("removed"))
 				{
 				try {
-					GHContent content = this.repository.getFileContent(ghfdi.getFilename(), this.ghpr.getHead().getSha());
-		            
-					BufferedReader reader = new BufferedReader(new InputStreamReader(content.read()));
+					GHContent content = this.repository.getFileContent(ghfdi.getFilename(), this.ghpr.getHead().getSha());		            
+					BufferedReader reader = new BufferedReader(new InputStreamReader(content.read(),"UTF-8"));
 					String s="";
 					String alls="";
 					while((s = reader.readLine())!=null)
@@ -1387,7 +1392,7 @@ public class PRModelBuilder {
 					GHFilesChangedUnit ghfcui = new GHFilesChangedUnit(content.getPath(), alls);
 					this.ghFilesChangedUnits.add(ghfcui);
 					
-				} catch (IOException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					this.recordException(e);
 				}
@@ -1409,7 +1414,7 @@ public class PRModelBuilder {
 									this.ghFilesChangedUnits.add(ghfcui);
 								}
 							}
-						} catch (IOException e) {
+						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							this.recordException(e);
 						}
@@ -1440,7 +1445,7 @@ public class PRModelBuilder {
 			{
 				if(dfua.fileType.equals("add") || dfua.fileType.equals("change"))
 				{
-					if(ghfcui.getFilepath().equals(dfua.relativePath) && ghfcui.getFileContent().contains(dfua.diffBodyAdd))
+					if(ghfcui.getFilepath().equals(dfua.relativePath) && ghfcui.getFileContent().equals(dfua.sourceAfter))
 					{
 						return true;
 					}	
@@ -1824,12 +1829,71 @@ public class PRModelBuilder {
 				if(dfui.absolutePathBefore!="" && dfui.absolutePathAfter=="")
 				{
 					dfui.fileType ="delete";
+					File fb = new File(dfui.absolutePathBefore);
+					try {
+						BufferedReader reader = new BufferedReader(new FileReader(fb));
+						String ls ="";
+						String fcontent ="";
+						while((ls = reader.readLine())!=null)
+						{
+							fcontent += ls;
+						}
+						dfui.sourceBefore = fcontent;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}else if(dfui.absolutePathBefore=="" && dfui.absolutePathAfter!="")
 				{
 					dfui.fileType ="add";
+					File fa = new File(dfui.absolutePathAfter);
+					try {
+						BufferedReader reader = new BufferedReader(new FileReader(fa));
+						String ls ="";
+						String fcontent ="";
+						while((ls = reader.readLine())!=null)
+						{
+							fcontent += ls;
+						}
+						dfui.sourceAfter = fcontent;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 				}else if(dfui.absolutePathBefore!="" && dfui.absolutePathAfter!="")
 				{
 					dfui.fileType ="change";
+					File fb = new File(dfui.absolutePathBefore);
+					try {
+						BufferedReader reader = new BufferedReader(new FileReader(fb));
+						String ls ="";
+						String fcontent ="";
+						while((ls = reader.readLine())!=null)
+						{
+							fcontent += ls;
+						}
+						dfui.sourceBefore = fcontent;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					File fa = new File(dfui.absolutePathAfter);
+					try {
+						BufferedReader reader = new BufferedReader(new FileReader(fa));
+						String ls ="";
+						String fcontent ="";
+						while((ls = reader.readLine())!=null)
+						{
+							fcontent += ls;
+						}
+						dfui.sourceAfter = fcontent;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 			}

@@ -39,6 +39,26 @@ public class ChangedFieldUnit {
 		this.buildAccessMethod();
 	}
 	
+	void unBuild()
+	{
+		this.jfdBefore=null;
+		this.jfdAfter=null;
+		if(!this.accessMethodsBefore.isEmpty())
+		{
+			for(JavaMethod jmi : this.accessMethodsBefore)
+			{
+				jmi=null;
+			}
+		}
+		if(!this.accessMethodsAfter.isEmpty())
+		{
+			for(JavaMethod jmi : this.accessMethodsAfter)
+			{
+				jmi=null;
+			}
+		}
+	}
+	
 	void buildName()
 	{
 		if(this.type.equals("delete"))

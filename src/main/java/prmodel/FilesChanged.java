@@ -41,8 +41,10 @@ public class FilesChanged {
 			}
 		}
 		System.out.println(" codeElement : ");
+		if(this.cde!=null)
+		{
 		this.cde.printCodeElement();
-	  
+		}
 	}
 	
 	void printPrFilesChanged()

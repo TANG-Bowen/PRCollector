@@ -34,6 +34,19 @@ public class ChangedFileUnit {
 		this.buildCgClasses();
 	}
 	
+	void unBuild()
+	{
+		this.jfBefore=null;
+		this.jfAfter=null;
+		if(!this.cgClassUnits.isEmpty())
+		{
+			for(ChangedClassUnit cgclsi : this.cgClassUnits)
+			{
+				cgclsi.unBuild();
+			}
+		}
+	}
+	
 	void buildName()
 	{
 		if(this.type.equals("delete"))

@@ -16,11 +16,11 @@ public class CollectMissionSingle {
 		String filePath="/Users/tangbowen/PRDataset-te";
 		
 		//PRModelBuilder mdlBuilder = new PRModelBuilder(psnToken_tf_1004, repoName_cassandra, 3008);
-		PRModelBuilder mdlBuilder = new PRModelBuilder(psnToken_tf_1004, repoName_boot, 40955);
-		//PRModelBuilder mdlBuilder = new PRModelBuilder(psnToken_tf_1004, repoName_dubbo, 14312);
+		PRModelBuilder mdlBuilder = new PRModelBuilder(psnToken_tf_1004, repoName_boot, 40617);
+		//PRModelBuilder mdlBuilder = new PRModelBuilder(psnToken_tf_1004, repoName_dubbo, 9846);
 		mdlBuilder.setRootSrcPath(filePath);
 		mdlBuilder.writeFile(true);
-		mdlBuilder.deleteSrcFile(true);
+		mdlBuilder.deleteSrcFile(false);
 		mdlBuilder.downloadFilterChangedFiles(0, 40);
 		mdlBuilder.downloadFilterCommitNum(0, 20);
 		//mdlBuilder.setWriteErrorLogs(false);

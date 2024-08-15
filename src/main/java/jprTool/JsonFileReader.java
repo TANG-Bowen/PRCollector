@@ -6,12 +6,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import com.google.gson.Gson;
-
+import com.google.gson.GsonBuilder;
 import jwrmodel.*;
 import jxp3model.*;
 
@@ -32,8 +36,12 @@ public class JsonFileReader {
 		aimFiles = new HashSet<>();
 		str_prs = new HashSet<>();
 		prs = new HashSet<>();
-		gson = new Gson();
 		File fp = new File(path);
+		aimFile = new File(this.filePath);
+//		Gson gson = new GsonBuilder()
+//	            .registerTypeAdapter(Date.class, new CustomDateDeserializer())
+//	            .create();
+		
 		if(!fp.exists())
 		{
 			System.out.println("File in this path is not exists : "+this.aimFiles.size());
@@ -44,50 +52,57 @@ public class JsonFileReader {
 		{
 			this.readFiles();
 		}
+		
 	}
 	
 	public void readFile()
 	{
 		aimFile = new File(this.filePath);
+		String content;
 		try {
-			FileReader reader = new FileReader(this.aimFile.getAbsolutePath());
-			this.str_pr = gson.fromJson(reader, Str_PullRequest.class);
-			this.loadPRModel();
-			reader.close();
 			
-		} catch (FileNotFoundException e) {
+			content = new String(Files.readAllBytes(Paths.get(this.aimFile.getAbsolutePath())),"UTF-8");
+			content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
+			this.gson = new Gson();
+			this.str_pr = gson.fromJson(content, Str_PullRequest.class);
+			this.loadPRModel();
+		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		
-		}
+		}		
 	}
 	
 	public void readFiles()
 	{
 		File filesDirectory = new File(this.filePath);
 		this.aimFiles.addAll(this.listAllFiles(filesDirectory));
+		String content;
 		if(!this.aimFiles.isEmpty())
 		{
 			for(File fi : this.aimFiles)
 			{
 				if(this.getFileExtension(fi).equals("json"))
-				{
+				{											
 					try {
-						FileReader reader = new FileReader(fi.getAbsolutePath());
-						Str_PullRequest str_pri = this.gson.fromJson(reader, Str_PullRequest.class);
+						
+						content = new String(Files.readAllBytes(Paths.get(fi.getAbsolutePath())),"UTF-8");
+						content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
+						this.gson = new Gson();
+						Str_PullRequest str_pri = gson.fromJson(content, Str_PullRequest.class);
 						this.str_prs.add(str_pri);
-						reader.close();
-					} catch (FileNotFoundException e) {
+						
+					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
+						
 						e.printStackTrace();
-					}
+					}					
 				}
 			}
 		}
@@ -461,6 +476,7 @@ public class JsonFileReader {
 				cmiti.setAuthor(this.findParticipant(str_cmiti.getAuthorInstId(),pr));
 				cmiti.setCommitDate(str_cmiti.getCommitDate());
 				cmiti.setMessage(str_cmiti.getMessage());
+				cmiti.setCommitType(str_cmiti.getCommitType());
 				cmiti.setInstId(str_cmiti.getInstId());
 				FilesChanged flcg = new FilesChanged(pr);
 				Str_FilesChanged str_flcg = str_cmiti.getFilesChanged();
@@ -493,7 +509,9 @@ public class JsonFileReader {
 	}
 	
 	void loadFilesChanged(FilesChanged flcg, Str_FilesChanged str_flcg, PullRequest pr)
-	{		
+	{	
+		if(str_flcg!=null)
+		{
 		flcg.setSrcBeforeDirName(str_flcg.getSrcBeforeDirName());
 		flcg.setSrcAfterDirName(str_flcg.getSrcAfterDirName());
 		flcg.setHasJavaSrcFile(str_flcg.isHasJavaSrcFile());
@@ -510,6 +528,8 @@ public class JsonFileReader {
 				dfui.setDiffBodyAll(str_dfui.getDiffBodyAll());
 				dfui.setDiffBodyAdd(str_dfui.getDiffBodyAdd());
 				dfui.setDiffBodyDelete(str_dfui.getDiffBodyDelete());
+				dfui.setSourceBefore(str_dfui.getSourceBefore());
+				dfui.setSourceAfter(str_dfui.getSourceAfter());
 				dfui.setFileType(str_dfui.getFileType());
 				dfui.setJavaSrcFile(str_dfui.isJavaSrcFile());
 				dfui.setTest(str_dfui.isTest());
@@ -533,6 +553,7 @@ public class JsonFileReader {
 		CodeElement cde = new CodeElement(flcg,pr);
 		this.loadCodeElement(cde, str_flcg.getStr_codeElement());
 		flcg.setCde(cde);
+		}
 	}
 	
 	void loadCodeElement(CodeElement cde , Str_CodeElement str_cde)

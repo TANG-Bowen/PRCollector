@@ -10,6 +10,8 @@ public class Str_DiffFileUnit {
 	String diffBodyAll="";
 	String diffBodyAdd="";
 	String diffBodyDelete="";
+	String sourceBefore="";
+	String sourceAfter="";
 	String fileType ="";//add, delete, change
 	boolean isJavaSrcFile=false;
 	boolean isTest=false;//build after jxp3Module building
@@ -99,6 +101,22 @@ public class Str_DiffFileUnit {
 
 	public void setDiffLineUnits(ArrayList<Str_DiffLineUnit> diffLineUnits) {
 		this.diffLineUnits = diffLineUnits;
+	}
+
+	public String getSourceBefore() {
+		return sourceBefore;
+	}
+
+	public void setSourceBefore(String sourceBefore) {
+		this.sourceBefore = sourceBefore;
+	}
+
+	public String getSourceAfter() {
+		return sourceAfter;
+	}
+
+	public void setSourceAfter(String sourceAfter) {
+		this.sourceAfter = sourceAfter;
 	}
 	
 	

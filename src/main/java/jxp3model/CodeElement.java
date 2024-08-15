@@ -43,6 +43,17 @@ public class CodeElement {
 		this.buildCgProjectUnits();
 	}
 	
+	void unBuild()
+	{
+		if(!this.cgProjectUnits.isEmpty())
+		{
+			for(ChangedProjectUnit cgpgi : this.cgProjectUnits)
+			{
+				cgpgi.unBuild();
+			}
+		}
+	}
+	
 	void printDiffUnitPath()
 	{
 		if(this.flcg!=null)
