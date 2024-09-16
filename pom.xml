@@ -35,15 +35,13 @@
      <version>2.11.0</version>
      </dependency>
      
-     <dependency>
-		 <groupId>org.jtool</groupId>
-		 <artifactId>tinyjxplatform</artifactId>
-		 <version>0.0.1</version>
-	 </dependency>
-
-     
-
-  </dependencies>
+     <!-- <dependency>
+     <groupId>org.jtool</groupId>
+     <artifactId>jxplatform</artifactId>
+     <version>3.0.25</version>
+     </dependency>
+     <dependency> -->
+   </dependencies>
   <build>
 	<plugins>
 		<plugin>
