@@ -21,10 +21,11 @@ public class PullRequestBuilder {
     }
     
     PullRequest build() throws IOException {
-        int id = ghPullRequest.getNumber();
+        int number = ghPullRequest.getNumber();
         String title = ghPullRequest.getTitle();
         String repositoryName = ghPullRequest.getRepository().getName();
         String state = ghPullRequest.getState().name();
+        String id = repositoryName + "#" + number;
         
         PRModelDate createDate = new PRModelDate(ghPullRequest.getCreatedAt());
         PRModelDate endDate = new PRModelDate(ghPullRequest.getClosedAt());

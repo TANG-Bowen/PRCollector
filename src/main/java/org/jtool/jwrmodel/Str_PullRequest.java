@@ -7,7 +7,7 @@ public class Str_PullRequest {
     
     String prmodelId;
     
-    int id;
+    String id;
     String title;
     String repositoryName;
     String state;

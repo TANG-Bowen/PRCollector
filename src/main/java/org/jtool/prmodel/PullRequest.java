@@ -10,7 +10,7 @@ public class PullRequest extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private final int id;
+    private final String id;
     private final String title;
     private final String repositoryName;
     private final String state;
@@ -44,7 +44,7 @@ public class PullRequest extends PRElement {
     private Set<Label> removedLabels = new HashSet<>();
     private Set<Label> finalLabels = new HashSet<>();
     
-    public PullRequest(int id, String title, String repositoryName, String state,
+    public PullRequest(String id, String title, String repositoryName, String state,
             PRModelDate createDate, PRModelDate endDate,
             String mergeBranch, String headBranch, String pageUrl, String repositorySrcDLUrl,
             String headRepositorySrcDLUrl,
@@ -152,14 +152,14 @@ public class PullRequest extends PRElement {
     
     @Override
     public int hashCode() {
-        return id;
+        return id.hashCode();
     }
     
     /* ------------------------------------
      * APIs
      --------------------------------------*/
     
-    public int getId() {
+    public String getId() {
         return id;
     }
     
