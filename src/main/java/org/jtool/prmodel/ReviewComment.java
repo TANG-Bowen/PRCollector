@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class ReviewComment extends Comment {
+public class ReviewComment extends PRAction {
     
     /* -------- Attributes -------- */
     
@@ -9,6 +9,7 @@ public class ReviewComment extends Comment {
     
     /* -------- Attributes -------- */
     
+    private MarkdownDoc markdownDoc;
     private CodeReviewSnippet snippet;
     
     public ReviewComment(PullRequest pullRequest, PRModelDate date, String body) {
@@ -19,7 +20,6 @@ public class ReviewComment extends Comment {
         this.snippet = snippet;
     }
     
-    @Override
     public void print() {
         super.print("ReviewComment ");
     }
@@ -27,6 +27,10 @@ public class ReviewComment extends Comment {
     /* ------------------------------------
      * API
      --------------------------------------*/
+    
+    public MarkdownDoc getMarkdownDoc() {
+        return markdownDoc;
+    }
     
     public CodeReviewSnippet getCodeReviewSnippet() {
         return snippet;
