@@ -3,23 +3,25 @@ package org.jtool.jwrmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jtool.prmodel.MarkdownDocContent;
+
 public class Str_MarkdownDoc {
     
     String prmodelId;
     
-    List<String> headingStrings;
-    List<String> boldStrings;
-    List<String> italicStrings;
-    List<String> quoteStrings;
-    List<String> linkStrings;
-    List<String> codeStrings;
-    List<String> codeBlockStrings;
-    List<String> mentionStrings;
-    List<String> textStrings;
+    List<MarkdownDocContent> headingStrings;
+    List<MarkdownDocContent> boldStrings;
+    List<MarkdownDocContent> italicStrings;
+    List<MarkdownDocContent> quoteStrings;
+    List<MarkdownDocContent> linkStrings;
+    List<MarkdownDocContent> codeStrings;
+    List<MarkdownDocContent> codeBlockStrings;
+    List<MarkdownDocContent> mentionStrings;
+    List<MarkdownDocContent> textStrings;
     
-    List<String> pullLinkStrings;
-    List<String> issueLinkStrings;
-    List<String> textLinkStrings;
+    List<MarkdownDocContent> pullLinkStrings;
+    List<MarkdownDocContent> issueLinkStrings;
+    List<MarkdownDocContent> textLinkStrings;
     
-    List<String> htmlComments = new ArrayList<>();
+    List<MarkdownDocContent> htmlComments = new ArrayList<>();
 }

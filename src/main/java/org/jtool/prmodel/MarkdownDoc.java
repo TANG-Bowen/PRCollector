@@ -7,21 +7,21 @@ public class MarkdownDoc extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private final List<String> headingStrings = new ArrayList<>();   //# 
-    private final List<String> boldStrings = new ArrayList<>();      //**
-    private final List<String> italicStrings = new ArrayList<>();    //_
-    private final List<String> quoteStrings = new ArrayList<>();     //>
-    private final List<String> linkStrings = new ArrayList<>();      //[]()
-    private final List<String> codeStrings = new ArrayList<>();      //`
-    private final List<String> codeBlockStrings = new ArrayList<>(); //```
-    private final List<String> mentionStrings = new ArrayList<>();   //@
-    private final List<String> textStrings = new ArrayList<>();
+    private final List<MarkdownDocContent> headingStrings = new ArrayList<>();   //# 
+    private final List<MarkdownDocContent> boldStrings = new ArrayList<>();      //**
+    private final List<MarkdownDocContent> italicStrings = new ArrayList<>();    //_
+    private final List<MarkdownDocContent> quoteStrings = new ArrayList<>();     //>
+    private final List<MarkdownDocContent> linkStrings = new ArrayList<>();      //[]()
+    private final List<MarkdownDocContent> codeStrings = new ArrayList<>();      //`
+    private final List<MarkdownDocContent> codeBlockStrings = new ArrayList<>(); //```
+    private final List<MarkdownDocContent> mentionStrings = new ArrayList<>();   //@
+    private final List<MarkdownDocContent> textStrings = new ArrayList<>();
     
-    private final List<String> pullLinkStrings = new ArrayList<>();  //gh-num
-    private final List<String> issueLinkStrings = new ArrayList<>(); //#num
-    private final List<String> textLinkStrings = new ArrayList<>();
+    private final List<MarkdownDocContent> pullLinkStrings = new ArrayList<>();  //gh-num
+    private final List<MarkdownDocContent> issueLinkStrings = new ArrayList<>(); //#num
+    private final List<MarkdownDocContent> textLinkStrings = new ArrayList<>();
     
-    private final List<String> htmlComments = new ArrayList<>();     // <!-- ...-->
+    private final List<MarkdownDocContent> htmlComments = new ArrayList<>();     // <!-- ...-->
     
     /* -------- Attributes -------- */
     
@@ -47,9 +47,9 @@ public class MarkdownDoc extends PRElement {
         print(prefix, htmlComments, "HtmlComment");
     }
     
-    private void print(String prefix, List<String> strings, String type) {
-        for (String s : strings) {
-            System.out.println("  " + type + " : " + s);
+    private void print(String prefix, List<MarkdownDocContent> texts, String type) {
+        for (MarkdownDocContent text : texts) {
+            System.out.println("  " + type + " : " + text.toString());
         }
     }
     
@@ -57,55 +57,55 @@ public class MarkdownDoc extends PRElement {
      * API
      --------------------------------------*/
     
-    public List<String> getHeadingStrings() {
+    public List<MarkdownDocContent> getHeadingStrings() {
         return headingStrings;
     }
     
-    public List<String> getBoldStrings() {
+    public List<MarkdownDocContent> getBoldStrings() {
         return boldStrings;
     }
     
-    public List<String> getItalicStrings() {
+    public List<MarkdownDocContent> getItalicStrings() {
         return italicStrings;
     }
     
-    public List<String> getQuoteStrings() {
+    public List<MarkdownDocContent> getQuoteStrings() {
         return quoteStrings;
     }
     
-    public List<String> getLinkStrings() {
+    public List<MarkdownDocContent> getLinkStrings() {
         return linkStrings;
     }
     
-    public List<String> getCodeStrings() {
+    public List<MarkdownDocContent> getCodeStrings() {
         return codeStrings;
     }
     
-    public List<String> getCodeBlockStrings() {
+    public List<MarkdownDocContent> getCodeBlockStrings() {
         return codeBlockStrings;
     }
     
-    public List<String> getTextStrings() {
+    public List<MarkdownDocContent> getTextStrings() {
         return textStrings;
     }
     
-    public List<String> getMentionStrings() {
+    public List<MarkdownDocContent> getMentionStrings() {
         return mentionStrings;
     }
     
-    public List<String> getTextLinkStrings() {
+    public List<MarkdownDocContent> getTextLinkStrings() {
         return textLinkStrings;
     }
     
-    public List<String> getPullLinkStrings() {
+    public List<MarkdownDocContent> getPullLinkStrings() {
         return pullLinkStrings;
     }
     
-    public List<String> getIssueLinkStrings() {
+    public List<MarkdownDocContent> getIssueLinkStrings() {
         return issueLinkStrings;
     }
     
-    public List<String> getHtmlComments() {
+    public List<MarkdownDocContent> getHtmlComments() {
         return htmlComments;
     }
 }

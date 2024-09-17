@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 
 import com.vladsch.flexmark.ast.BlockQuote;
@@ -20,10 +19,10 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-import com.vladsch.flexmark.util.sequence.BasedSequence;
 
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.MarkdownDoc;
+import org.jtool.prmodel.MarkdownDocContent;
 import org.jtool.prmodel.Comment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.Review;
@@ -41,10 +40,10 @@ public class MarkdownDocBuilder {
     public void build() {
         MarkdownDoc doc = new MarkdownDoc(pullRequest);
         MutableDataSet doptions = new MutableDataSet();
-        Parser dparser = Parser.builder(doptions).build();
+        Parser pparser = Parser.builder(doptions).build();
         
-        Document ddocument = dparser.parse(pullRequest.getDescription().getBody());
-        traverse(doc, ddocument);
+        Document pdocument = pparser.parse(pullRequest.getDescription().getBody());
+        traverse(doc, pdocument);
         
         buildMentionUsersInEachDoc(doc);
         
@@ -92,101 +91,115 @@ public class MarkdownDocBuilder {
     }
     
     private void traverse(MarkdownDoc doc, Node node) {
-        for (Node child = node.getFirstChild();child!=null;child = child.getNext()) {
+        for (Node child = node.getFirstChild(); child != null; child = child.getNext()) {
             if (child instanceof Heading) {
-                Node headingContent = child.getFirstChild();
-                if (headingContent != null) {
-                    doc.getHeadingStrings().add(headingContent.getChars().toString());
+                Node headingNode = child.getFirstChild();
+                if (headingNode != null) {
+                    doc.getHeadingStrings().add(createMarkdownDocContent(headingNode));
                 }
             } else if (child instanceof Emphasis) {
-                Node emphasisContent = child.getFirstChild();
-                if (emphasisContent != null) {
-                    doc.getItalicStrings().add(emphasisContent.getChars().toString());
+                Node emphasisNode = child.getFirstChild();
+                if (emphasisNode != null) {
+                    doc.getItalicStrings().add(createMarkdownDocContent(emphasisNode));
                 }
             } else if (child instanceof StrongEmphasis) {
-                Node strongEmphasisContent = child.getFirstChild();
-                if (strongEmphasisContent != null) {
-                    doc.getBoldStrings().add(strongEmphasisContent.getChars().toString());
+                Node strongEmphasisNode = child.getFirstChild();
+                if (strongEmphasisNode != null) {
+                    doc.getBoldStrings().add(createMarkdownDocContent(strongEmphasisNode));
                 }
             } else if (child instanceof BlockQuote) {
-                Node quoteContent = child.getFirstChild();
-                if (quoteContent != null) {
-                    doc.getQuoteStrings().add(quoteContent.getChars().toString());
+                Node quoteNode = child.getFirstChild();
+                if (quoteNode != null) {
+                    doc.getQuoteStrings().add(createMarkdownDocContent(quoteNode));
                 }
             } else if(child instanceof Link) {
                 Link link = (Link)child;
-                BasedSequence linkText = link.getText();
-                BasedSequence linkUrl = link.getUrl();
-                String addString = linkText + "->" + linkUrl;
-                doc.getLinkStrings().add(addString);
+                doc.getLinkStrings().add(createMarkdownDocContent(link));
             } else if (child instanceof Code) {
-                Node codeContent = child.getFirstChild();
-                if (codeContent != null) {
-                    doc.getCodeStrings().add(codeContent.getChars().toString());
+                Node codeNode = child.getFirstChild();
+                if (codeNode != null) {
+                    doc.getCodeStrings().add(createMarkdownDocContent(codeNode));
                 }
             } else if (child instanceof FencedCodeBlock) {
-                Node codeBlockContent = child.getFirstChild();
-                if (codeBlockContent != null) {
-                    doc.getCodeBlockStrings().add(codeBlockContent.getChars().toString());
+                Node codeBlockNode = child.getFirstChild();
+                if (codeBlockNode != null) {
+                    doc.getCodeBlockStrings().add(createMarkdownDocContent(codeBlockNode));
                 }
-            } else if(child instanceof Text) {
-                String text = child.getChars().unescape();
-                doc.getTextStrings().add(text);
+            } else if (child instanceof Text) {
+                Text text = (Text)child;
+                doc.getTextStrings().add(createMarkdownDocContent(text));
                 traverse(doc, child);
             } else if (child instanceof HtmlCommentBlock) {
-                HtmlCommentBlock htcmt = (HtmlCommentBlock) child;
-                doc.getHtmlComments().add(htcmt.getChars().toString());
-                
+                HtmlCommentBlock htmlCommentBlock = (HtmlCommentBlock)child;
+                doc.getHtmlComments().add(createMarkdownDocContent(htmlCommentBlock));
             } else {
                 traverse(doc, child);
             }
         }
     }
     
-    @SuppressWarnings("unused")
-    private void addTextLink(String text, MarkdownDoc doc) {
-        Pattern pattern = Pattern.compile("\\bhttps?:\\/\\/[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)");
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String textLink = matcher.group();
-            doc.getTextLinkStrings().add(textLink);
-            String[] ss = textLink.split("/");
-        }
+    private MarkdownDocContent createMarkdownDocContent(Node node) {
+        return new MarkdownDocContent(node.getChars().toString(),
+                node.getChars().getStartOffset(), node.getChars().getStartOffset(),
+                node.getStartOffset(), node.getStartOffset());
     }
     
-    @SuppressWarnings("unused")
+    private MarkdownDocContent createMarkdownDocContent(Text text) {
+        return new MarkdownDocContent(text.getChars().unescape(),
+                text.getChars().getStartOffset(), text.getChars().getStartOffset(),
+                text.getStartOffset(), text.getStartOffset());
+    }
+    
+    private MarkdownDocContent createMarkdownDocContent(Link link) {
+        String linkText = link.getText().toString();
+        String linkUrl = link.getUrl().toString();
+        String text = linkText + "->" + linkUrl;
+        return new MarkdownDocContent(text,
+                link.getChars().getStartOffset(), link.getChars().getStartOffset(),
+                link.getStartOffset(), link.getStartOffset());
+    }
+    
     private void buildMentionUsersInEachDoc(MarkdownDoc doc) {
-        boolean checkUser = true;
         for (String user : pullRequest.getHtmlDescription().getMentionUsers()) {
-            for (String text : doc.getTextStrings()) {
-                if (text.contains(user)) {
-                    String[] email = user.split("@");
-                    String name = email[email.length - 1];
+            for (MarkdownDocContent content : doc.getTextStrings()) {
+                if (content.getText().contains(user)) {
+                    String[] words = user.split("@");
+                    String name = words[words.length - 1];
                     try {
-                        GHUser ghUser = github.getUser(name);
+                        github.getUser(name); // Check the name
+                        
+                        MarkdownDocContent nameContent = new MarkdownDocContent(name,
+                                content.getStartOffset(), content.getStartOffset(),
+                                content.getNodeStartOffset(), content.getNodeStartOffset());
+                        doc.getMentionStrings().add(nameContent);
                     } catch (IOException e) {
-                        checkUser = false;
-                    }
-                    if (checkUser) {
-                        doc.getMentionStrings().add(name);
+                        /* empty */
                     }
                 }
             }
         }
     }
     
-    @SuppressWarnings("unused")
     private void buildIssueLinksAndPullLinks(String text, MarkdownDoc doc) {
         if (text != null) {
             Pattern issuePattern = Pattern.compile("#\\d+");
             Matcher issueMatch = issuePattern.matcher(text);
             while (issueMatch.find()) {
-                doc.getIssueLinkStrings().add(issueMatch.group());
+                int start = issueMatch.start();
+                int end = issueMatch.start();
+                MarkdownDocContent issueContent = new MarkdownDocContent(issueMatch.group(),
+                        start, end, start, end);
+                doc.getIssueLinkStrings().add(issueContent);
             }
-            Pattern linkPattern = Pattern.compile("gh-\\d+");
-            Matcher linkMatch = linkPattern.matcher(text);
-            while (linkMatch.find()) {
-                doc.getPullLinkStrings().add(linkMatch.group());
+            
+            Pattern pullPattern = Pattern.compile("gh-\\d+");
+            Matcher pullMatch = pullPattern.matcher(text);
+            while (pullMatch.find()) {
+                int start = pullMatch.start();
+                int end = pullMatch.start();
+                MarkdownDocContent pullContent = new MarkdownDocContent(pullMatch.group(),
+                        start, end, start, end);
+                doc.getPullLinkStrings().add(pullContent);
             }
         }
     }
