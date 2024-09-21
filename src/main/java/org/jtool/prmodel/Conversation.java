@@ -8,12 +8,12 @@ public class Conversation extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private LinkedHashSet<Comment> comments = new LinkedHashSet<>();
-    private LinkedHashSet<ReviewComment> reviewComments = new LinkedHashSet<>();
-    private LinkedHashSet<Event> events = new LinkedHashSet<>();
+    private LinkedHashSet<IssueComment> issuecomments = new LinkedHashSet<>();
+    private LinkedHashSet<IssueEvent> issueEvents = new LinkedHashSet<>();
     private LinkedHashSet<Review> reviews = new LinkedHashSet<>();
+    private LinkedHashSet<ReviewComment> reviewComments = new LinkedHashSet<>();
     private LinkedHashSet<CodeReviewSnippet> codeReviews = new LinkedHashSet<>();
-    private LinkedHashSet<PRAction> timeLine = new LinkedHashSet<>();
+    private LinkedHashSet<Action> timeLine = new LinkedHashSet<>();
     
     public Conversation(PullRequest pullRequest) {
         super(pullRequest);
@@ -23,28 +23,28 @@ public class Conversation extends PRElement {
         String prefix = "Conversation ";
         System.out.println();
         System.out.println(prefix + super.toString());
-        comments.forEach(e -> e.print());
+        issuecomments.forEach(e -> e.print());
         reviewComments.forEach(e -> e.print());
-        events.forEach(e -> e.print());
+        issueEvents.forEach(e -> e.print());
         reviews.forEach(e -> e.print());
         codeReviews.forEach(e -> e.print());
-        timeLine.forEach(e -> e.print("PRAction "));
+        timeLine.forEach(e -> e.print("Action "));
     }
     
     /* ------------------------------------
      * API
      --------------------------------------*/
     
-    public LinkedHashSet<Comment> getComments() {
-        return comments;
+    public LinkedHashSet<IssueComment> getIssueComments() {
+        return issuecomments;
     }
     
     public LinkedHashSet<ReviewComment> getReviewComments() {
         return reviewComments;
     }
     
-    public LinkedHashSet<Event> getEvents() {
-        return events;
+    public LinkedHashSet<IssueEvent> getIssueEvents() {
+        return issueEvents;
     }
     
     public LinkedHashSet<Review> getReviews() {
@@ -55,7 +55,7 @@ public class Conversation extends PRElement {
         return codeReviews;
     }
     
-    public LinkedHashSet<PRAction> getTimeLine() {
+    public LinkedHashSet<Action> getTimeLine() {
         return timeLine;
     }
 }

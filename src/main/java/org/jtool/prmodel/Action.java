@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class PRAction extends PRElement {
+public class Action extends PRElement {
     
     /* -------- Attributes -------- */
     
@@ -12,7 +12,7 @@ public class PRAction extends PRElement {
     protected Conversation conversation;
     protected Participant participant;
     
-    protected PRAction(PullRequest pullRequest, PRModelDate date, String body) {
+    protected Action(PullRequest pullRequest, PRModelDate date, String body) {
         super(pullRequest);
         this.date = date;
         this.body = body;

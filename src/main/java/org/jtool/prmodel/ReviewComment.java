@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class ReviewComment extends PRAction {
+public class ReviewComment extends Action {
     
     /* -------- Attributes -------- */
     
@@ -14,6 +14,10 @@ public class ReviewComment extends PRAction {
     
     public ReviewComment(PullRequest pullRequest, PRModelDate date, String body) {
         super(pullRequest, date, body);
+    }
+    
+    public void setMarkdownDoc(MarkdownDoc markdownDoc) {
+        this.markdownDoc = markdownDoc;
     }
     
     public void setCodeReviewSnippet(CodeReviewSnippet snippet) {

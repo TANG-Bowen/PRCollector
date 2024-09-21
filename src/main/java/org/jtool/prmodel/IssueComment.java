@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class Comment extends PRAction {
+public class IssueComment extends Action {
     
     /* -------- Attributes -------- */
     
@@ -11,7 +11,7 @@ public class Comment extends PRAction {
     
     private MarkdownDoc markdownDoc;
     
-    public Comment(PullRequest pullRequest, PRModelDate date, String body) {
+    public IssueComment(PullRequest pullRequest, PRModelDate date, String body) {
         super(pullRequest, date, body);
     }
     

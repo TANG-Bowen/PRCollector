@@ -1,6 +1,6 @@
 package org.jtool.jwrmodel;
 
-public class Str_Comment {
+public class Str_IssueComment {
     
     String prmodelId;
     

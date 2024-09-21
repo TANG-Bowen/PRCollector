@@ -2,12 +2,12 @@ package org.jtool.prmodel.QuickAccessAPI;
 
 import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.PRAction;
+import org.jtool.prmodel.Action;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.PRModelDate;
-import org.jtool.prmodel.Comment;
+import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
-import org.jtool.prmodel.Event;
+import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Review;
 
 public class TimeRelation {
@@ -18,7 +18,7 @@ public class TimeRelation {
     
     public static long mergetime_msec(PullRequest pullRequest) {
         if (pullRequest.isMerged() && !pullRequest.isStandardMerged()) {
-            for (Event event: pullRequest.getConversation().getEvents()) {
+            for (IssueEvent event: pullRequest.getConversation().getIssueEvents()) {
                 if (event.getBody().equals("closed")) {
                     return event.getDate().from(pullRequest.getCreateDate());
                 }
@@ -30,8 +30,8 @@ public class TimeRelation {
     }
     
     public static long firstComment_response(PullRequest pullRequest) {
-        for (PRAction action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(Comment.class.getName())) {
+        for (Action action : pullRequest.getConversation().getTimeLine()) {
+            if (action.getActionType().equals(IssueComment.class.getName())) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -40,7 +40,7 @@ public class TimeRelation {
     }
     
     public static long firstReviewComment_response(PullRequest pullRequest) {
-        for (PRAction action : pullRequest.getConversation().getTimeLine()) {
+        for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(ReviewComment.class.getName())) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
@@ -50,8 +50,8 @@ public class TimeRelation {
     }
     
     public static long firstEvent_response(PullRequest pullRequest) {
-        for (PRAction action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(Event.class.getName())) {
+        for (Action action : pullRequest.getConversation().getTimeLine()) {
+            if (action.getActionType().equals(IssueEvent.class.getName())) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -60,7 +60,7 @@ public class TimeRelation {
     }
     
     public static long firstReview_response(PullRequest pullRequest) {
-        for (PRAction action : pullRequest.getConversation().getTimeLine()) {
+        for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(Review.class.getName())) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());

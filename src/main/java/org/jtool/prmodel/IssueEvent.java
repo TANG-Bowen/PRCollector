@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class Event extends PRAction {
+public class IssueEvent extends Action {
     
     /* -------- Attributes -------- */
     
@@ -9,7 +9,7 @@ public class Event extends PRAction {
     
     /* -------- Attributes -------- */
     
-    public Event(PullRequest pullRequest, PRModelDate date, String body) {
+    public IssueEvent(PullRequest pullRequest, PRModelDate date, String body) {
         super(pullRequest, date, body);
     }
     

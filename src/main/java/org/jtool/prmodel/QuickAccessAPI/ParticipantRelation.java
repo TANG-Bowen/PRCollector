@@ -3,7 +3,7 @@ package org.jtool.prmodel.QuickAccessAPI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jtool.prmodel.Event;
+import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.PullRequest;
 
@@ -51,7 +51,7 @@ public class ParticipantRelation {
             }
         }
         
-        for (Event event : pullRequest.getConversation().getEvents()) {
+        for (IssueEvent event : pullRequest.getConversation().getIssueEvents()) {
             if (event.getBody().equals("closed")) {
                 closeMember = event.getParticipant();
                 break;

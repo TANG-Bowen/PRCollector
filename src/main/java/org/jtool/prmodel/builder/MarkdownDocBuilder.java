@@ -23,7 +23,7 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.MarkdownDoc;
 import org.jtool.prmodel.MarkdownDocContent;
-import org.jtool.prmodel.Comment;
+import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.Review;
 
@@ -50,7 +50,7 @@ public class MarkdownDocBuilder {
         buildIssueLinksAndPullLinks(pullRequest.getDescription().getBody(), doc);
         pullRequest.getDescription().setMardownDoc(doc);
         
-        for (Comment comment : pullRequest.getConversation().getComments()) {
+        for (IssueComment comment : pullRequest.getConversation().getIssueComments()) {
             MarkdownDoc doc2 = new MarkdownDoc(pullRequest);
             MutableDataSet options = new MutableDataSet();
             Parser parser = Parser.builder(options).build();

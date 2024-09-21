@@ -19,13 +19,13 @@ import com.google.gson.Gson;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.Conversation;
-import org.jtool.prmodel.Comment;
+import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
-import org.jtool.prmodel.Event;
+import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.MarkdownDoc;
 import org.jtool.prmodel.Review;
 import org.jtool.prmodel.CodeReviewSnippet;
-import org.jtool.prmodel.PRAction;
+import org.jtool.prmodel.Action;
 import org.jtool.prmodel.Commit;
 import org.jtool.prmodel.Diff;
 import org.jtool.prmodel.DiffFile;
@@ -33,7 +33,7 @@ import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
-import org.jtool.prmodel.FilesChangedInfo;
+import org.jtool.prmodel.AllFilesChanged;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PRModelDate;
 
@@ -53,9 +53,9 @@ public class JsonFileReader {
     
     private Map<String, Participant> participantMap = new HashMap<>();
     
-    private Map<String, Comment> commentMap = new HashMap<>();
+    private Map<String, IssueComment> commentMap = new HashMap<>();
     private Map<String, ReviewComment> reviewCommentMap = new HashMap<>();
-    private Map<String, Event> eventMap = new HashMap<>();
+    private Map<String, IssueEvent> eventMap = new HashMap<>();
     private Map<String, Review> reviewMap = new HashMap<>();
     
     private Map<String, DiffFile> diffFileMap = new HashMap<>();
@@ -166,8 +166,8 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        FilesChangedInfo info = loadFilesChangedInfo(pullRequest, str_pr.filesChangedInfo);
-        pullRequest.setFilesChangedInfo(info);
+        AllFilesChanged fileChanged = loadFilesChangedInfo(pullRequest, str_pr.allFilesChanged);
+        pullRequest.setAllFilesChanged(fileChanged);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
         pullRequest.getAddedLabels().addAll(addedLabels);
@@ -242,22 +242,23 @@ public class JsonFileReader {
         Conversation conversation = new Conversation(pullRequest);
         conversation.setPrmodelId(str_cv.prmodelId);
         
-        conversation.getComments().addAll(loadComments(pullRequest, conversation, str_cv.comments));
+        conversation.getIssueComments().addAll(loadComments(pullRequest, conversation, str_cv.issueComments));
+        conversation.getIssueEvents().addAll(loadEvents(pullRequest, conversation, str_cv.issueEvents));
         conversation.getReviewComments().addAll(loadReviewComments(pullRequest, conversation, str_cv.reviewComments));
-        conversation.getEvents().addAll(loadEvents(pullRequest, conversation, str_cv.events));
+        
         conversation.getReviews().addAll(loadReviews(pullRequest, conversation, str_cv.reviews));
         conversation.getCodeReviews().addAll(loadCodeReviewSnippets(pullRequest, conversation, str_cv.codeReviews));
         conversation.getTimeLine().addAll(loadTimeLine(pullRequest, conversation, str_cv.timeLineIds));
         return conversation;
     }
     
-    private LinkedHashSet<Comment> loadComments(PullRequest pullRequest, Conversation conversation,
-            Set<Str_Comment> str_cts) {
-        LinkedHashSet<Comment> comments = new LinkedHashSet<>();
-        for (Str_Comment str_ct : str_cts) {
+    private LinkedHashSet<IssueComment> loadComments(PullRequest pullRequest, Conversation conversation,
+            Set<Str_IssueComment> str_cts) {
+        LinkedHashSet<IssueComment> comments = new LinkedHashSet<>();
+        for (Str_IssueComment str_ct : str_cts) {
             PRModelDate date = new PRModelDate(str_ct.date);
             
-            Comment comment = new Comment(pullRequest, date, str_ct.body);
+            IssueComment comment = new IssueComment(pullRequest, date, str_ct.body);
             comment.setPrmodelId(str_ct.prmodelId);
             
             comment.setConversation(conversation);
@@ -301,13 +302,13 @@ public class JsonFileReader {
         return reviewComments;
     }
     
-    private LinkedHashSet<Event> loadEvents(PullRequest pullRequest, Conversation conversation,
-            Set<Str_Event> str_ets) {
-        LinkedHashSet<Event> events = new LinkedHashSet<>();
-        for (Str_Event str_et : str_ets) {
+    private LinkedHashSet<IssueEvent> loadEvents(PullRequest pullRequest, Conversation conversation,
+            Set<Str_IssueEvent> str_ets) {
+        LinkedHashSet<IssueEvent> events = new LinkedHashSet<>();
+        for (Str_IssueEvent str_et : str_ets) {
             PRModelDate date = new PRModelDate(str_et.date);
             
-            Event event = new Event(pullRequest, date, str_et.body);
+            IssueEvent event = new IssueEvent(pullRequest, date, str_et.body);
             event.setPrmodelId(str_et.prmodelId);
             
             event.setConversation(conversation);
@@ -369,17 +370,17 @@ public class JsonFileReader {
         return codeReviewSnippets;
     }
     
-    private LinkedHashSet<PRAction> loadTimeLine(PullRequest pullRequest, Conversation conversation,
+    private LinkedHashSet<Action> loadTimeLine(PullRequest pullRequest, Conversation conversation,
             Set<String> aids) {
-        Map<String, PRAction> actionMap = new HashMap<>();
+        Map<String, Action> actionMap = new HashMap<>();
         actionMap.putAll(commentMap);
         actionMap.putAll(reviewCommentMap);
         actionMap.putAll(eventMap);
         actionMap.putAll(reviewMap);
         
-        LinkedHashSet<PRAction> actions = new LinkedHashSet<>();
+        LinkedHashSet<Action> actions = new LinkedHashSet<>();
         for (String aid : aids) {
-            PRAction action = actionMap.get(aid);
+            Action action = actionMap.get(aid);
             actions.add(action);
         }
         return actions;
@@ -639,8 +640,8 @@ public class JsonFileReader {
         return ciStaruses;
     }
     
-    private FilesChangedInfo loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChangedInfo str_info) {
-        FilesChangedInfo info = new FilesChangedInfo(pullRequest, str_info.hasJavaFile);
+    private AllFilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_AllFilesChanged str_info) {
+        AllFilesChanged info = new AllFilesChanged(pullRequest, str_info.hasJavaFile);
         info.setPrmodelId(str_info.prmodelId);
         
         for (String id : str_info.diffFileIds) {
@@ -659,7 +660,7 @@ public class JsonFileReader {
             Label label = new Label(pullRequest, str_lb.name, str_lb.color, str_lb.description);
             label.setPrmodelId(str_lb.prmodelId);
             
-            label.setEvent(eventMap.get(str_lb.eventId));
+            label.setIssueEvent(eventMap.get(str_lb.issueEventId));
             
             labels.add(label);
         }

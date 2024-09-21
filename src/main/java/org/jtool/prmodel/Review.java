@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class Review extends PRAction {
+public class Review extends Action {
     
     /* -------- Attributes -------- */
     

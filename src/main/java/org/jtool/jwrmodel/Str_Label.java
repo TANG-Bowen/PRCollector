@@ -9,5 +9,5 @@ public class Str_Label {
     String color;
     String description;
     
-    String eventId;
+    String issueEventId;
 }

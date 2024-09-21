@@ -10,7 +10,7 @@ public class Label extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private Event event;
+    private IssueEvent issueEvent;
     
     public Label(PullRequest pullRequest, String name, String color, String description) {
         super(pullRequest);
@@ -19,8 +19,8 @@ public class Label extends PRElement {
         this.description = description;
     }
     
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setIssueEvent(IssueEvent issueEvent) {
+        this.issueEvent = issueEvent;
     }
     
     public void print() {
@@ -30,7 +30,7 @@ public class Label extends PRElement {
         System.out.println(prefix + "name : " + name);
         System.out.println(prefix + "color : " + color);
         System.out.println(prefix + "description : " + description);
-        event.print();
+        issueEvent.print();
     }
     
     /* ------------------------------------
@@ -49,7 +49,7 @@ public class Label extends PRElement {
         return description;
     }
     
-    public Event getEvent() {
-        return event;
+    public IssueEvent getIssueEvent() {
+        return issueEvent;
     }
 }

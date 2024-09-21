@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.Conversation;
-import org.jtool.prmodel.Comment;
+import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
-import org.jtool.prmodel.Event;
+import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.MarkdownDoc;
 import org.jtool.prmodel.Review;
 import org.jtool.prmodel.CodeReviewSnippet;
-import org.jtool.prmodel.PRAction;
+import org.jtool.prmodel.Action;
 import org.jtool.prmodel.Commit;
 import org.jtool.prmodel.Diff;
 import org.jtool.prmodel.DiffFile;
@@ -24,7 +24,7 @@ import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
-import org.jtool.prmodel.FilesChangedInfo;
+import org.jtool.prmodel.AllFilesChanged;
 import org.jtool.prmodel.Label;
 
 import org.jtool.jxp3model.CodeChange;
@@ -73,7 +73,7 @@ public class StringConverter {
         str_pr.htmlDescription = buildHTMLDescription(pullRequest.getHtmlDescription());
         str_pr.conversation = buildConversation(pullRequest.getConversation());
         str_pr.commits = buildCommits(pullRequest.getCommits());
-        str_pr.filesChangedInfo = buildFilesChangedInfo(pullRequest.getFilesChangedInfo());
+        str_pr.allFilesChanged = buildAllFilesChanged(pullRequest.getAllFilesChanged());
         str_pr.addedLabels = buildLabels(pullRequest.getAddedLabels());
         str_pr.removedLabels = buildLabels(pullRequest.getRemovedLabels());
         str_pr.finalLabels = buildLabels(pullRequest.getFinalLabels());
@@ -149,9 +149,9 @@ public class StringConverter {
         
         str_cv.prmodelId = conversation.getPRModelId();
         
-        str_cv.comments = buildComments(conversation.getComments());
+        str_cv.issueComments = buildIssueComments(conversation.getIssueComments());
+        str_cv.issueEvents = buildIssueEvents(conversation.getIssueEvents());
         str_cv.reviewComments = buildReviewComments(conversation.getReviewComments());
-        str_cv.events = buildEvents(conversation.getEvents());
         str_cv.reviews = buildReviews(conversation.getReviews());
         
         str_cv.timeLineIds = buildTimeLine(conversation.getTimeLine());
@@ -161,10 +161,10 @@ public class StringConverter {
         return str_cv;
     }
     
-    private LinkedHashSet<Str_Comment> buildComments(LinkedHashSet<Comment> comments) {
-        LinkedHashSet<Str_Comment> str_cts = new LinkedHashSet<>();
-        for (Comment comment : comments) {
-            Str_Comment str_ct = new Str_Comment();
+    private LinkedHashSet<Str_IssueComment> buildIssueComments(LinkedHashSet<IssueComment> comments) {
+        LinkedHashSet<Str_IssueComment> str_cts = new LinkedHashSet<>();
+        for (IssueComment comment : comments) {
+            Str_IssueComment str_ct = new Str_IssueComment();
             str_cts.add(str_ct);
             
             str_ct.prmodelId = comment.getPRModelId();
@@ -176,6 +176,22 @@ public class StringConverter {
             str_ct.participantId = comment.getParticipant().getPRModelId();
         }
         return str_cts;
+    }
+    
+    private LinkedHashSet<Str_IssueEvent> buildIssueEvents(LinkedHashSet<IssueEvent> events) {
+        LinkedHashSet<Str_IssueEvent> str_ets = new LinkedHashSet<>();
+        for (IssueEvent event : events) {
+            Str_IssueEvent str_et = new Str_IssueEvent();
+            str_ets.add(str_et);
+            
+            str_et.prmodelId = event.getPRModelId();
+            
+            str_et.date = event.getDate().toString();
+            str_et.body = event.getBody();
+            
+            str_et.participantId = event.getParticipant().getPRModelId();
+        }
+        return str_ets;
     }
     
     private LinkedHashSet<Str_ReviewComment> buildReviewComments(LinkedHashSet<ReviewComment> comments) {
@@ -194,22 +210,6 @@ public class StringConverter {
             str_ct.snippetId = comment.getCodeReviewSnippet().getPRModelId();
         }
         return str_cts;
-    }
-    
-    private LinkedHashSet<Str_Event> buildEvents(LinkedHashSet<Event> events) {
-        LinkedHashSet<Str_Event> str_ets = new LinkedHashSet<>();
-        for (Event event : events) {
-            Str_Event str_et = new Str_Event();
-            str_ets.add(str_et);
-            
-            str_et.prmodelId = event.getPRModelId();
-            
-            str_et.date = event.getDate().toString();
-            str_et.body = event.getBody();
-            
-            str_et.participantId = event.getParticipant().getPRModelId();
-        }
-        return str_ets;
     }
     
     private LinkedHashSet<Str_Review> buildReviews(LinkedHashSet<Review> reviews) {
@@ -245,9 +245,9 @@ public class StringConverter {
         return str_rvs;
     }
     
-    private LinkedHashSet<String> buildTimeLine(LinkedHashSet<PRAction> actions) {
+    private LinkedHashSet<String> buildTimeLine(LinkedHashSet<Action> actions) {
         LinkedHashSet<String> str_tlIds = new LinkedHashSet<>();
-        for (PRAction action : actions) {
+        for (Action action : actions) {
             str_tlIds.add(action.getPRModelId());
         }
         return str_tlIds;
@@ -483,16 +483,16 @@ public class StringConverter {
         return str_statuses;
     }
     
-    private Str_FilesChangedInfo buildFilesChangedInfo(FilesChangedInfo info) {
-        Str_FilesChangedInfo str_info = new Str_FilesChangedInfo();
+    private Str_AllFilesChanged buildAllFilesChanged(AllFilesChanged fileChanged) {
+        Str_AllFilesChanged str_info = new Str_AllFilesChanged();
         
-        str_info.prmodelId = info.getPRModelId();
+        str_info.prmodelId = fileChanged.getPRModelId();
         
-        str_info.hasJavaFile = info.hasJavaFile();
+        str_info.hasJavaFile = fileChanged.hasJavaFile();
         
-        str_info.diffFileIds = info.getDiffFiles().stream().map(f -> f.getPRModelId())
+        str_info.diffFileIds = fileChanged.getDiffFiles().stream().map(f -> f.getPRModelId())
                 .collect(Collectors.toSet());
-        str_info.fileChangeIds = info.getFileChanges().stream().map(c -> c.getPRModelId())
+        str_info.fileChangeIds = fileChanged.getFileChanges().stream().map(c -> c.getPRModelId())
                 .collect(Collectors.toSet());
         return str_info;
     }
@@ -509,7 +509,7 @@ public class StringConverter {
             str_lb.color = label.getColor();
             str_lb.description = label.getDescription();
             
-            str_lb.eventId = label.getEvent().getPRModelId();
+            str_lb.issueEventId = label.getIssueEvent().getPRModelId();
         }
         return str_labels;
      }

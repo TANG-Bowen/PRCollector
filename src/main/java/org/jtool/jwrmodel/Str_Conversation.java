@@ -6,9 +6,9 @@ public class Str_Conversation {
     
     String prmodelId;
     
-    LinkedHashSet<Str_Comment> comments;
+    LinkedHashSet<Str_IssueComment> issueComments;
+    LinkedHashSet<Str_IssueEvent> issueEvents;
     LinkedHashSet<Str_ReviewComment> reviewComments;
-    LinkedHashSet<Str_Event> events;
     LinkedHashSet<Str_Review> reviews;
     LinkedHashSet<Str_CodeReviewSnippet> codeReviews;
     

@@ -10,7 +10,7 @@ import org.kohsuke.github.GHLabel;
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 
-import org.jtool.prmodel.Event;
+import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PullRequest;
 
@@ -26,7 +26,7 @@ public class LabelBuilder {
         this.repository = repository;
     }
     
-    void build(Map<Long, Event> eventMap) throws IOException {
+    void build(Map<Long, IssueEvent> eventMap) throws IOException {
         if (eventMap == null) {
             return;
         }
@@ -47,8 +47,9 @@ public class LabelBuilder {
                 pullRequest.getAddedLabels().add(label);
                 
                 long ghId = repoLabel.getId();
-                Event event = eventMap.get(ghId);
-                label.setEvent(event);
+                IssueEvent issueEvent = eventMap.get(ghId);
+                label.setIssueEvent(issueEvent);
+                
             } else if (eventType.equals("unlabeled")) {
                 GHLabel ghLabel = ghEvent.getLabel();
                 String name = ghLabel.getName();
@@ -60,8 +61,8 @@ public class LabelBuilder {
                 pullRequest.getRemovedLabels().add(label);
                 
                 long ghId = repoLabel.getId();
-                Event event = eventMap.get(ghId);
-                label.setEvent(event);
+                IssueEvent issueEvent = eventMap.get(ghId);
+                label.setIssueEvent(issueEvent);
             }
         }
         
