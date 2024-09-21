@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 import org.jtool.jxp3model.FileChange;
 
-public class AllFilesChanged extends PRElement {
+public class FilesChanged extends PRElement {
     
     /* -------- Attributes -------- */
     
@@ -16,7 +16,7 @@ public class AllFilesChanged extends PRElement {
     private Set<DiffFile> diffFiles = new HashSet<>();
     private Set<FileChange> fileChanges = new HashSet<>();
     
-    public AllFilesChanged(PullRequest pullRequest, boolean hasJavaFile) {
+    public FilesChanged(PullRequest pullRequest, boolean hasJavaFile) {
         super(pullRequest);
         this.hasJavaFile = hasJavaFile;
     }

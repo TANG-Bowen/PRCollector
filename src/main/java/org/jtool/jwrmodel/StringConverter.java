@@ -24,7 +24,7 @@ import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
-import org.jtool.prmodel.AllFilesChanged;
+import org.jtool.prmodel.FilesChanged;
 import org.jtool.prmodel.Label;
 
 import org.jtool.jxp3model.CodeChange;
@@ -73,7 +73,7 @@ public class StringConverter {
         str_pr.htmlDescription = buildHTMLDescription(pullRequest.getHtmlDescription());
         str_pr.conversation = buildConversation(pullRequest.getConversation());
         str_pr.commits = buildCommits(pullRequest.getCommits());
-        str_pr.allFilesChanged = buildAllFilesChanged(pullRequest.getAllFilesChanged());
+        str_pr.filesChanged = buildAllFilesChanged(pullRequest.getFilesChanged());
         str_pr.addedLabels = buildLabels(pullRequest.getAddedLabels());
         str_pr.removedLabels = buildLabels(pullRequest.getRemovedLabels());
         str_pr.finalLabels = buildLabels(pullRequest.getFinalLabels());
@@ -483,8 +483,8 @@ public class StringConverter {
         return str_statuses;
     }
     
-    private Str_AllFilesChanged buildAllFilesChanged(AllFilesChanged fileChanged) {
-        Str_AllFilesChanged str_info = new Str_AllFilesChanged();
+    private Str_FilesChanged buildAllFilesChanged(FilesChanged fileChanged) {
+        Str_FilesChanged str_info = new Str_FilesChanged();
         
         str_info.prmodelId = fileChanged.getPRModelId();
         

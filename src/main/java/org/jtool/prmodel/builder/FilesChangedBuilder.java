@@ -20,17 +20,17 @@ import org.jtool.prmodel.Commit;
 import org.jtool.prmodel.DiffFile;
 
 import org.jtool.prmodel.PullRequest;
-import org.jtool.prmodel.AllFilesChanged;
+import org.jtool.prmodel.FilesChanged;
 import org.jtool.prmodel.PRElement;
 import org.jtool.jxp3model.FileChange;
 
-public class AllFilesChangedBuilder {
+public class FilesChangedBuilder {
     
     private final PullRequest pullRequest;
     private final GHPullRequest ghPullRequest;
     private final GHRepository repository;
     
-    AllFilesChangedBuilder(PullRequest pullRequest, GHPullRequest ghPullRequest, GHRepository repository) {
+    FilesChangedBuilder(PullRequest pullRequest, GHPullRequest ghPullRequest, GHRepository repository) {
         this.pullRequest = pullRequest;
         this.ghPullRequest = ghPullRequest;
         this.repository = repository;
@@ -44,30 +44,30 @@ public class AllFilesChangedBuilder {
             
             boolean hasJavaFile = commits.stream().anyMatch(c -> c.getDiff().hasJavaFile());
             
-            AllFilesChanged allFilesChanged = new AllFilesChanged(pullRequest, hasJavaFile);
-            pullRequest.setAllFilesChanged(allFilesChanged);
+            FilesChanged filesChanged = new FilesChanged(pullRequest, hasJavaFile);
+            pullRequest.setFilesChanged(filesChanged);
             
             for (Commit commit : commits) {
                 for (DiffFile diffFile : commit.getDiff().getDiffFiles()) {
                     if (isIn(diffFile, ghChangedFiles)) {
-                        allFilesChanged.getDiffFiles().add(diffFile);
+                        filesChanged.getDiffFiles().add(diffFile);
                     }
                 }
                 
                 for (FileChange fileChange : commit.getCodeChange().getFileChanges()) {
-                    if (isIn(fileChange, ghChangedFiles) && !allFilesChanged.getFileChanges().contains(fileChange)) {
-                        allFilesChanged.getFileChanges().add(fileChange);
+                    if (isIn(fileChange, ghChangedFiles) && !filesChanged.getFileChanges().contains(fileChange)) {
+                        filesChanged.getFileChanges().add(fileChange);
                     }
                 }
             }
             
-            removeReplicatedDiffFiles(allFilesChanged);
+            removeReplicatedDiffFiles(filesChanged);
             
         } else if (pullRequest.getCommits().size() == 1) {
             Commit commit = pullRequest.getCommits().get(0);
             
-            AllFilesChanged filesChangedInfo = new AllFilesChanged(pullRequest, commit.getDiff().hasJavaFile());
-            pullRequest.setAllFilesChanged(filesChangedInfo);
+            FilesChanged filesChangedInfo = new FilesChanged(pullRequest, commit.getDiff().hasJavaFile());
+            pullRequest.setFilesChanged(filesChangedInfo);
             
             for (DiffFile diffFile : commit.getDiff().getDiffFiles()) {
                 filesChangedInfo.getDiffFiles().add(diffFile);
@@ -157,7 +157,7 @@ public class AllFilesChangedBuilder {
         return false;
     }
     
-    private void removeReplicatedDiffFiles(AllFilesChanged filesChangedInfo) {
+    private void removeReplicatedDiffFiles(FilesChanged filesChangedInfo) {
         if (filesChangedInfo.getDiffFiles().isEmpty()) {
             return;
         }

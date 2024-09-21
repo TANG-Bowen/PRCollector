@@ -33,7 +33,7 @@ public class Str_PullRequest {
     List<Str_Commit> commits;
     Str_Description description;
     Str_HTMLDescription htmlDescription;
-    Str_AllFilesChanged allFilesChanged;
+    Str_FilesChanged filesChanged;
     Set<Str_Label> addedLabels;
     Set<Str_Label> removedLabels;
     Set<Str_Label> finalLabels;

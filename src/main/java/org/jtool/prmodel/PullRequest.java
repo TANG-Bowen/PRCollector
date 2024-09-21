@@ -38,7 +38,7 @@ public class PullRequest extends PRElement {
     private List<Commit> commits = new ArrayList<>();
     private Description description;
     private HTMLDescription htmlDescription;
-    private AllFilesChanged allFilesChanged;
+    private FilesChanged filesChanged;
     
     private Set<Label> addedLabels = new HashSet<>();
     private Set<Label> removedLabels = new HashSet<>();
@@ -90,8 +90,8 @@ public class PullRequest extends PRElement {
         this.htmlDescription = description;
     }
     
-    public void setAllFilesChanged(AllFilesChanged allFilesChanged) {
-        this.allFilesChanged = allFilesChanged;
+    public void setFilesChanged(FilesChanged filesChanged) {
+        this.filesChanged = filesChanged;
     }
     
     public void print() {
@@ -104,7 +104,7 @@ public class PullRequest extends PRElement {
         description.print();
         htmlDescription.print();
         
-        allFilesChanged.print();
+        filesChanged.print();
         
         addedLabels.forEach(e -> e.print());
         removedLabels.forEach(e -> e.print());
@@ -243,8 +243,8 @@ public class PullRequest extends PRElement {
         return htmlDescription;
     }
     
-    public AllFilesChanged getAllFilesChanged() {
-        return allFilesChanged;
+    public FilesChanged getFilesChanged() {
+        return filesChanged;
     }
     
     public Set<Label> getAddedLabels() {

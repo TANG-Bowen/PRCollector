@@ -33,7 +33,7 @@ import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
-import org.jtool.prmodel.AllFilesChanged;
+import org.jtool.prmodel.FilesChanged;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PRModelDate;
 
@@ -166,8 +166,8 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        AllFilesChanged fileChanged = loadFilesChangedInfo(pullRequest, str_pr.allFilesChanged);
-        pullRequest.setAllFilesChanged(fileChanged);
+        FilesChanged fileChanged = loadFilesChangedInfo(pullRequest, str_pr.filesChanged);
+        pullRequest.setFilesChanged(fileChanged);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
         pullRequest.getAddedLabels().addAll(addedLabels);
@@ -640,8 +640,8 @@ public class JsonFileReader {
         return ciStaruses;
     }
     
-    private AllFilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_AllFilesChanged str_info) {
-        AllFilesChanged info = new AllFilesChanged(pullRequest, str_info.hasJavaFile);
+    private FilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChanged str_info) {
+        FilesChanged info = new FilesChanged(pullRequest, str_info.hasJavaFile);
         info.setPrmodelId(str_info.prmodelId);
         
         for (String id : str_info.diffFileIds) {

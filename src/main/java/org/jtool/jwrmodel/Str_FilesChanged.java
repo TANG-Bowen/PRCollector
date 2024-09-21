@@ -2,7 +2,7 @@ package org.jtool.jwrmodel;
 
 import java.util.Set;
 
-public class Str_AllFilesChanged {
+public class Str_FilesChanged {
     
     String prmodelId;
     
