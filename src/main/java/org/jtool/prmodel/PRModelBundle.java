@@ -64,31 +64,40 @@ public class PRModelBundle {
         this(ghToken, repositoryName, rootSrcPath, -1);
     }
     
-    private File getPullRequestDir(int pullRequestNumber) {
+    public PRModel build() {
+        PRModel prmodel = new PRModel();
+        String pullRequestPath = getPullRequestPath(pullRequestNumber);
+        if (!alreadyBuilt(pullRequestPath)) {
+            File pullRequestDir = getDir(pullRequestPath);
+            
+            if (pullRequestNumber >= 0) {
+                buildSingle(prmodel, pullRequestNumber, pullRequestDir);
+            } else {
+                build(prmodel, pullRequestDir);
+            }
+        } else {
+            System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
+        }
+        return prmodel;
+    }
+    
+    private String getPullRequestPath(int pullRequestNumber) {
         String rootPath = rootSrcPath + File.separator + "PRCollector";
         File rootDir = getDir(rootPath);
         String repoPath = rootDir.getAbsolutePath() + File.separator + repository.getName();
         File repositoryDir = getDir(repoPath);
         String prPath = repositoryDir.getAbsolutePath() + File.separator + pullRequestNumber;
-        File pullRequestDir = getDir(prPath);
-        return pullRequestDir;
+        return prPath;
     }
     
-    public PRModel build() {
-        PRModel prmodel = new PRModel();
-        if (pullRequestNumber >= 0) {
-            buildSingle(prmodel, pullRequestNumber);
-        } else {
-            build(prmodel);
-        }
-        return prmodel;
+    private boolean alreadyBuilt(String path) {
+        File file = new File(path);
+        return file.exists();
     }
     
-    private void build(PRModel prmodel) {
+    private void build(PRModel prmodel, File pullRequestDir) {
         PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
         for (GHPullRequest ghPullRequest : ghPullRequests) {
-            File pullRequestDir = getPullRequestDir(ghPullRequest.getNumber());
-            
             PRModelBuilder builder = new PRModelBuilder(this,
                     ghToken, ghPullRequest.getNumber(), pullRequestDir);
             
@@ -98,14 +107,12 @@ public class PRModelBundle {
                 prmodel.addPullRequest(pullRequest);
                 
                 writePRModelToFile(pullRequest, pullRequestDir);
-                builder = null;
             }
+            builder = null;
         }
     }
     
-    private void buildSingle(PRModel prmodel, int pullRequestNumber) {
-        File pullRequestDir = getPullRequestDir(pullRequestNumber);
-        
+    private void buildSingle(PRModel prmodel, int pullRequestNumber, File pullRequestDir) {
         PRModelBuilder builder = new PRModelBuilder(this,
                 ghToken, pullRequestNumber, pullRequestDir);
         
@@ -115,8 +122,8 @@ public class PRModelBundle {
             prmodel.addPullRequest(pullRequest);
             
             writePRModelToFile(pullRequest, pullRequestDir);
-            builder = null;
         }
+        builder = null;
     }
     
     private void writePRModelToFile(PullRequest pullRequest, File pullRequestDir) {

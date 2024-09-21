@@ -22,6 +22,7 @@ public class PRModelBuilder {
     
     private final String ghToken;
     private final int pullRequestNumber;
+    private File pullRequestDir;
     
     private final int changedFilesMin;
     private final int changedFilesMax;
@@ -32,7 +33,6 @@ public class PRModelBuilder {
     private final boolean writeErrorLog;
     
     private PullRequest pullRequest;
-    private File pullRequestDir;
     
     public PRModelBuilder(PRModelBundle bundle, String ghToken, int pullRequestNumber, File pullRequestDir) {
         this.repositoryName = bundle.getRepositoryName();
@@ -68,75 +68,69 @@ public class PRModelBuilder {
         }
         
         try {
-            if (!alreadyBuilt(repository, ghPullRequest)) {
-                boolean downloadingChangedFilesOk = checkDownloadingChangedFiles(ghPullRequest);
-                if (!downloadingChangedFilesOk) {
-                    return false;
-                }
-                
-                boolean downloadinCommitOk = checkDownloadingCommits(ghPullRequest);
-                if (!downloadinCommitOk) {
-                    return false;
-                }
-                
-                PullRequestBuilder pullRequestBuilder = new PullRequestBuilder(ghPullRequest);
-                pullRequest = pullRequestBuilder.build();
-                System.out.println("Built PullRequest element");
-                
-                ParticipantBuilder participantBuilder = new ParticipantBuilder(pullRequest, ghPullRequest);
-                participantBuilder.build();
-                System.out.println("built Participant elements");
-                
-                ConversationBuilder conversationBuilder = new ConversationBuilder(pullRequest, ghPullRequest);
-                conversationBuilder.build();
-                System.out.println("built Conversation elements");
-                
-                DescriptionBuilder descriptionBuilder = new DescriptionBuilder(pullRequest, ghPullRequest);
-                descriptionBuilder.build();
-                System.out.println("Built Description element");
-                
-                HTMLDescriptionBuilder htmlDescriptionBuilder = new HTMLDescriptionBuilder(pullRequest, ghPullRequest);
-                htmlDescriptionBuilder.build();
-                System.out.println("Built HTMLDescription element");
-                
-                MarkdownDocBuilder markdownDocBuilder = new MarkdownDocBuilder(pullRequest, github);
-                markdownDocBuilder.build();
-                System.out.println("built MarkdownDoc element");
-                
-                LabelBuilder labelBuilder = new LabelBuilder(pullRequest, ghPullRequest, repository);
-                labelBuilder.build(conversationBuilder.eventMap);
-                System.out.println("built Label elements");
-                
-                CommitBuilder commitBuilder = new CommitBuilder(pullRequest, ghPullRequest);
-                commitBuilder.build();
-                System.out.println("built Commit elements");
-                
-                if (pullRequest.isSourceCodeRetrievable()) {
-                    boolean noBannedLabel = checkBannedLabels(pullRequest);
-                    if (noBannedLabel) {
-                        
-                        DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
-                        diffBuilder.build();
-                        System.out.println("built Diff element");
-                        
-                        CodeChangetBuilder codeChangetBuilder = new CodeChangetBuilder(pullRequest);
-                        codeChangetBuilder.build();
-                        System.out.println("built CodeChange elements");
-                        
-                        diffBuilder.setTestForDiffFiles();
-                        
-                        FilesChangedBuilder filesChangedBuilder =
-                                new FilesChangedBuilder(pullRequest, ghPullRequest, repository);
-                        filesChangedBuilder.build();
-                        System.out.println("built FilesChanged element");
-                    }
-                }
-                return true;
-            } else {
-                System.out.println("Already built : " +
-                        repository.getName() + "  ---  " + ghPullRequest.getNumber());
+            boolean downloadingChangedFilesOk = checkDownloadingChangedFiles(ghPullRequest);
+            if (!downloadingChangedFilesOk) {
                 return false;
             }
+            
+            boolean downloadinCommitOk = checkDownloadingCommits(ghPullRequest);
+            if (!downloadinCommitOk) {
+                return false;
+            }
+            
+            PullRequestBuilder pullRequestBuilder = new PullRequestBuilder(ghPullRequest);
+            pullRequest = pullRequestBuilder.build();
+            System.out.println("Built PullRequest element");
+            
+            ParticipantBuilder participantBuilder = new ParticipantBuilder(pullRequest, ghPullRequest);
+            participantBuilder.build();
+            System.out.println("built Participant elements");
+            
+            ConversationBuilder conversationBuilder = new ConversationBuilder(pullRequest, ghPullRequest);
+            conversationBuilder.build();
+            System.out.println("built Conversation elements");
+            
+            DescriptionBuilder descriptionBuilder = new DescriptionBuilder(pullRequest, ghPullRequest);
+            descriptionBuilder.build();
+            System.out.println("Built Description element");
+            
+            HTMLDescriptionBuilder htmlDescriptionBuilder = new HTMLDescriptionBuilder(pullRequest, ghPullRequest);
+            htmlDescriptionBuilder.build();
+            System.out.println("Built HTMLDescription element");
+            
+            MarkdownDocBuilder markdownDocBuilder = new MarkdownDocBuilder(pullRequest, github);
+            markdownDocBuilder.build();
+            System.out.println("built MarkdownDoc element");
+            
+            LabelBuilder labelBuilder = new LabelBuilder(pullRequest, ghPullRequest, repository);
+            labelBuilder.build(conversationBuilder.eventMap);
+            System.out.println("built Label elements");
+            
+            CommitBuilder commitBuilder = new CommitBuilder(pullRequest, ghPullRequest);
+            commitBuilder.build();
+            System.out.println("built Commit elements");
+            
+            if (pullRequest.isSourceCodeRetrievable()) {
+                boolean noBannedLabel = checkBannedLabels(pullRequest);
+                if (noBannedLabel) {
+                    DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
+                    diffBuilder.build();
+                    System.out.println("built Diff element");
+                    
+                    CodeChangetBuilder codeChangetBuilder = new CodeChangetBuilder(pullRequest);
+                    codeChangetBuilder.build();
+                    System.out.println("built CodeChange elements");
+                    
+                    diffBuilder.setTestForDiffFiles();
+                    
+                    FilesChangedBuilder filesChangedBuilder =
+                            new FilesChangedBuilder(pullRequest, ghPullRequest, repository);
+                    filesChangedBuilder.build();
+                    System.out.println("built FilesChanged element");
+                }
+            }
+            return true;
+            
         } catch (IOException | CommitMissingException e) {
             recordException(e, repository, ghPullRequest);
             return false;
@@ -162,13 +156,6 @@ public class PRModelBuilder {
             }
         }
         return true;
-    }
-    
-    private boolean alreadyBuilt(GHRepository repository, GHPullRequest ghPullRequest) {
-        String repeatedPath = rootSrcPath + File.separator + "PRCollector" +
-                File.separator + repository.getName() + File.separator + ghPullRequest.getNumber();
-        File f = new File(repeatedPath);
-        return f.exists();
     }
     
     private void recordException(Exception ex, GHRepository repository, GHPullRequest ghPullRequest) {
