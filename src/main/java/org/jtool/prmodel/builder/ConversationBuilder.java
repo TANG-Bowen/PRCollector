@@ -23,7 +23,7 @@ import org.jtool.prmodel.Action;
 import org.jtool.prmodel.PRModelDate;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.PullRequest;
-import org.jtool.prmodel.Review;
+import org.jtool.prmodel.ReviewEvent;
 import org.jtool.prmodel.ReviewComment;
 
 public class ConversationBuilder {
@@ -42,10 +42,11 @@ public class ConversationBuilder {
         Conversation conversation = new Conversation(pullRequest);
         pullRequest.setConversation(conversation);
         
-        buildIssueComment(conversation);
         buildIssueEvent(conversation);
+        buildIssueComment(conversation);
+        buildReviewEvent(conversation);
         buildReviewComment(conversation);
-        buildReview(conversation);
+        
         buildTimeLine(conversation);
         
         buildCodeReviewSnippet(conversation);
@@ -57,19 +58,6 @@ public class ConversationBuilder {
         return pullRequest.getParticipants().stream()
                 .filter(p -> p.getLogin().equals(login))
                 .findFirst().orElse(null);
-    }
-    
-    private void buildIssueComment(Conversation conversation) throws IOException {
-        for (GHIssueComment ghComment : ghPullRequest.listComments()) {
-            PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
-            String body = ghComment.getBody();
-            
-            IssueComment comment = new IssueComment(pullRequest, date, body);
-            conversation.getIssueComments().add(comment);
-            
-            comment.setConversation(conversation);
-            comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
-        }
     }
     
     private void buildIssueEvent(Conversation conversation) throws IOException {
@@ -90,6 +78,32 @@ public class ConversationBuilder {
         }
     }
     
+    private void buildIssueComment(Conversation conversation) throws IOException {
+        for (GHIssueComment ghComment : ghPullRequest.listComments()) {
+            PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
+            String body = ghComment.getBody();
+            
+            IssueComment comment = new IssueComment(pullRequest, date, body);
+            conversation.getIssueComments().add(comment);
+            
+            comment.setConversation(conversation);
+            comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
+        }
+    }
+    
+    private void buildReviewEvent(Conversation conversation) throws IOException {
+        for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
+            PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
+            String body = ghReview.getBody();
+            
+            ReviewEvent review = new ReviewEvent(pullRequest, date, body);
+            conversation.getReviewEvents().add(review);
+            
+            review.setConversation(conversation);
+            review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
+        }
+    }
+    
     private void buildReviewComment(Conversation conversation) throws IOException {
         for (GHPullRequestReviewComment ghComment : ghPullRequest.listReviewComments()) {
             PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
@@ -103,25 +117,12 @@ public class ConversationBuilder {
         }
     }
     
-    private void buildReview(Conversation conversation) throws IOException {
-        for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
-            PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
-            String body = ghReview.getBody();
-            
-            Review review = new Review(pullRequest, date, body);
-            conversation.getReviews().add(review);
-            
-            review.setConversation(conversation);
-            review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
-        }
-    }
-    
     private void buildTimeLine(Conversation conversation) {
         List<Action> actions = new ArrayList<>();
-        conversation.getIssueComments().forEach(c -> actions.add(c));
-        conversation.getReviewComments().forEach(c -> actions.add(c));
         conversation.getIssueEvents().forEach(e -> actions.add(e));
-        conversation.getReviews().forEach(r -> actions.add(r));
+        conversation.getIssueComments().forEach(c -> actions.add(c));
+        conversation.getReviewEvents().forEach(r -> actions.add(r));
+        conversation.getReviewComments().forEach(c -> actions.add(c));
         
         List<Action> sortedActions = actions.stream()
                                               .sorted((a1, a2) -> a1.getDate().compareTo(a2.getDate()))

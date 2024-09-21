@@ -8,7 +8,7 @@ import org.jtool.prmodel.PRModelDate;
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
-import org.jtool.prmodel.Review;
+import org.jtool.prmodel.ReviewEvent;
 
 public class TimeRelation {
     
@@ -61,7 +61,7 @@ public class TimeRelation {
     
     public static long firstReview_response(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(Review.class.getName())) {
+            if (action.getActionType().equals(ReviewEvent.class.getName())) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }

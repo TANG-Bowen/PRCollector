@@ -23,7 +23,7 @@ import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.MarkdownDoc;
-import org.jtool.prmodel.Review;
+import org.jtool.prmodel.ReviewEvent;
 import org.jtool.prmodel.CodeReviewSnippet;
 import org.jtool.prmodel.Action;
 import org.jtool.prmodel.Commit;
@@ -56,7 +56,7 @@ public class JsonFileReader {
     private Map<String, IssueComment> commentMap = new HashMap<>();
     private Map<String, ReviewComment> reviewCommentMap = new HashMap<>();
     private Map<String, IssueEvent> eventMap = new HashMap<>();
-    private Map<String, Review> reviewMap = new HashMap<>();
+    private Map<String, ReviewEvent> reviewMap = new HashMap<>();
     
     private Map<String, DiffFile> diffFileMap = new HashMap<>();
     private Map<String, FileChange> fileChangeMap = new HashMap<>();
@@ -242,12 +242,12 @@ public class JsonFileReader {
         Conversation conversation = new Conversation(pullRequest);
         conversation.setPrmodelId(str_cv.prmodelId);
         
-        conversation.getIssueComments().addAll(loadComments(pullRequest, conversation, str_cv.issueComments));
         conversation.getIssueEvents().addAll(loadEvents(pullRequest, conversation, str_cv.issueEvents));
+        conversation.getIssueComments().addAll(loadComments(pullRequest, conversation, str_cv.issueComments));
+        conversation.getReviewEvents().addAll(loadReviews(pullRequest, conversation, str_cv.reviewEvents));
         conversation.getReviewComments().addAll(loadReviewComments(pullRequest, conversation, str_cv.reviewComments));
-        
-        conversation.getReviews().addAll(loadReviews(pullRequest, conversation, str_cv.reviews));
         conversation.getCodeReviews().addAll(loadCodeReviewSnippets(pullRequest, conversation, str_cv.codeReviews));
+        
         conversation.getTimeLine().addAll(loadTimeLine(pullRequest, conversation, str_cv.timeLineIds));
         return conversation;
     }
@@ -323,13 +323,13 @@ public class JsonFileReader {
         return events;
     }
     
-    private LinkedHashSet<Review> loadReviews(PullRequest pullRequest, Conversation conversation,
-            Set<Str_Review> str_rvs) {
-        LinkedHashSet<Review> reviews = new LinkedHashSet<>();
-        for (Str_Review str_rv : str_rvs) {
+    private LinkedHashSet<ReviewEvent> loadReviews(PullRequest pullRequest, Conversation conversation,
+            Set<Str_ReviewEvent> str_rvs) {
+        LinkedHashSet<ReviewEvent> reviews = new LinkedHashSet<>();
+        for (Str_ReviewEvent str_rv : str_rvs) {
             PRModelDate date = new PRModelDate(str_rv.date);
             
-            Review review = new Review(pullRequest, date, str_rv.body);
+            ReviewEvent review = new ReviewEvent(pullRequest, date, str_rv.body);
             review.setPrmodelId(str_rv.prmodelId);
             
             review.setConversation(conversation);

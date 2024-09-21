@@ -8,7 +8,7 @@ import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.ReviewComment;
-import org.jtool.prmodel.Review;
+import org.jtool.prmodel.ReviewEvent;
 
 public class ConversationRelation {
     
@@ -36,23 +36,23 @@ public class ConversationRelation {
     }
     
     public static List<ReviewComment> reviewCommentsHaveMentions(PullRequest pullRequest) {
-        List<ReviewComment> reviewcomments = new ArrayList<>();
+        List<ReviewComment> comments = new ArrayList<>();
         for (ReviewComment comment : pullRequest.getConversation().getReviewComments()) {
             if (!comment.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                reviewcomments.add(comment);
+                comments.add(comment);
             }
         }
-        return reviewcomments;
+        return comments;
     }
     
-    public static List<Review> reviewEventsHaveMentions(PullRequest pullRequest) {
-        List<Review> reviews = new ArrayList<>();
-        for (Review review : pullRequest.getConversation().getReviews()) {
-            if (!review.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                reviews.add(review);
+    public static List<ReviewEvent> reviewEventsHaveMentions(PullRequest pullRequest) {
+        List<ReviewEvent> events = new ArrayList<>();
+        for (ReviewEvent event : pullRequest.getConversation().getReviewEvents()) {
+            if (!event.getMarkdownDoc().getMentionStrings().isEmpty()) {
+                events.add(event);
             }
         }
-        return reviews;
+        return events;
     }
     
     public static List<IssueComment> getCommentsByParticipant(PullRequest pullRequest, Participant participant) {
@@ -66,13 +66,13 @@ public class ConversationRelation {
     }
     
     public static List<ReviewComment> getReviewCommentsByParticipant(PullRequest pullRequest, Participant participant) {
-        List<ReviewComment> reviewComments = new ArrayList<>();
+        List<ReviewComment> comments = new ArrayList<>();
         for (ReviewComment comment: pullRequest.getConversation().getReviewComments()) {
             if (comment.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
-                reviewComments.add(comment);
+                comments.add(comment);
             }
         }
-        return reviewComments;
+        return comments;
     }
     
     public List<IssueEvent> getEventsByParticipant(PullRequest pullRequest, Participant participant) {
@@ -85,14 +85,14 @@ public class ConversationRelation {
         return events;
     }
     
-    public static List<Review> getReviewEventsByParticipant(PullRequest pullRequest, Participant participant) {
-        List<Review> reviews = new ArrayList<>();
-        for (Review review : pullRequest.getConversation().getReviews()) {
-            if (review.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
-                reviews.add(review);
+    public static List<ReviewEvent> getReviewEventsByParticipant(PullRequest pullRequest, Participant participant) {
+        List<ReviewEvent> events = new ArrayList<>();
+        for (ReviewEvent event : pullRequest.getConversation().getReviewEvents()) {
+            if (event.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
+                events.add(event);
             }
         }
-        return reviews;
+        return events;
     }
     
     public static boolean mentionExist(PullRequest pullRequest) {
@@ -111,9 +111,9 @@ public class ConversationRelation {
             }
         }
         
-        for (Review review : pullRequest.getConversation().getReviews()) {
+        for (ReviewEvent review : pullRequest.getConversation().getReviewEvents()) {
             if (!review.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                hasMention=true;
+                hasMention = true;
                 break;
             }
         }

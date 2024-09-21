@@ -1,6 +1,6 @@
 package org.jtool.jwrmodel;
 
-public class Str_Review {
+public class Str_ReviewEvent {
 	
     String prmodelId;
     

@@ -1,6 +1,6 @@
 package org.jtool.prmodel;
 
-public class Review extends Action {
+public class ReviewEvent extends Action {
     
     /* -------- Attributes -------- */
     
@@ -11,7 +11,7 @@ public class Review extends Action {
     
     private MarkdownDoc markdownDoc;
     
-    public Review(PullRequest pullRequest, PRModelDate date, String body) {
+    public ReviewEvent(PullRequest pullRequest, PRModelDate date, String body) {
         super(pullRequest, date, body);
     }
     

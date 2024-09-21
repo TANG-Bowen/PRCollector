@@ -25,7 +25,7 @@ import org.jtool.prmodel.MarkdownDoc;
 import org.jtool.prmodel.MarkdownDocContent;
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
-import org.jtool.prmodel.Review;
+import org.jtool.prmodel.ReviewEvent;
 
 public class MarkdownDocBuilder {
     
@@ -76,7 +76,7 @@ public class MarkdownDocBuilder {
             comment.setMarkdownDoc(doc2);
         }
         
-        for (Review review : pullRequest.getConversation().getReviews()){
+        for (ReviewEvent review : pullRequest.getConversation().getReviewEvents()){
             MarkdownDoc doc2 = new MarkdownDoc(pullRequest);
             MutableDataSet options = new MutableDataSet();
             Parser parser = Parser.builder(options).build();

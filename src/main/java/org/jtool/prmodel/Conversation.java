@@ -8,9 +8,9 @@ public class Conversation extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private LinkedHashSet<IssueComment> issuecomments = new LinkedHashSet<>();
     private LinkedHashSet<IssueEvent> issueEvents = new LinkedHashSet<>();
-    private LinkedHashSet<Review> reviews = new LinkedHashSet<>();
+    private LinkedHashSet<IssueComment> issuecomments = new LinkedHashSet<>();
+    private LinkedHashSet<ReviewEvent> reviewEvents = new LinkedHashSet<>();
     private LinkedHashSet<ReviewComment> reviewComments = new LinkedHashSet<>();
     private LinkedHashSet<CodeReviewSnippet> codeReviews = new LinkedHashSet<>();
     private LinkedHashSet<Action> timeLine = new LinkedHashSet<>();
@@ -23,11 +23,12 @@ public class Conversation extends PRElement {
         String prefix = "Conversation ";
         System.out.println();
         System.out.println(prefix + super.toString());
-        issuecomments.forEach(e -> e.print());
-        reviewComments.forEach(e -> e.print());
         issueEvents.forEach(e -> e.print());
-        reviews.forEach(e -> e.print());
+        issuecomments.forEach(e -> e.print());
+        reviewEvents.forEach(e -> e.print());
+        reviewComments.forEach(e -> e.print());
         codeReviews.forEach(e -> e.print());
+        
         timeLine.forEach(e -> e.print("Action "));
     }
     
@@ -35,20 +36,21 @@ public class Conversation extends PRElement {
      * API
      --------------------------------------*/
     
-    public LinkedHashSet<IssueComment> getIssueComments() {
-        return issuecomments;
-    }
-    
-    public LinkedHashSet<ReviewComment> getReviewComments() {
-        return reviewComments;
-    }
-    
     public LinkedHashSet<IssueEvent> getIssueEvents() {
         return issueEvents;
     }
     
-    public LinkedHashSet<Review> getReviews() {
-        return reviews;
+    
+    public LinkedHashSet<IssueComment> getIssueComments() {
+        return issuecomments;
+    }
+    
+    public LinkedHashSet<ReviewEvent> getReviewEvents() {
+        return reviewEvents;
+    }
+    
+    public LinkedHashSet<ReviewComment> getReviewComments() {
+        return reviewComments;
     }
     
     public LinkedHashSet<CodeReviewSnippet> getCodeReviews() {

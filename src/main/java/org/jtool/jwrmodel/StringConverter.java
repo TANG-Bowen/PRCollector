@@ -14,7 +14,7 @@ import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.MarkdownDoc;
-import org.jtool.prmodel.Review;
+import org.jtool.prmodel.ReviewEvent;
 import org.jtool.prmodel.CodeReviewSnippet;
 import org.jtool.prmodel.Action;
 import org.jtool.prmodel.Commit;
@@ -152,7 +152,7 @@ public class StringConverter {
         str_cv.issueComments = buildIssueComments(conversation.getIssueComments());
         str_cv.issueEvents = buildIssueEvents(conversation.getIssueEvents());
         str_cv.reviewComments = buildReviewComments(conversation.getReviewComments());
-        str_cv.reviews = buildReviews(conversation.getReviews());
+        str_cv.reviewEvents = buildReviews(conversation.getReviewEvents());
         
         str_cv.timeLineIds = buildTimeLine(conversation.getTimeLine());
         
@@ -212,10 +212,10 @@ public class StringConverter {
         return str_cts;
     }
     
-    private LinkedHashSet<Str_Review> buildReviews(LinkedHashSet<Review> reviews) {
-       LinkedHashSet<Str_Review> str_rvs = new LinkedHashSet<>();
-       for (Review review : reviews){
-           Str_Review str_rv = new Str_Review();
+    private LinkedHashSet<Str_ReviewEvent> buildReviews(LinkedHashSet<ReviewEvent> reviews) {
+       LinkedHashSet<Str_ReviewEvent> str_rvs = new LinkedHashSet<>();
+       for (ReviewEvent review : reviews){
+           Str_ReviewEvent str_rv = new Str_ReviewEvent();
            str_rvs.add(str_rv);
            
            str_rv.prmodelId = review.getPRModelId();
