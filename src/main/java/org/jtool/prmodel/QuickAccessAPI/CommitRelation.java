@@ -46,10 +46,8 @@ public class CommitRelation {
      */
     public static int src_churn(PullRequest pullRequest) {
         int churns = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                churns = churns + dfile.getDiffLines().size();
-            }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            churns = churns + dfile.getDiffLines().size();
         }
         return churns;
     }
@@ -80,11 +78,9 @@ public class CommitRelation {
      */
     public static int test_churn(PullRequest pullRequest) {
         int churns = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (dfile.isTest()) {
-                    churns = churns + dfile.getDiffLines().size();
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (dfile.isTest()) {
+                churns = churns + dfile.getDiffLines().size();
             }
         }
         return churns;
@@ -113,11 +109,9 @@ public class CommitRelation {
     
     public static int files_added(PullRequest pullRequest) {
         int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (dfile.getChangeType().equals(PRElement.ADD)) {
-                    files++;
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (dfile.getChangeType().equals(PRElement.ADD)) {
+                files++;
             }
         }
         return files;
@@ -140,11 +134,9 @@ public class CommitRelation {
     
     public static int files_deleted(PullRequest pullRequest) {
         int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (dfile.getChangeType().equals(PRElement.DELETE)) {
-                    files++;
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (dfile.getChangeType().equals(PRElement.DELETE)) {
+                files++;
             }
         }
         return files;
@@ -167,11 +159,9 @@ public class CommitRelation {
     
     public static int files_modified(PullRequest pullRequest) {
         int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (dfile.getChangeType().equals(PRElement.CHANGE)) {
-                    files++;
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (dfile.getChangeType().equals(PRElement.CHANGE)) {
+                files++;
             }
         }
         return files;
@@ -193,11 +183,7 @@ public class CommitRelation {
     }
     
     public static int files_changed(PullRequest pullRequest) {
-        int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            files = files + commit.getDiff().getDiffFiles().size();
-        }
-        return files;
+        return pullRequest.getFilesChanged().getDiffFiles().size();
     }
     
     public static int files_changed(PullRequest pullRequest, String commitSha) {
@@ -211,11 +197,9 @@ public class CommitRelation {
     
     public static int src_files(PullRequest pullRequest) {
         int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (dfile.isJavaFile()) {
-                    files++;
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (dfile.isJavaFile()) {
+                files++;
             }
         }
         return files;
@@ -244,11 +228,9 @@ public class CommitRelation {
     
     public static int doc_files(PullRequest pullRequest) {
         int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (checkFilenameExtention(dfile)) {
-                    files++;
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (checkFilenameExtention(dfile)) {
+                files++;
             }
         }
         return files;
@@ -271,11 +253,9 @@ public class CommitRelation {
     
     public static int other_files(PullRequest pullRequest) {
         int files = 0;
-        for (Commit commit : pullRequest.getCommits()) {
-            for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-                if (!dfile.isJavaFile() && !checkFilenameExtention(dfile)) {
-                    files++;
-                }
+        for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
+            if (!dfile.isJavaFile() && !checkFilenameExtention(dfile)) {
+                files++;
             }
         }
         return files;
