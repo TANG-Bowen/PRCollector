@@ -41,11 +41,11 @@ public class PRModelDate {
     }
     
     public long until(PRModelDate date) {
-        return localTime.until(date.localTime, ChronoUnit.SECONDS);
+        return localTime.until(date.localTime, ChronoUnit.MILLIS);
     }
     
     public long from(PRModelDate date) {
-        return date.localTime.until(localTime, ChronoUnit.SECONDS);
+        return date.localTime.until(localTime, ChronoUnit.MILLIS);
     }
     
     @Override
