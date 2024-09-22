@@ -10,13 +10,13 @@ import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.ReviewEvent;
 
-public class TimeRelation {
+public class TimeFeature {
     
-    public static long lifetime_msec(PullRequest pullRequest) {
+    public static long lifetime_ms(PullRequest pullRequest) {
         return pullRequest.getEndDate().from(pullRequest.getCreateDate());
     }
     
-    public static long mergetime_msec(PullRequest pullRequest) {
+    public static long mergetime_ms(PullRequest pullRequest) {
         if (pullRequest.isMerged() && !pullRequest.isStandardMerged()) {
             for (IssueEvent event: pullRequest.getConversation().getIssueEvents()) {
                 if (event.getBody().equals("closed")) {
@@ -24,32 +24,12 @@ public class TimeRelation {
                 }
             }
         } else if (pullRequest.isStandardMerged()) {
-            return TimeRelation.lifetime_msec(pullRequest);
+            return lifetime_ms(pullRequest);
         }
         return 0;
     }
     
-    public static long firstComment_response(PullRequest pullRequest) {
-        for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(IssueComment.class.getName())) {
-                PRModelDate actionDate = action.getDate();
-                return actionDate.from(pullRequest.getCreateDate());
-            }
-        }
-        return 0;
-    }
-    
-    public static long firstReviewComment_response(PullRequest pullRequest) {
-        for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(ReviewComment.class.getName())) {
-                PRModelDate actionDate = action.getDate();
-                return actionDate.from(pullRequest.getCreateDate());
-            }
-        }
-        return 0;
-    }
-    
-    public static long firstEvent_response(PullRequest pullRequest) {
+    public static long firstIssueEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(IssueEvent.class.getName())) {
                 PRModelDate actionDate = action.getDate();
@@ -59,7 +39,7 @@ public class TimeRelation {
         return 0;
     }
     
-    public static long firstReview_response(PullRequest pullRequest) {
+    public static long firstReviewEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(ReviewEvent.class.getName())) {
                 PRModelDate actionDate = action.getDate();
@@ -69,7 +49,27 @@ public class TimeRelation {
         return 0;
     }
     
-    public static long total_ci_latency(PullRequest pullRequest) {
+    public static long firstIssueCommentResponse_ms(PullRequest pullRequest) {
+        for (Action action : pullRequest.getConversation().getTimeLine()) {
+            if (action.getActionType().equals(IssueComment.class.getName())) {
+                PRModelDate actionDate = action.getDate();
+                return actionDate.from(pullRequest.getCreateDate());
+            }
+        }
+        return 0;
+    }
+    
+    public static long firstReviewCommentResponse_ms(PullRequest pullRequest) {
+        for (Action action : pullRequest.getConversation().getTimeLine()) {
+            if (action.getActionType().equals(ReviewComment.class.getName())) {
+                PRModelDate actionDate = action.getDate();
+                return actionDate.from(pullRequest.getCreateDate());
+            }
+        }
+        return 0;
+    }
+    
+    public static long totalCILatency_ms(PullRequest pullRequest) {
         int commitSize = pullRequest.getCommits().size();
         if (commitSize > 0) {
            Commit lastCommit = pullRequest.getCommits().get(commitSize - 1);

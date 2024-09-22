@@ -4,92 +4,104 @@ import org.jtool.prmodel.QuickAccessAPI.*;
 
 public class QuickAccessAPITest {
     
-    String testCmtSha1 = "fd16ae78424bfce31439cc0fc67005cf7d14dba3";
+    private static final String testCommitSha1 = "fd16ae78424bfce31439cc0fc67005cf7d14dba3";
     
-    QuickAccessAPITest() {
+    private PullRequest pullRequest;
+    
+    QuickAccessAPITest(PullRequest pullRequest) {
+        this.pullRequest = pullRequest;
     }
     
-    public void print(PullRequest pullRequest) {
-        printCommitRelation(pullRequest);
-        printConversationRelation(pullRequest);
-        printDiscriptionRelation(pullRequest);
-        printEventRelation(pullRequest);
-        printParticipantRelation(pullRequest);
-        printTimeRelation(pullRequest);
+    public void print() {
+        printCommitFeature();
+        printCommitFeature();
+        printConversationFeature();
+        printDiscriptionFeature();
+        printEventFeature();
+        printParticipantFeature();
+        printTimeFeature();
+    }
+    
+    public void printCommitFeature() {
+        System.out.println();
+        System.out.println("Commit : ");
+        System.out.println("Num of commits : "                   + CommitFeature.numCommits(pullRequest));
+        System.out.println("Num of src churns : "                + CommitFeature.numSrcChurns(pullRequest));
+        System.out.println("Num of src churns for commit : "     + CommitFeature.numSrcChurns(pullRequest, testCommitSha1));
+        System.out.println("Num of test churns : "               + CommitFeature.numTestChurns(pullRequest));
+        System.out.println("Num of test churns for commit : "    + CommitFeature.numTestChurns(pullRequest, testCommitSha1));
+        System.out.println("Num of files added : "               + CommitFeature.numFilesAdded(pullRequest));
+        System.out.println("Num of files added for commit : "    + CommitFeature.numFilesAdded(pullRequest, testCommitSha1));
+        System.out.println("Num of files deleted : "             + CommitFeature.numFilesDeleted(pullRequest));
+        System.out.println("Num of files deleted for commit : "  + CommitFeature.numFilesDeleted(pullRequest, testCommitSha1));
+        System.out.println("Num of files changed : "             + CommitFeature.numFilesChanged(pullRequest));
+        System.out.println("Num of files changed for commit : "  + CommitFeature.numFilesChanged(pullRequest, testCommitSha1));
+        System.out.println("Num of files modified : "            + CommitFeature.numFilesModified(pullRequest));
+        System.out.println("Num of files modified for commit : " + CommitFeature.numFilesModified(pullRequest, testCommitSha1));
+        System.out.println("Num of src files : "                 + CommitFeature.numSrcFiles(pullRequest));
+        System.out.println("Num of src files for commit : "      + CommitFeature.numSrcFiles(pullRequest, testCommitSha1));
+        System.out.println("Num of doc files : "                 + CommitFeature.numDocFiles(pullRequest));
+        System.out.println("Num of doc files for commit : "      + CommitFeature.numDocFiles(pullRequest, testCommitSha1));
+        System.out.println("Num of other_files : "               + CommitFeature.numOtherFiles(pullRequest));
+        System.out.println("Num of other_files_commit : "        + CommitFeature.numOtherFiles(pullRequest, testCommitSha1));
+        System.out.println("test included : "                    + CommitFeature.testIncluded(pullRequest));
+        System.out.println("test included for commit : "         + CommitFeature.testIncluded(pullRequest, testCommitSha1));
+        System.out.println("CI_failures : "                      + CommitFeature.numCIFailures(pullRequest));                
+    }
+    
+    public void printConversationFeature() {
+        System.out.println();
+        System.out.println("Conversation : ");
+        System.out.println("Num of issue comments : "                + ConversationFeature.numIssueComments(pullRequest));
+        System.out.println("Num of review comments : "               + ConversationFeature.numReviewComments(pullRequest));
+        System.out.println("Num of comments : "                      + ConversationFeature.numComments(pullRequest));
+        System.out.println("Num of issue comments with mentions : "  + ConversationFeature.getIssueCommentsWithMentions(pullRequest).size());
+        System.out.println("Num of review comments with mentions : " + ConversationFeature.getReviewCommentsWithMentions(pullRequest).size());
+        System.out.println("Num of review events with mentions : "   + ConversationFeature.getReviewEventsWithMentions(pullRequest).size());
+        System.out.println("Mention exists : "                       + ConversationFeature.mentionExists(pullRequest));
+        for (Participant pa : pullRequest.getParticipants()) {
+            System.out.println("Num of issue events by participant : "    + ConversationFeature.getIssueEventsByParticipant(pullRequest, pa).size());
+            System.out.println("Num of review events by participant : "   + ConversationFeature.getReviewEventsByParticipant(pullRequest, pa).size());
+            System.out.println("Num of issue comments by participant : "  + ConversationFeature.getIssueCommentsByParticipant(pullRequest, pa).size());
+            System.out.println("Num of review comments by participant : " + ConversationFeature.getReviewCommentsByParticipant(pullRequest, pa).size());
+        }
         
     }
     
-    public void printCommitRelation(PullRequest pullRequest) {
+    public void printDiscriptionFeature() {
         System.out.println();
-        System.out.println("CommitR : ");
-        System.out.println("Num_Commits : "           + CommitRelation.num_commits(pullRequest));
-        System.out.println("Src_churn : "             + CommitRelation.src_churn(pullRequest));
-        System.out.println("Src_churn_commit : "      + CommitRelation.src_churn(pullRequest, testCmtSha1));
-        System.out.println("Test_churn : "            + CommitRelation.test_churn(pullRequest));
-        System.out.println("Test_churn_commit : "     + CommitRelation.test_churn(pullRequest, testCmtSha1));
-        System.out.println("Files_added : "           + CommitRelation.files_added(pullRequest));
-        System.out.println("Files_added_commit : "    + CommitRelation.files_added(pullRequest, testCmtSha1));
-        System.out.println("Files_delete : "          + CommitRelation.files_deleted(pullRequest));
-        System.out.println("Files_delete_commit : "   + CommitRelation.files_deleted(pullRequest, testCmtSha1));
-        System.out.println("Files_modified : "        + CommitRelation.files_modified(pullRequest));
-        System.out.println("Files_modified_commit : " + CommitRelation.files_modified(pullRequest, testCmtSha1));
-        System.out.println("Files_changed : "         + CommitRelation.files_changed(pullRequest));
-        System.out.println("Files_changed_commit : "  + CommitRelation.files_changed(pullRequest, testCmtSha1));
-        System.out.println("Src_files : "             + CommitRelation.src_files(pullRequest));
-        System.out.println("Src_files_commit : "      + CommitRelation.src_files(pullRequest, testCmtSha1));
-        System.out.println("Doc_files : "             + CommitRelation.doc_files(pullRequest));
-        System.out.println("Doc_files_commit : "      + CommitRelation.doc_files(pullRequest, testCmtSha1));
-        System.out.println("Other_files : "           + CommitRelation.other_files(pullRequest));
-        System.out.println("Other_files_commit : "    + CommitRelation.other_files(pullRequest, testCmtSha1));
-        System.out.println("Test_inclusion : "        + CommitRelation.test_inclusion(pullRequest));
-        System.out.println("Test_inclusion_commit : " + CommitRelation.test_inclusion(pullRequest, testCmtSha1));
-        System.out.println("CI_failures : "           + CommitRelation.ci_failures(pullRequest));                
+        System.out.println("Discription : ");
+        System.out.println("Num of complex title : "           + DescriptionFeature.numComplexTitle(pullRequest));
+        System.out.println("Num of complex description : "     + DescriptionFeature.numComplexDescription(pullRequest));
+        System.out.println("Num of mentions in description : " + DescriptionFeature.getMentionsInDescription(pullRequest).size());
     }
     
-    public void printConversationRelation(PullRequest pullRequest) {
+    public void printEventFeature() {
         System.out.println();
-        System.out.println("ConversationR : ");
-        System.out.println("Num_commit_comment : "         + ConversationRelation.num_commit_comments(pullRequest));
-        System.out.println("Num_issue_comment : "          + ConversationRelation.num_issue_comments(pullRequest));
-        System.out.println("Num_comment : "                + ConversationRelation.num_comments(pullRequest));
-        System.out.println("CommentsHaveMentions : "       + ConversationRelation.commentsHaveMentions(pullRequest).size());
-        System.out.println("ReviewCommentsHaveMentions : " + ConversationRelation.reviewCommentsHaveMentions(pullRequest).size());
-        System.out.println("ReviewEventsHaveMentions : "   + ConversationRelation.reviewEventsHaveMentions(pullRequest).size());
-        
-    }
-    
-    public void printDiscriptionRelation(PullRequest pullRequest) {
-        System.out.println();
-        System.out.println("DiscriptionR : ");
-        System.out.println("Complexity_title : "       + DescriptionRelation.complexity_title(pullRequest));
-        System.out.println("Complexity_description : " + DescriptionRelation.complexity_description(pullRequest));
-        System.out.println("MentionInDescription : "   + DescriptionRelation.mentionInDescription(pullRequest).size());
-    }
-    
-    public void printEventRelation(PullRequest pullRequest) {
-        System.out.println();
-        System.out.println("EventR : ");
-        for(Participant pa : pullRequest.getParticipants()) {
-            System.out.println("Prior_interaction : " + EventRelation.prior_interaction(pullRequest, pa));
+        System.out.println("Event : ");
+        for (Participant pa : pullRequest.getParticipants()) {
+            System.out.println("Num of prior interactions : " + EventFeature.numPriorInteractions(pullRequest, pa));
         }
     }
     
-    public void printParticipantRelation(PullRequest pullRequest) {
+    public void printParticipantFeature() {
         System.out.println();
-        System.out.println("ParticipantR : ");
-        System.out.println("Num_participants : " + ParticipantRelation.num_participants(pullRequest));
-        System.out.println("SocialDistance : "   + ParticipantRelation.social_distance(pullRequest));
+        System.out.println("Participant : ");
+        System.out.println("Num of participants : " + ParticipantFeature.numParticipants(pullRequest));
+        System.out.println("Social distance exists : " + ParticipantFeature.socialDistanceExists(pullRequest));
+        System.out.println("Author : "                 + ParticipantFeature.getAuthor(pullRequest));
+        System.out.println("Num of reviewers : "       + ParticipantFeature.getReviewers(pullRequest).size());
     }
     
-    public void printTimeRelation(PullRequest pullRequest) {
+    public void printTimeFeature() {
         System.out.println();
         System.out.println("TimeR : ");
-        System.out.println("Lifetime_minites : "            + TimeRelation.lifetime_msec(pullRequest));
-        System.out.println("Mergetime_minites : "           + TimeRelation.mergetime_msec(pullRequest));
-        System.out.println("FirstComment_response : "       + TimeRelation.firstComment_response(pullRequest));
-        System.out.println("FirstReviewComment_response : " + TimeRelation.firstReviewComment_response(pullRequest));
-        System.out.println("FirstEvent_response : "         + TimeRelation.firstEvent_response(pullRequest));
-        System.out.println("FirstReviewEvent_response : "   + TimeRelation.firstReview_response(pullRequest));
-        System.out.println("TotalCI_latency : "             + TimeRelation.total_ci_latency(pullRequest));
+        System.out.println("Milli seconds for lifetime: "                       + TimeFeature.lifetime_ms(pullRequest));
+        System.out.println("Milli seconds for mergetime : "                     + TimeFeature.mergetime_ms(pullRequest));
+        System.out.println("Milli seconds for first issue comment response : "  + TimeFeature.firstIssueCommentResponse_ms(pullRequest));
+        System.out.println("Milli seconds for first review comment response : " + TimeFeature.firstReviewCommentResponse_ms(pullRequest));
+        System.out.println("Milli seconds for First iisue event response : "    + TimeFeature.firstIssueEventResponse_ms(pullRequest));
+        System.out.println("Milli seconds for first review event response : "   + TimeFeature.firstReviewEventResponse_ms(pullRequest));
+        System.out.println("Milli seconds for total CI latency : "              + TimeFeature.totalCILatency_ms(pullRequest));
     }
 }

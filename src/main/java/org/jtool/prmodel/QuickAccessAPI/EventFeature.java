@@ -4,9 +4,9 @@ import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.PullRequest;
 
-public class EventRelation {
+public class EventFeature {
     
-    public static int prior_interaction(PullRequest pullRequest, Participant participant) {
+    public static int numPriorInteractions(PullRequest pullRequest, Participant participant) {
         int num = 0;
         for (Participant pa : pullRequest.getParticipants()) {
             if (pa.getLogin().equals(participant.getLogin())) {

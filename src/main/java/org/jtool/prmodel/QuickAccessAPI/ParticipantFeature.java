@@ -7,9 +7,9 @@ import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.PullRequest;
 
-public class ParticipantRelation {
+public class ParticipantFeature {
     
-    public static int num_participants(PullRequest pullRequest) {
+    public static int numParticipants(PullRequest pullRequest) {
         return pullRequest.getParticipants().size();
     }
     
@@ -41,7 +41,7 @@ public class ParticipantRelation {
         }
     }
     
-    public static boolean social_distance(PullRequest pullRequest) {
+    public static boolean socialDistanceExists(PullRequest pullRequest) {
         Participant submitter = null;
         Participant closeMember = null;
         for (Participant pa : pullRequest.getParticipants()) {

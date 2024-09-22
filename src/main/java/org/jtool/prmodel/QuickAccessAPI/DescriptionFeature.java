@@ -5,19 +5,19 @@ import java.util.stream.Collectors;
 
 import org.jtool.prmodel.PullRequest;
 
-public class DescriptionRelation {
+public class DescriptionFeature {
     
-    public static int complexity_title(PullRequest pullRequest) {
+    public static int numComplexTitle(PullRequest pullRequest) {
         String[] words = pullRequest.getTitle().split("\\s+");
         return words.length;
     }
     
-    public static int complexity_description(PullRequest pullRequest) {
+    public static int numComplexDescription(PullRequest pullRequest) {
         String[] words = pullRequest.getDescription().getBody().split("\\s+");
         return words.length;
     }
     
-    public static List<String> mentionInDescription(PullRequest pullRequest) {
+    public static List<String> getMentionsInDescription(PullRequest pullRequest) {
         return pullRequest.getDescription().getMarkdownDoc().getMentionStrings().stream()
                 .map(c -> c.getText()).collect(Collectors.toList());
     }

@@ -1,6 +1,5 @@
 package org.jtool.prmodel.QuickAccessAPI;
 
-import java.util.List;
 import java.io.File;
 
 import org.jtool.prmodel.CIStatus;
@@ -9,16 +8,7 @@ import org.jtool.prmodel.DiffFile;
 import org.jtool.prmodel.PRElement;
 import org.jtool.prmodel.PullRequest;
 
-public class CommitRelation {
-    
-    /**
-     * Returns commits in a pull-request.
-     * @param pullRequest a pull-request
-     * @return the collection of the commits
-     */
-    public static List<Commit> getCommits(PullRequest pullRequest) {
-        return pullRequest.getCommits();
-    }
+public class CommitFeature {
     
     /**
      * Returns the commit having the sha number in a pull-request.
@@ -35,7 +25,7 @@ public class CommitRelation {
      * @param pullRequest a pull-request
      * @return the number of the commits
      */
-    public static int num_commits(PullRequest pullRequest) {
+    public static int numCommits(PullRequest pullRequest) {
         return pullRequest.getCommits().size();
     }
     
@@ -44,7 +34,7 @@ public class CommitRelation {
      * @param pullRequest a pull-request
      * @return the number of the churns
      */
-    public static int src_churn(PullRequest pullRequest) {
+    public static int numSrcChurns(PullRequest pullRequest) {
         int churns = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             churns = churns + dfile.getDiffLines().size();
@@ -58,9 +48,9 @@ public class CommitRelation {
      * @param commitSha the sha number of a commit
      * @return the number of the churns
      */
-    public static int src_churn(PullRequest pullRequest, String commitSha) {
+    public static int numSrcChurns(PullRequest pullRequest, String commitSha) {
         int churns = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -76,7 +66,7 @@ public class CommitRelation {
      * @param pullRequest a pull-request
      * @return the number of the churns
      */
-    public static int test_churn(PullRequest pullRequest) {
+    public static int numTestChurns(PullRequest pullRequest) {
         int churns = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (dfile.isTest()) {
@@ -92,9 +82,9 @@ public class CommitRelation {
      * @param commitSha the sha number of a commit
      * @return the number of the churns
      */
-    public static int test_churn(PullRequest pullRequest, String commitSha) {
+    public static int numTestChurns(PullRequest pullRequest, String commitSha) {
         int churns = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -107,7 +97,7 @@ public class CommitRelation {
         return churns;
     }
     
-    public static int files_added(PullRequest pullRequest) {
+    public static int numFilesAdded(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (dfile.getChangeType().equals(PRElement.ADD)) {
@@ -117,9 +107,9 @@ public class CommitRelation {
         return files;
     }
     
-    public static int files_added(PullRequest pullRequest, String commitSha) {
+    public static int numFilesAdded(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -132,7 +122,7 @@ public class CommitRelation {
         return files;
     }
     
-    public static int files_deleted(PullRequest pullRequest) {
+    public static int numFilesDeleted(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (dfile.getChangeType().equals(PRElement.DELETE)) {
@@ -142,9 +132,9 @@ public class CommitRelation {
         return files;
     }
     
-    public static int files_deleted(PullRequest pullRequest, String commitSha) {
+    public static int numFilesDeleted(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -157,7 +147,7 @@ public class CommitRelation {
         return files;
     }
     
-    public static int files_modified(PullRequest pullRequest) {
+    public static int numFilesChanged(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (dfile.getChangeType().equals(PRElement.CHANGE)) {
@@ -167,9 +157,9 @@ public class CommitRelation {
         return files;
     }
     
-    public static int files_modified(PullRequest pullRequest, String commitSha) {
+    public static int numFilesChanged(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -182,20 +172,19 @@ public class CommitRelation {
         return files;
     }
     
-    public static int files_changed(PullRequest pullRequest) {
+    public static int numFilesModified(PullRequest pullRequest) {
         return pullRequest.getFilesChanged().getDiffFiles().size();
     }
     
-    public static int files_changed(PullRequest pullRequest, String commitSha) {
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+    public static int numFilesModified(PullRequest pullRequest, String commitSha) {
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
-        
         return commit.getDiff().getDiffFiles().size();
     }
     
-    public static int src_files(PullRequest pullRequest) {
+    public static int numSrcFiles(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (dfile.isJavaFile()) {
@@ -205,9 +194,9 @@ public class CommitRelation {
         return files;
     }
     
-    public static int src_files(PullRequest pullRequest, String commitSha) {
+    public static int numSrcFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -226,7 +215,7 @@ public class CommitRelation {
         return ext.contains(".md") || ext.contains(".html") || ext.contains(".adoc");
     }
     
-    public static int doc_files(PullRequest pullRequest) {
+    public static int numDocFiles(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (checkFilenameExtention(dfile)) {
@@ -236,9 +225,9 @@ public class CommitRelation {
         return files;
     }
     
-    public static int doc_files(PullRequest pullRequest, String commitSha) {
+    public static int numDocFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -251,7 +240,7 @@ public class CommitRelation {
         return files;
     }
     
-    public static int other_files(PullRequest pullRequest) {
+    public static int numOtherFiles(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
             if (!dfile.isJavaFile() && !checkFilenameExtention(dfile)) {
@@ -261,9 +250,9 @@ public class CommitRelation {
         return files;
     }
     
-    public static int other_files(PullRequest pullRequest, String commitSha) {
+    public static int numOtherFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return 0;
         }
@@ -276,15 +265,15 @@ public class CommitRelation {
         return files;
     }
     
-    public static boolean test_inclusion(PullRequest pullRequest) {
-        return test_churn(pullRequest) > 0;
+    public static boolean testIncluded(PullRequest pullRequest) {
+        return numTestChurns(pullRequest) > 0;
     }
     
-    public static boolean test_inclusion(PullRequest pullRequest, String commitSha) {
-        return test_churn(pullRequest, commitSha) > 0;
+    public static boolean testIncluded(PullRequest pullRequest, String commitSha) {
+        return numTestChurns(pullRequest, commitSha) > 0;
     }
     
-    public static int ci_failures(PullRequest pullRequest) {
+    public static int numCIFailures(PullRequest pullRequest) {
         int failures = 0;
         for (Commit commit : pullRequest.getCommits()) {
             for (CIStatus status : commit.getCIStatus()) {

@@ -10,7 +10,7 @@ import org.jtool.jxp3model.MethodChange;
 import org.jtool.prmodel.Commit;
 import org.jtool.prmodel.PullRequest;
 
-public class CodeChangeRelation {
+public class CodeChangeFeature {
     
     public static List<ClassChange> changedClasses(PullRequest pullRequest) {
         List<ClassChange> classes = new ArrayList<>();
@@ -26,7 +26,7 @@ public class CodeChangeRelation {
     
     public static List<ClassChange> changedClasses(PullRequest pullRequest, String commitSha) {
         List<ClassChange> classes = new ArrayList<>();
-        Commit commit = CommitRelation.getCommit(pullRequest, commitSha);
+        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
             return classes;
         }
@@ -41,7 +41,7 @@ public class CodeChangeRelation {
     
     public static List<MethodChange> changedMethods(PullRequest pullRequest) {
         List<MethodChange> methods = new ArrayList<>();
-        for (ClassChange cchange : CodeChangeRelation.changedClasses(pullRequest)) {
+        for (ClassChange cchange : CodeChangeFeature.changedClasses(pullRequest)) {
             for (MethodChange mchange : cchange.getMethodChanges()) {
                 methods.add(mchange);
             }
@@ -51,7 +51,7 @@ public class CodeChangeRelation {
     
     public static List<MethodChange> changedMethods(PullRequest pullRequest, String commitSha) {
         List<MethodChange> methods = new ArrayList<>();
-        for (ClassChange cchange : CodeChangeRelation.changedClasses(pullRequest, commitSha)) {
+        for (ClassChange cchange : CodeChangeFeature.changedClasses(pullRequest, commitSha)) {
             for (MethodChange mchange : cchange.getMethodChanges()) {
                 methods.add(mchange);
             }
@@ -61,7 +61,7 @@ public class CodeChangeRelation {
     
     public static List<FieldChange> changedFields(PullRequest pullRequest) {
         List<FieldChange> fields = new ArrayList<>();
-        for (ClassChange cchange : CodeChangeRelation.changedClasses(pullRequest)) {
+        for (ClassChange cchange : CodeChangeFeature.changedClasses(pullRequest)) {
             for (FieldChange fchange : cchange.getFieldChanges()) {
                 fields.add(fchange);
             }
@@ -71,7 +71,7 @@ public class CodeChangeRelation {
     
     public static List<FieldChange> changedFields(PullRequest pullRequest, String commitSha) {
         List<FieldChange> fields = new ArrayList<>();
-        for (ClassChange cchange : CodeChangeRelation.changedClasses(pullRequest, commitSha)) {
+        for (ClassChange cchange : CodeChangeFeature.changedClasses(pullRequest, commitSha)) {
             for (FieldChange fchange : cchange.getFieldChanges()) {
                 fields.add(fchange);
             }
