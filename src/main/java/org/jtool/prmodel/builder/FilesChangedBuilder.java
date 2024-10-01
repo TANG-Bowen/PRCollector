@@ -121,7 +121,7 @@ public class FilesChangedBuilder {
     
     private boolean isIn(DiffFile diffFile, List<GHFile> ghChangedFiles) {
         for (GHFile ghFile : ghChangedFiles) {
-            if (diffFile.getChangeType() == PRElement.ADD || diffFile.getChangeType() == PRElement.CHANGE) {
+            if (diffFile.getChangeType() == PRElement.ADD || diffFile.getChangeType() == PRElement.REVISE) {
                 if (ghFile.path.equals(diffFile.getRelativePath()) &&
                         ghFile.content.equals(diffFile.getSourceCodeAfter())) {
                     return true;
@@ -137,7 +137,7 @@ public class FilesChangedBuilder {
     }
     
     private boolean isIn(FileChange fileChange, List<GHFile> ghChangedFiles) {
-        if (fileChange.getChangeType() == PRElement.ADD || fileChange.getChangeType() == PRElement.CHANGE) {
+        if (fileChange.getChangeType() == PRElement.ADD || fileChange.getChangeType() == PRElement.REVISE) {
             String sourceCode  = fileChange.getSourceCodeAfter().replaceAll("\n", "");
             for (GHFile ghFile : ghChangedFiles) {
                 if (fileChange.getPathAfter().contains(ghFile.path) &&
@@ -163,7 +163,7 @@ public class FilesChangedBuilder {
         }
         
         Set<DiffFile> filesBefore = filesChangedInfo.getDiffFiles().stream()
-                .filter(f -> f.getChangeType() == PRElement.ADD || f.getChangeType() == PRElement.CHANGE)
+                .filter(f -> f.getChangeType() == PRElement.ADD || f.getChangeType() == PRElement.REVISE)
                 .collect(Collectors.toSet());
         
         Set<DiffFile> removedFiles = new HashSet<>();

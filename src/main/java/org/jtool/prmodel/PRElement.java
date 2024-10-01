@@ -9,7 +9,7 @@ public class PRElement {
     
     public static final String DELETE = "delete";
     public static final String ADD = "add";
-    public static final String CHANGE = "change";
+    public static final String REVISE = "revise";
     public static final String NO_CHANGE = "";
     
     public static final String BEFORE = "before";

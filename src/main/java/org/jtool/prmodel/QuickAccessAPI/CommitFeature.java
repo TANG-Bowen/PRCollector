@@ -147,17 +147,17 @@ public class CommitFeature {
         return files;
     }
     
-    public static int numFilesChanged(PullRequest pullRequest) {
+    public static int numFilesRevised(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
-            if (dfile.getChangeType().equals(PRElement.CHANGE)) {
+            if (dfile.getChangeType().equals(PRElement.REVISE)) {
                 files++;
             }
         }
         return files;
     }
     
-    public static int numFilesChanged(PullRequest pullRequest, String commitSha) {
+    public static int numFilesRevised(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
         if (commit == null) {
@@ -165,7 +165,7 @@ public class CommitFeature {
         }
         
         for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
-            if (dfile.getChangeType().equals(PRElement.CHANGE)) {
+            if (dfile.getChangeType().equals(PRElement.REVISE)) {
                 files++;
             }
         }

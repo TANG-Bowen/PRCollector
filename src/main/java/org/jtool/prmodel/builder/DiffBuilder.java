@@ -233,7 +233,7 @@ public class DiffBuilder {
                         sourceCodeAfter = getCode(absolutePathAfter);
                     } else if (changeType == PRElement.DELETE) {
                         sourceCodeBefore = getCode(absolutePathBefore);
-                    } else if (changeType == PRElement.CHANGE) {
+                    } else if (changeType == PRElement.REVISE) {
                         sourceCodeBefore = getCode(absolutePathBefore);
                         sourceCodeAfter = getCode(absolutePathAfter);
                     }
@@ -291,7 +291,7 @@ public class DiffBuilder {
         } else if (!absolutePathBefore.equals("") && absolutePathAfter.equals("")) {
             return PRElement.DELETE;
         } else if (!absolutePathBefore.equals("") && !absolutePathAfter.equals("")) {
-            return PRElement.CHANGE;
+            return PRElement.REVISE;
         }
         return PRElement.NO_CHANGE;
     }
@@ -325,7 +325,7 @@ public class DiffBuilder {
                                 if (diffFile.getPathBefore().equals(fileChange.getPathBefore())) {
                                     diffFile.setTest(fileChange.isTest());
                                 }
-                            } else if (diffFile.getChangeType() == PRElement.CHANGE) {
+                            } else if (diffFile.getChangeType() == PRElement.REVISE) {
                                 if (diffFile.getPathBefore().equals(fileChange.getPathBefore()) &&
                                     diffFile.getPathAfter().equals(fileChange.getPathAfter())) {
                                     diffFile.setTest(fileChange.isTest());

@@ -34,8 +34,8 @@ public class QuickAccessAPITest {
         System.out.println("Num of files added for commit : "    + CommitFeature.numFilesAdded(pullRequest, testCommitSha1));
         System.out.println("Num of files deleted : "             + CommitFeature.numFilesDeleted(pullRequest));
         System.out.println("Num of files deleted for commit : "  + CommitFeature.numFilesDeleted(pullRequest, testCommitSha1));
-        System.out.println("Num of files changed : "             + CommitFeature.numFilesChanged(pullRequest));
-        System.out.println("Num of files changed for commit : "  + CommitFeature.numFilesChanged(pullRequest, testCommitSha1));
+        System.out.println("Num of files revised : "             + CommitFeature.numFilesRevised(pullRequest));
+        System.out.println("Num of files revised for commit : "  + CommitFeature.numFilesRevised(pullRequest, testCommitSha1));
         System.out.println("Num of files modified : "            + CommitFeature.numFilesModified(pullRequest));
         System.out.println("Num of files modified for commit : " + CommitFeature.numFilesModified(pullRequest, testCommitSha1));
         System.out.println("Num of src files : "                 + CommitFeature.numSrcFiles(pullRequest));
