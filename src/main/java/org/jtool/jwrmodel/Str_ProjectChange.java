@@ -6,7 +6,6 @@ public class Str_ProjectChange {
     
     String prmodelId;
     
-    String changeType;
     String nameBefore;
     String nameAfter;
     String pathBefore;

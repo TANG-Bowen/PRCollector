@@ -10,7 +10,6 @@ public class ProjectChange extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private final String changeType;
     private final String nameBefore;
     private final String nameAfter;
     private final String pathBefore;
@@ -25,10 +24,9 @@ public class ProjectChange extends PRElement {
         this.codeChange = codeChange;
     }
     
-    public ProjectChange(PullRequest pullRequest, String changeType,
+    public ProjectChange(PullRequest pullRequest,
             String nameBefore, String nameAfter, String pathBefore, String pathAfter) {
         super(pullRequest);
-        this.changeType = changeType;
         this.nameBefore = nameBefore;
         this.nameAfter = nameAfter;
         this.pathBefore = pathBefore;
@@ -40,7 +38,6 @@ public class ProjectChange extends PRElement {
         String prefix = "ProjectChange ";
         System.out.println();
         System.out.println(prefix + super.toString());
-        System.out.println(prefix + "changeType : " + changeType);
         System.out.println(prefix + "nameBefore : " + nameBefore);
         System.out.println(prefix + "nameAfter : " + nameAfter);
         System.out.println(prefix + "pathBefore : " + pathBefore);
@@ -66,10 +63,6 @@ public class ProjectChange extends PRElement {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
-    public String getChangeType() {
-        return changeType;
-    }
     
     public String getNameBefore() {
         return nameBefore;

@@ -464,7 +464,7 @@ public class JsonFileReader {
             Set<Str_ProjectChange> str_pjs) {
         Set<ProjectChange> projectChanges = new HashSet<>();
         for (Str_ProjectChange str_pj : str_pjs) {
-            ProjectChange projectChange = new ProjectChange( pullRequest, str_pj.changeType,
+            ProjectChange projectChange = new ProjectChange( pullRequest,
                     str_pj.nameBefore, str_pj.nameAfter, str_pj.pathBefore, str_pj.pathAfter);
             projectChange.setPrmodelId(str_pj.prmodelId);
             

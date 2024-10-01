@@ -346,8 +346,6 @@ public class StringConverter {
             
             str_pj.prmodelId = pchange.getPRModelId();
             
-            str_pj.changeType = pchange.getChangeType().toString();
-            
             str_pj.nameBefore = pchange.getNameBefore();
             str_pj.nameAfter = pchange.getnameAfter();
             str_pj.pathBefore = pchange.getPathBefore();

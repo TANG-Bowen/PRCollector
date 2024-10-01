@@ -99,17 +99,8 @@ public class CodeChangetBuilder {
                     nameAfter = nameBefore;
                 }
                 
-                File file = new File(pathAfter);
-                if (!projectNames.contains(nameBefore) && !file.exists()) {
-                    buildProjectChange(codeChange, diff,
-                            PRElement.DELETE, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
-                    projectNames.add(nameBefore);
-                    
-                } else if (!projectNames.contains(nameBefore) && file.exists()) {
-                    buildProjectChange(codeChange, diff,
-                            PRElement.CHANGE, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
-                    projectNames.add(nameBefore);
-                }
+                buildProjectChange(codeChange, diff, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
+                projectNames.add(nameBefore);
                 
             } else if (diffFile.isJavaFile() && diffFile.getChangeType() == PRElement.ADD) {
                 if (containsPath(diffFile.getPathAfter(), "src")) {
@@ -133,19 +124,10 @@ public class CodeChangetBuilder {
                     nameBefore = nameAfter;
                 }
                 
-                File file = new File(pathBefore);
-                if (!projectNames.contains(nameAfter) && !file.exists()) {
-                    buildProjectChange(codeChange, diff,
-                            PRElement.ADD, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
-                    projectNames.add(nameAfter);
-                    
-                } else if (!projectNames.contains(nameAfter) && file.exists()) {
-                    buildProjectChange(codeChange, diff,
-                            PRElement.CHANGE, nameBefore, pathAfter, pathBefore, pathAfter, diffFile);
-                    projectNames.add(nameAfter);
-                }
+                buildProjectChange(codeChange, diff, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
+                projectNames.add(nameAfter);
                 
-            } else if (diffFile.isJavaFile() == true && diffFile.getChangeType() == PRElement.CHANGE) {
+            } else if (diffFile.isJavaFile() == true && diffFile.getChangeType() == PRElement.REVISE) {
                 if (containsPath(diffFile.getPathBefore(), "src") &&
                     containsPath(diffFile.getPathAfter(), "src")) {
                     String[] dirsBefore = diffFile.getPathBefore().split(File.separator + "src");
@@ -171,11 +153,8 @@ public class CodeChangetBuilder {
                     nameAfter = anames.length == 1 ? anames[0] : anames[1];
                 }
                 
-                if (!projectNames.contains(nameBefore) && !projectNames.contains(nameAfter)) {
-                    buildProjectChange(codeChange, diff,
-                            PRElement.CHANGE, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
-                    projectNames.add(nameAfter);
-                }
+                buildProjectChange(codeChange, diff, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
+                projectNames.add(nameAfter);
             }
         }
     }
@@ -190,9 +169,9 @@ public class CodeChangetBuilder {
         return false;
     }
     
-    private void buildProjectChange(CodeChange codeChange, Diff diff, String changeType,
+    private void buildProjectChange(CodeChange codeChange, Diff diff,
             String nameBefore, String nameAfter, String pathBefore, String pathAfter, DiffFile diffFile) {
-        ProjectChange projectChange = new ProjectChange(pullRequest, changeType,
+        ProjectChange projectChange = new ProjectChange(pullRequest,
                 nameBefore, nameAfter, pathBefore, pathAfter);
         
         codeChange.getProjectChanges().add(projectChange);
@@ -225,7 +204,7 @@ public class CodeChangetBuilder {
                 projectChange.getFileChanges().add(fileChange);
             }
             
-        } else if (changeType == PRElement.CHANGE) {
+        } else if (changeType == PRElement.REVISE) {
             Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
             Set<JavaFile> jfilesAfter  = new HashSet<>(projectAfter.getFiles());
             
@@ -242,7 +221,7 @@ public class CodeChangetBuilder {
                         FileChange fileChange = createFileAdded(codeChange, jfile);
                         projectChange.getFileChanges().add(fileChange);
                     }
-                } else if (diffFile.getChangeType() == PRElement.CHANGE) {
+                } else if (diffFile.getChangeType() == PRElement.REVISE) {
                     JavaFile jfileBefore = getJavaFile(diffFile.getPathBefore(), jfilesBefore);
                     JavaFile jfileAfter = getJavaFile(diffFile.getPathAfter(), jfilesAfter);
                     if (jfileBefore != null && jfileAfter != null) {
@@ -310,7 +289,7 @@ public class CodeChangetBuilder {
         String sourceCodeBefore = jfileBefore.getSource();
         String sourceCodeAfter = jfileAfter.getSource();
         
-        FileChange fileChange = new FileChange(pullRequest, PRElement.CHANGE, 
+        FileChange fileChange = new FileChange(pullRequest, PRElement.REVISE, 
                 name, pathBefore, pathAfter, sourceCodeBefore, sourceCodeAfter);
         
         Set<JavaClass> beforeClasses = new HashSet<>(jfileBefore.getClasses());
@@ -418,7 +397,7 @@ public class CodeChangetBuilder {
         String sourceCodeBefore = jclassBefore.getSource();
         String sourceCodeAfter =  jclassAfter.getSource();
         
-        ClassChange classChange = new ClassChange(pullRequest, PRElement.CHANGE,
+        ClassChange classChange = new ClassChange(pullRequest, PRElement.REVISE,
                 name, qualifiedName, type, sourceCodeBefore, sourceCodeAfter);
         classMapBefore.put(classChange, jclassBefore);
         classElemMapBefore.put(jclassBefore, classChange.getCodeElementBefore());
@@ -539,7 +518,7 @@ public class CodeChangetBuilder {
         String sourceCodeBefore =  jfieldBefore.getSource();
         String sourceCodeAfter = jfieldAfter.getSource();
         
-        FieldChange fieldChange = new FieldChange(pullRequest, PRElement.CHANGE,
+        FieldChange fieldChange = new FieldChange(pullRequest, PRElement.REVISE,
                 name, qualifiedName, type, sourceCodeBefore, sourceCodeAfter);
         fieldMapBefore.put(fieldChange, jfieldBefore);
         fieldMapAfter.put(fieldChange, jfieldAfter);
