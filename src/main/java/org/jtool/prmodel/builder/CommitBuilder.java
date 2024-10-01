@@ -75,6 +75,8 @@ public class CommitBuilder {
     private String getCommitType(GHCommit ghCommit, String message) throws IOException {
         List<GHCommit> parents = ghCommit.getParents();
         int parentCount = parents.size();
+        message = message.toUpperCase();
+        
         if (parentCount == 0) {
             return "initial";
         } else if (parentCount > 1 || message.contains("Merge") || message.contains("merge")) { 
