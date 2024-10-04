@@ -18,16 +18,14 @@ import org.jtool.prmodel.ReviewEvent;
 import org.jtool.prmodel.CodeReviewSnippet;
 import org.jtool.prmodel.Action;
 import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.Diff;
 import org.jtool.prmodel.DiffFile;
 import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.CIStatus;
+import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
 import org.jtool.prmodel.FilesChanged;
 import org.jtool.prmodel.Label;
-
-import org.jtool.jxp3model.CodeChange;
 import org.jtool.jxp3model.ProjectChange;
 import org.jtool.jxp3model.FileChange;
 import org.jtool.jxp3model.ClassChange;
@@ -268,26 +266,21 @@ public class StringConverter {
             str_ct.message = commit.getMessage();
             
             str_ct.committerId = commit.getCommitter().getPRModelId();
-            str_ct.diff = buildDiff(commit.getDiff());
             str_ct.codeChange = buildCodeChange(commit.getCodeChange());
             str_ct.ciStatus = buildCIStatus(commit);
         }
         return str_cts;
     }
     
-    private Str_Diff buildDiff(Diff diff) {
-        Str_Diff str_df = new Str_Diff();
+    private Str_CodeChange buildCodeChange(CodeChange codeChange) {
+        Str_CodeChange str_ch = new Str_CodeChange();
         
-        str_df.prmodelId = diff.getPRModelId();
+        str_ch.prmodelId = codeChange.getPRModelId();
+        str_ch.hasJavaFile = codeChange.hasJavaFile();
         
-        str_df.sourceCodePathBefore = diff.getSourceCodePathBefore();
-        str_df.sourceCodePathAfter = diff.getSourceCodeDirNameAfter();
-        str_df.sourceCodeDirNameBefore = diff.getSourceCodeDirNameBefore();
-        str_df.sourceCodeDirNameAfter = diff.getSourceCodeDirNameAfter();
-        str_df.hasJavaFile = diff.hasJavaFile();
-        
-        str_df.diffFiles = buildDiffFiles(diff.getDiffFiles());
-        return str_df;
+        str_ch.diffFiles = buildDiffFiles(codeChange.getDiffFiles());
+        str_ch.projectChanges = buildProjectChange(codeChange.getProjectChanges());
+        return str_ch;
     }
     
     private List<Str_DiffFile> buildDiffFiles(List<DiffFile> files) {
@@ -327,15 +320,6 @@ public class StringConverter {
             str_dl.text = diffLine.getText();
         }
         return str_dls;
-    }
-    
-    private Str_CodeChange buildCodeChange(CodeChange codeChange) {
-        Str_CodeChange str_ch = new Str_CodeChange();
-        
-        str_ch.prmodelId = codeChange.getPRModelId();
-        
-        str_ch.projectChanges = buildProjectChange(codeChange.getProjectChanges());
-        return str_ch;
     }
     
     private Set<Str_ProjectChange> buildProjectChange(Set<ProjectChange> pchanges) {

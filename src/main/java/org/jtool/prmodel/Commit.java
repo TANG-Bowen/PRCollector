@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
-import org.jtool.jxp3model.CodeChange;
-
 public class Commit extends PRElement {
     
     /* -------- Attributes -------- */
@@ -19,7 +17,6 @@ public class Commit extends PRElement {
     /* -------- Attributes -------- */
     
     private Participant committer;
-    private Diff diff;
     private CodeChange codeChange;
     private List<CIStatus> ciStatus = new ArrayList<>();
     
@@ -35,10 +32,6 @@ public class Commit extends PRElement {
     
     public void setCommiter(Participant committer) {
         this.committer = committer;
-    }
-    
-    public void setDiff(Diff diff) {
-        this.diff = diff;
     }
     
     public void setCodeChange(CodeChange codeChange) {
@@ -95,10 +88,6 @@ public class Commit extends PRElement {
     
     public Participant getCommitter() {
         return committer;
-    }
-    
-    public Diff getDiff() {
-        return diff;
     }
     
     public CodeChange getCodeChange() {

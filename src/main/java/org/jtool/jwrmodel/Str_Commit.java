@@ -13,7 +13,6 @@ public class Str_Commit {
     String message;
     
     String committerId;
-    Str_Diff diff;
     Str_CodeChange codeChange;
     List<Str_CIStatus> ciStatus;
 }

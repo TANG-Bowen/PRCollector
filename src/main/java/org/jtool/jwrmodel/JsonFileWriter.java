@@ -16,6 +16,8 @@ import com.google.gson.Gson;
 
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Commit;
+import org.jtool.prmodel.PRElement;
+import org.jtool.prmodel.PRModelBundle;
 
 public class JsonFileWriter {
     
@@ -47,50 +49,27 @@ public class JsonFileWriter {
         }
     }
     
-    public void deleteGitSourceFile(PullRequest pullRequest) {
-        for (Commit commit : pullRequest.getCommits()) {
-            if (commit.getDiff() != null) {
-                File fileBefore = new File(commit.getDiff().getSourceCodePathBefore());
-                deleteGitSourceFiles(fileBefore);
-                
-                File fileAfter = new File(commit.getDiff().getSourceCodePathAfter());
-                deleteGitSourceFiles(fileAfter);
-            } else {
-                System.out.println("No ned to delete Git source files for "+ commit.getSha());
-            }
-        }
-    }
-    
-    private void deleteGitSourceFiles(File file) {
-        Path path = Paths.get(file.getAbsolutePath());
-        try {
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                
-                @Override
-                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-                
-                @Override
-                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-                
-                @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-            System.out.println("Successed to delete Git Source files !");
+    public void deleteGitSourceFile(PullRequest pullRequest, File pullRequestDir) {
+        for (Commit commit : pullRequest.getTragetCommits()) {
+            String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
+            String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore; 
+            String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
+            String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
             
-        } catch (IOException e) {
-            /* empty */
+            File dirBefore = PRModelBundle.getDir(pathBefore);
+            File dirAfter = PRModelBundle.getDir(pathAfter);
+            
+            deleteFiles(dirBefore);
+            deleteFiles(dirAfter);
         }
     }
     
-    public void deleteRetainPullRequestFiles(Path path) {
+    private void deleteFiles(File file) {
+        Path path = Paths.get(file.getAbsolutePath());
+        deleteFiles(path);
+    }
+    
+    public void deleteFiles(Path path) {
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 

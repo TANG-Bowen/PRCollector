@@ -17,7 +17,6 @@ public abstract class CommonChange extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private CodeChange codeChange;
     private FileChange fileChange;
     
     protected CommonChange(PullRequest pullRequest, String changeType,
@@ -31,10 +30,6 @@ public abstract class CommonChange extends PRElement {
         
         this.before = new CodeElement(PRElement.BEFORE, qualifiedName, sourceCodeBefore);
         this.after = new CodeElement(PRElement.AFTER, qualifiedName, sourceCodeAfter);
-    }
-    
-    public void setCodeChange(CodeChange codeChange) {
-        this.codeChange = codeChange;
     }
     
     public void setFileChange(FileChange fileChange) {
@@ -114,10 +109,6 @@ public abstract class CommonChange extends PRElement {
     
     public boolean isTest() {
         return isTest;
-    }
-    
-    public CodeChange getCodeChange() {
-        return codeChange;
     }
     
     public FileChange getFileChange() {

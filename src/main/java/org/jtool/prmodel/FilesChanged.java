@@ -23,7 +23,7 @@ public class FilesChanged extends PRElement {
     
     public void collect() {
         for (Commit commit : pullRequest.getTragetCommits()) {
-            for (DiffFile diffFile : commit.getDiff().getDiffFiles()) {
+            for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
                 if (diffFiles.contains(diffFile)) {
                     diffFiles.add(diffFile);
                 }

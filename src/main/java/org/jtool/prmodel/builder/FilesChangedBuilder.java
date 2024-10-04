@@ -42,13 +42,13 @@ public class FilesChangedBuilder {
         if (pullRequest.getCommits().size() > 1) {
             List<Commit> commits = pullRequest.getTragetCommits();
             
-            boolean hasJavaFile = commits.stream().anyMatch(c -> c.getDiff().hasJavaFile());
+            boolean hasJavaFile = commits.stream().anyMatch(c -> c.getCodeChange().hasJavaFile());
             
             FilesChanged filesChanged = new FilesChanged(pullRequest, hasJavaFile);
             pullRequest.setFilesChanged(filesChanged);
             
             for (Commit commit : commits) {
-                for (DiffFile diffFile : commit.getDiff().getDiffFiles()) {
+                for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
                     if (isIn(diffFile, ghChangedFiles)) {
                         filesChanged.getDiffFiles().add(diffFile);
                     }
@@ -66,10 +66,10 @@ public class FilesChangedBuilder {
         } else if (pullRequest.getCommits().size() == 1) {
             Commit commit = pullRequest.getCommits().get(0);
             
-            FilesChanged filesChangedInfo = new FilesChanged(pullRequest, commit.getDiff().hasJavaFile());
+            FilesChanged filesChangedInfo = new FilesChanged(pullRequest, commit.getCodeChange().hasJavaFile());
             pullRequest.setFilesChanged(filesChangedInfo);
             
-            for (DiffFile diffFile : commit.getDiff().getDiffFiles()) {
+            for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
                 filesChangedInfo.getDiffFiles().add(diffFile);
             }
             for (FileChange fileChange : commit.getCodeChange().getFileChanges()) {

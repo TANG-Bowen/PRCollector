@@ -1,24 +1,32 @@
-package org.jtool.jxp3model;
+package org.jtool.prmodel;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.PRElement;
-import org.jtool.prmodel.PullRequest;
+import org.jtool.jxp3model.ProjectChange;
+import org.jtool.jxp3model.FileChange;
 
 public class CodeChange extends PRElement {
     
     /* -------- Attributes -------- */
     
+    private boolean hasJavaFile = false;
+    
     /* -------- Attributes -------- */
     
     private Commit commit;
+    private List<DiffFile> diffFiles = new ArrayList<>();
     private Set<ProjectChange> projectChanges = new HashSet<>();
     private Set<FileChange> fileChanges = new HashSet<>();
     
     public CodeChange(PullRequest pullRequest) {
         super(pullRequest);
+    }
+    
+    public void hasJavaFile(boolean bool) {
+        this.hasJavaFile = bool;
     }
     
     public void setCommit(Commit commit) {
@@ -32,15 +40,20 @@ public class CodeChange extends PRElement {
     }
     
     public void print() {
-        String prefix = "CodeElementChangePerCommit ";
+        String prefix = "CodeChange ";
         System.out.println();
         System.out.println(prefix + super.toString());
+        System.out.println(prefix + "hasJavaFile : " + hasJavaFile);
         projectChanges.forEach(e -> e.print());
     }
     
     /* ------------------------------------
      * API
      --------------------------------------*/
+    
+    public boolean hasJavaFile() {
+        return hasJavaFile;
+    }
     
     public Commit getCommit() {
         return commit;
@@ -52,5 +65,9 @@ public class CodeChange extends PRElement {
     
     public Set<FileChange> getFileChanges() {
         return fileChanges;
+    }
+    
+    public List<DiffFile> getDiffFiles() {
+        return diffFiles;
     }
 }

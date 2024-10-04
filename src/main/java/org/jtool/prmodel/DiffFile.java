@@ -21,7 +21,7 @@ public class DiffFile extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private Diff diff;
+    private CodeChange codeChange;
     private List<DiffLine> diffLines = new ArrayList<>();
     
     public DiffFile(PullRequest pullRequest, String pathBefore, String pathAfter,
@@ -45,8 +45,8 @@ public class DiffFile extends PRElement {
         this.isTest = bool;
     }
     
-    public void setDiff(Diff diff) {
-        this.diff = diff;
+    public void setCodeChange(CodeChange codeChange) {
+        this.codeChange = codeChange;
     }
     
     public void print() {
@@ -113,8 +113,8 @@ public class DiffFile extends PRElement {
         return isTest;
     }
     
-    public Diff getDiff() {
-        return diff;
+    public CodeChange getCodeChange() {
+        return codeChange;
     }
     
     public List<DiffLine> getDiffLines() {

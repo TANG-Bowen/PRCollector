@@ -1,6 +1,7 @@
 package org.jtool.prmodel.builder;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -14,7 +15,6 @@ import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.jtool.jxp3model.ClassChange;
-import org.jtool.jxp3model.CodeChange;
 import org.jtool.jxp3model.FieldChange;
 import org.jtool.jxp3model.FileChange;
 import org.jtool.jxp3model.MethodChange;
@@ -23,8 +23,8 @@ import org.jtool.jxp3model.CodeElement;
 
 import org.jtool.prmodel.PRElement;
 import org.jtool.prmodel.PullRequest;
+import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.Diff;
 import org.jtool.prmodel.DiffFile;
 import org.jtool.srcmodel.JavaProject;
 import org.jtool.srcmodel.JavaFile;
@@ -54,24 +54,24 @@ public class CodeChangetBuilder {
         this.pullRequest = pullRequest;
     }
     
-    public void build() {
-        for (Commit commit : pullRequest.getCommits()) {
-            CodeChange codeChange = new CodeChange(pullRequest);
-            codeChange.setCommit(commit);
+    public void build() throws IOException, CommitMissingException {
+        for (Commit commit : pullRequest.getTragetCommits()) {
+            String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
+            String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             
-            buildProjectChanges(codeChange, commit.getDiff());
-            codeChange.setFileChanges();
-            
-            setReferenceRelation(codeChange);
-            setTest(codeChange);
+            CodeChange codeChange = commit.getCodeChange();
+            if (codeChange != null) {
+                buildProjectChanges(codeChange, dirNameBefore, dirNameAfter);
+                codeChange.setFileChanges();
+                
+                setReferenceRelation(codeChange);
+                setTest(codeChange);
+            }
         }
     }
     
-    private void buildProjectChanges(CodeChange codeChange, Diff diff) {
-        String sourceCodeDirNameBefore = diff.getSourceCodeDirNameBefore();
-        String sourceCodeDirNameAfter = diff.getSourceCodeDirNameAfter();
-        
-        for (DiffFile diffFile : diff.getDiffFiles()) {
+    private void buildProjectChanges(CodeChange codeChange, String dirNameBefore, String dirNameAfter) {
+        for (DiffFile diffFile : codeChange.getDiffFiles()) {
             String nameBefore = "";
             String pathBefore = "";
             String nameAfter = "";
@@ -81,50 +81,50 @@ public class CodeChangetBuilder {
                 if (containsPath(diffFile.getPathBefore(), "src")) {
                     String[] dirsBefore = diffFile.getPathBefore().split(File.separator + "src");
                     pathBefore = dirsBefore[0] + File.separator + "src";
-                    String[] names = dirsBefore[0].split(sourceCodeDirNameBefore + File.separator);
+                    String[] names = dirsBefore[0].split(dirNameBefore + File.separator);
                     nameBefore = names.length == 1 ? names[0] : names[1];
                     
-                    String dirsAfter[] = pathBefore.split(sourceCodeDirNameAfter);
-                    pathAfter = dirsAfter[0] + sourceCodeDirNameAfter + dirsAfter[1];
+                    String dirsAfter[] = pathBefore.split(dirNameAfter);
+                    pathAfter = dirsAfter[0] + dirNameAfter + dirsAfter[1];
                     nameAfter = nameBefore;
                     
                 } else if (containsPath(diffFile.getPathBefore(), "test")) {
                     String[] dirsBefore = diffFile.getPathBefore().split(File.separator + "test");
                     pathBefore = dirsBefore[0] + File.separator + "test";
-                    String[] names = dirsBefore[0].split(sourceCodeDirNameBefore + File.separator);
+                    String[] names = dirsBefore[0].split(dirNameBefore + File.separator);
                     nameBefore = names.length == 1 ? names[0] : names[1];
                     
-                    String[] dirsAfter = pathBefore.split(sourceCodeDirNameBefore);
-                    pathAfter = dirsAfter[0] + sourceCodeDirNameAfter + dirsAfter[1];
+                    String[] dirsAfter = pathBefore.split(dirNameBefore);
+                    pathAfter = dirsAfter[0] + dirNameAfter + dirsAfter[1];
                     nameAfter = nameBefore;
                 }
                 
-                buildProjectChange(codeChange, diff, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
+                buildProjectChange(codeChange, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
                 projectNames.add(nameBefore);
                 
             } else if (diffFile.isJavaFile() && diffFile.getChangeType() == PRElement.ADD) {
                 if (containsPath(diffFile.getPathAfter(), "src")) {
                     String[] dirsAfter = diffFile.getPathAfter().split(File.separator + "src");
                     pathAfter = dirsAfter[0] + File.separator + "src";
-                    String[] names = dirsAfter[0].split(sourceCodeDirNameAfter + File.separator);
+                    String[] names = dirsAfter[0].split(dirNameAfter + File.separator);
                     nameAfter = names.length == 1 ? names[0] : names[1];
                     
-                    String[] dirsBefore = pathBefore.split(sourceCodeDirNameBefore);
-                    pathBefore = dirsBefore[0] + sourceCodeDirNameBefore + dirsBefore[1];
+                    String[] dirsBefore = pathBefore.split(dirNameBefore);
+                    pathBefore = dirsBefore[0] + dirNameBefore + dirsBefore[1];
                     nameBefore = nameAfter;
                         
                 } else if (containsPath(diffFile.getPathAfter(), "test")) {
                     String[] dirsAfter = diffFile.getPathAfter().split(File.separator + "test");
                     pathAfter = dirsAfter[0] + File.separator + "test";
-                    String[] names = dirsAfter[0].split(sourceCodeDirNameAfter + File.separator);
+                    String[] names = dirsAfter[0].split(dirNameAfter + File.separator);
                     nameAfter = names.length == 1 ? names[0] : names[1];
                     
-                    String[] dirsBefore = pathAfter.split(sourceCodeDirNameBefore);
-                    pathBefore = dirsBefore[0] + sourceCodeDirNameBefore + dirsBefore[1];
+                    String[] dirsBefore = pathAfter.split(dirNameBefore);
+                    pathBefore = dirsBefore[0] + dirNameBefore + dirsBefore[1];
                     nameBefore = nameAfter;
                 }
                 
-                buildProjectChange(codeChange, diff, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
+                buildProjectChange(codeChange, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
                 projectNames.add(nameAfter);
                 
             } else if (diffFile.isJavaFile() == true && diffFile.getChangeType() == PRElement.REVISE) {
@@ -132,28 +132,28 @@ public class CodeChangetBuilder {
                     containsPath(diffFile.getPathAfter(), "src")) {
                     String[] dirsBefore = diffFile.getPathBefore().split(File.separator + "src");
                     pathBefore = dirsBefore[0] + File.separator + "src";
-                    String[] bnames = dirsBefore[0].split(sourceCodeDirNameBefore + File.separator);
+                    String[] bnames = dirsBefore[0].split(dirNameBefore + File.separator);
                     nameBefore = bnames.length == 1 ? bnames[0] : bnames[1];
                     
                     String[] dirsAfter = diffFile.getPathBefore().split(File.separator + "src");
                     pathAfter = dirsAfter[0] + File.separator + "src";
-                    String anames[] = dirsAfter [0].split(sourceCodeDirNameAfter + File.separator);
+                    String anames[] = dirsAfter [0].split(dirNameAfter + File.separator);
                     nameAfter = anames.length == 1 ? anames[0] : anames[1];
                     
                 } else if (containsPath(diffFile.getPathBefore(), "test") &&
                            containsPath(diffFile.getPathAfter(), "test")) {
                     String dirsBefore[] = diffFile.getPathBefore().split(File.separator + "test");
                     pathBefore = dirsBefore[0] + File.separator + "test";
-                    String names[] = dirsBefore[0].split(sourceCodeDirNameBefore + File.separator);
+                    String names[] = dirsBefore[0].split(dirNameBefore + File.separator);
                     nameBefore = names.length == 1 ? names[0] : names[1];
                     
                     String dirsAfter[] = diffFile.getPathAfter().split(File.separator + "test");
                     pathAfter = dirsAfter[0] + File.separator + "test";
-                    String anames[] = dirsAfter[0].split(sourceCodeDirNameAfter + File.separator);
+                    String anames[] = dirsAfter[0].split(dirNameAfter + File.separator);
                     nameAfter = anames.length == 1 ? anames[0] : anames[1];
                 }
                 
-                buildProjectChange(codeChange, diff, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
+                buildProjectChange(codeChange, nameBefore, nameAfter, pathBefore, pathAfter, diffFile);
                 projectNames.add(nameAfter);
             }
         }
@@ -169,7 +169,7 @@ public class CodeChangetBuilder {
         return false;
     }
     
-    private void buildProjectChange(CodeChange codeChange, Diff diff,
+    private void buildProjectChange(CodeChange codeChange,
             String nameBefore, String nameAfter, String pathBefore, String pathAfter, DiffFile diffFile) {
         ProjectChange projectChange = new ProjectChange(pullRequest,
                 nameBefore, nameAfter, pathBefore, pathAfter);
@@ -185,11 +185,11 @@ public class CodeChangetBuilder {
         modelBuilderAfter.setVerbose(false);
         JavaProject projectAfter = modelBuilderAfter.buildSingle(nameAfter, pathAfter);
         
-        buildFileChanges(codeChange, diff,
+        buildFileChanges(codeChange,
                 projectChange, diffFile.getChangeType(), projectBefore, projectAfter);
     }
     
-    private void buildFileChanges(CodeChange codeChange, Diff diff,
+    private void buildFileChanges(CodeChange codeChange,
             ProjectChange projectChange, String changeType,
             JavaProject projectBefore, JavaProject projectAfter) {
         if (changeType == PRElement.DELETE) {
@@ -208,7 +208,7 @@ public class CodeChangetBuilder {
             Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
             Set<JavaFile> jfilesAfter  = new HashSet<>(projectAfter.getFiles());
             
-            for (DiffFile diffFile : diff.getDiffFiles()) {
+            for (DiffFile diffFile : codeChange.getDiffFiles()) {
                 if (diffFile.getChangeType() == PRElement.DELETE) {
                     JavaFile jfile = getJavaFile(diffFile.getPathBefore(), jfilesBefore);
                     if (jfile != null) {
@@ -255,7 +255,6 @@ public class CodeChangetBuilder {
             
             fileChange.getClassChanges().add(classChange);
             classChange.setFileChange(fileChange);
-            classChange.setCodeChange(codeChange);
         }
         
         return fileChange;
@@ -276,7 +275,6 @@ public class CodeChangetBuilder {
             
             fileChange.getClassChanges().add(classChange);
             classChange.setFileChange(fileChange);
-            classChange.setCodeChange(codeChange);
         }
         
         return fileChange;
@@ -302,7 +300,6 @@ public class CodeChangetBuilder {
                     
                     fileChange.getClassChanges().add(classChange);
                     classChange.setFileChange(fileChange);
-                    classChange.setCodeChange(codeChange);
                 }
             }
             for (JavaClass jclass : afterClasses) {
@@ -311,7 +308,6 @@ public class CodeChangetBuilder {
                     
                     fileChange.getClassChanges().add(classChange);
                     classChange.setFileChange(fileChange);
-                    classChange.setCodeChange(codeChange);
                 }
             }
             for (JavaClass jclassBefore : beforeClasses) {
@@ -322,7 +318,6 @@ public class CodeChangetBuilder {
                         
                         fileChange.getClassChanges().add(classChange);
                         classChange.setFileChange(fileChange);
-                        classChange.setCodeChange(codeChange);
                     }
                 }
             }
@@ -347,14 +342,12 @@ public class CodeChangetBuilder {
             
             classChange.getFieldChanges().add(fieldChange);
             fieldChange.setClassChange(classChange);
-            fieldChange.setCodeChange(codeChange);
         }
         for (JavaMethod jmethod : jclass.getMethods()) {
             MethodChange methodChange = createMethodDeleted(jmethod);
             
             classChange.getMethodChanges().add(methodChange);
             methodChange.setClassChange(classChange);
-            methodChange.setCodeChange(codeChange);
         }
         
         return classChange;
@@ -377,14 +370,12 @@ public class CodeChangetBuilder {
             
             classChange.getFieldChanges().add(fieldChange);
             fieldChange.setClassChange(classChange);
-            fieldChange.setCodeChange(codeChange);
         }
         for (JavaMethod jmethod : jclass.getMethods()) {
             MethodChange methodChange = createMethodAdded(jmethod);
             
             classChange.getMethodChanges().add(methodChange);
             methodChange.setClassChange(classChange);
-            methodChange.setCodeChange(codeChange);
         }
         
         return classChange;
@@ -414,7 +405,6 @@ public class CodeChangetBuilder {
                     
                     classChange.getFieldChanges().add(fieldChange);
                     fieldChange.setClassChange(classChange);
-                    fieldChange.setCodeChange(codeChange);
                 }
             }
             for (JavaField jfield : afterFields) {
@@ -423,7 +413,6 @@ public class CodeChangetBuilder {
                     
                     classChange.getFieldChanges().add(fieldChange);
                     fieldChange.setClassChange(classChange);
-                    fieldChange.setCodeChange(codeChange);
                 }
             }
             
@@ -435,7 +424,6 @@ public class CodeChangetBuilder {
                         
                         classChange.getFieldChanges().add(fieldChange);
                         fieldChange.setClassChange(classChange);
-                        fieldChange.setCodeChange(codeChange);
                     }
                 }
             }
@@ -451,7 +439,6 @@ public class CodeChangetBuilder {
                     
                     classChange.getMethodChanges().add(methodChange);
                     methodChange.setClassChange(classChange);
-                    methodChange.setCodeChange(codeChange);
                 }
             }
             for (JavaMethod jmethod : afterMethods) {
@@ -460,7 +447,6 @@ public class CodeChangetBuilder {
                     
                     classChange.getMethodChanges().add(methodChange);
                     methodChange.setClassChange(classChange);
-                    methodChange.setCodeChange(codeChange);
                 }
             }
             for (JavaMethod jmethodBefore : beforeMethods) {
@@ -471,7 +457,6 @@ public class CodeChangetBuilder {
                         
                         classChange.getMethodChanges().add(methodChange);
                         methodChange.setClassChange(classChange);
-                        methodChange.setCodeChange(codeChange);
                     }
                 }
             }

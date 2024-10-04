@@ -8,11 +8,10 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.jtool.jxp3model.CodeChange;
 import org.jtool.jxp3model.FileChange;
 import org.jtool.prmodel.PRElement;
+import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.Diff;
 import org.jtool.prmodel.DiffFile;
 import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.PullRequest;
@@ -35,17 +34,21 @@ public class DiffBuilder {
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
             
-            Diff diff = new Diff(pullRequest, pathBefore, pathAfter, dirNameBefore, dirNameAfter);
-            diff.setCommit(commit);
-            commit.setDiff(diff);
-            
             File dirBefore = PRModelBundle.getDir(pathBefore);
             File dirAfter = PRModelBundle.getDir(pathAfter);
-            commandGit(commit, diff, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
+            
+            CodeChange codeChange = new CodeChange(pullRequest);
+            codeChange.setCommit(commit);
+            commit.setCodeChange(codeChange);
+            
+            commandGit(commit, codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
+            
+            boolean hasJavaFile = codeChange.getDiffFiles().stream().anyMatch(f -> f.isJavaFile());
+            codeChange.hasJavaFile(hasJavaFile);
         }
     }
     
-    private void commandGit(Commit commit, Diff diff, String pathBefore, String pathAfter)
+    private void commandGit(Commit commit, CodeChange codeChange, String pathBefore, String pathAfter)
             throws CommitMissingException, IOException {
         String workingDir = pullRequestDir.getAbsolutePath();
         
@@ -97,7 +100,7 @@ public class DiffBuilder {
         
         String diffOutput = executeDiff(diffCommand);
         
-        buildDiffFiles(diff, diffOutput);
+        buildDiffFiles(codeChange, diffOutput, pathBefore, pathAfter);
     }
     
     private void downloadSourceCode(String command) throws CommitMissingException, IOException {
@@ -177,7 +180,7 @@ public class DiffBuilder {
         }
     }
     
-    private void buildDiffFiles(Diff diff, String diffOutput) {
+    private void buildDiffFiles(CodeChange codeChange, String diffOutput, String topPathBefore, String topPathAfter) {
         String[] diffs = diffOutput.split("diff --git ");
         if (diffs.length  > 1) {
             for (int i = 1; i < diffs.length; i++) {
@@ -220,7 +223,8 @@ public class DiffBuilder {
                         }
                     }
                     
-                    String relativePath = getRelativePath(diff, absolutePathBefore, absolutePathAfter);
+                    String relativePath = getRelativePath(
+                            absolutePathBefore, absolutePathAfter, topPathBefore, topPathAfter);
                     String changeType = getChangeType(absolutePathBefore, absolutePathAfter);
                     
                     String bodyAll = getDiffBodyAll(diffLines);
@@ -243,23 +247,25 @@ public class DiffBuilder {
                     DiffFile diffFile = new DiffFile(pullRequest, absolutePathBefore, absolutePathAfter,
                             relativePath, changeType, bodyAll, bodyAdd, bodyDel,
                             sourceCodeBefore, sourceCodeAfter, hasJavaFile);
-                    diffFile.setDiff(diff);
+                    diffFile.setCodeChange(codeChange);
+                    codeChange.getDiffFiles().add(diffFile);
+                    
                     diffFile.getDiffLines().addAll(diffLines);
                     diffLines.forEach(d -> d.setDiffFile(diffFile));
                 }
             }
         }
-        
     }
     
-    private String getRelativePath(Diff diff, String pathBefore, String pathAfter) {
+    private String getRelativePath(String pathBefore, String pathAfter,
+            String topPathBefore, String topPathAfter) {
         if (!pathBefore.equals("")) {
-            String[] paths = pathBefore.split(diff.getSourceCodePathBefore() + File.separator);
+            String[] paths = pathBefore.split(topPathBefore + File.separator);
             if (paths.length > 1) {
                 return paths[1];
             }
         } else if (!pathAfter.equals("")) {
-            String[] paths = pathAfter.split(diff.getSourceCodePathAfter() + File.separator);
+            String[] paths = pathAfter.split(topPathAfter + File.separator);
             if (paths.length > 1) {
                 return paths[1];
             }
@@ -313,7 +319,7 @@ public class DiffBuilder {
     void setTestForDiffFiles() {
         for (Commit commit : pullRequest.getTragetCommits()) {
             CodeChange codeChange = commit.getCodeChange();
-            for (DiffFile diffFile : commit.getDiff().getDiffFiles()) {
+            for (DiffFile diffFile : codeChange.getDiffFiles()) {
                 if (diffFile.isJavaFile()) {
                     for (FileChange fileChange : codeChange.getFileChanges()) {
                         if (diffFile.getChangeType() == fileChange.getChangeType()) {

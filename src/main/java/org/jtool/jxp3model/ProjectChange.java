@@ -3,6 +3,7 @@ package org.jtool.jxp3model;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.PRElement;
 import org.jtool.prmodel.PullRequest;
 

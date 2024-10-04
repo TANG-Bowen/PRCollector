@@ -55,7 +55,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             churns = churns + dfile.getDiffLines().size();
         }
         return churns;
@@ -89,7 +89,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (dfile.isTest()) {
                 churns = churns + dfile.getDiffLines().size();
             }
@@ -114,7 +114,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (dfile.getChangeType().equals(PRElement.ADD)) {
                 files++;
             }
@@ -139,7 +139,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (dfile.getChangeType().equals(PRElement.DELETE)) {
                 files++;
             }
@@ -164,7 +164,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (dfile.getChangeType().equals(PRElement.REVISE)) {
                 files++;
             }
@@ -181,7 +181,7 @@ public class CommitFeature {
         if (commit == null) {
             return 0;
         }
-        return commit.getDiff().getDiffFiles().size();
+        return commit.getCodeChange().getDiffFiles().size();
     }
     
     public static int numSrcFiles(PullRequest pullRequest) {
@@ -201,7 +201,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (dfile.isJavaFile()) {
                 files++;
             }
@@ -232,7 +232,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (checkFilenameExtention(dfile)) {
                 files++;
             }
@@ -257,7 +257,7 @@ public class CommitFeature {
             return 0;
         }
         
-        for (DiffFile dfile : commit.getDiff().getDiffFiles()) {
+        for (DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
             if (!dfile.isJavaFile() && !checkFilenameExtention(dfile)) {
                 files++;
             }

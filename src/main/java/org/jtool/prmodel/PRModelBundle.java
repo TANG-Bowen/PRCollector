@@ -135,14 +135,15 @@ public class PRModelBundle {
             jfwriter.write();
             
             if (deleteSourceFile) {
-                jfwriter.deleteGitSourceFile(pullRequest);
+                jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
             }
         } else {
-            jfwriter.deleteGitSourceFile(pullRequest);
+            jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
             System.out.println("delete source files after error logs");
             
             Path path = Path.of(pullRequestDir.getAbsolutePath());
-            jfwriter.deleteRetainPullRequestFiles(path);
+            jfwriter.deleteFiles(path);
+            
             System.out.println("delete retained source files under the pr dir ");
         }
     }

@@ -27,17 +27,15 @@ import org.jtool.prmodel.ReviewEvent;
 import org.jtool.prmodel.CodeReviewSnippet;
 import org.jtool.prmodel.Action;
 import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.Diff;
 import org.jtool.prmodel.DiffFile;
 import org.jtool.prmodel.DiffLine;
 import org.jtool.prmodel.CIStatus;
+import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
 import org.jtool.prmodel.FilesChanged;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PRModelDate;
-
-import org.jtool.jxp3model.CodeChange;
 import org.jtool.jxp3model.CodeElement;
 import org.jtool.jxp3model.ProjectChange;
 import org.jtool.jxp3model.FileChange;
@@ -397,7 +395,6 @@ public class JsonFileReader {
             Participant committer = participantMap.get(str_ct.committerId);
             commit.setCommiter(committer);
             
-            commit.setDiff(loadDiff(pullRequest, commit, str_ct.diff));
             commit.setCodeChange(loadCodeChange(pullRequest, commit, str_ct.codeChange));
             commit.getCIStatus().addAll(loadCIStatus(pullRequest, str_ct.ciStatus));
             
@@ -406,19 +403,23 @@ public class JsonFileReader {
         return commits;
     }
     
-    private Diff loadDiff(PullRequest pullRequest, Commit commit, Str_Diff str_df) {
-        Diff diff = new Diff(pullRequest, str_df.sourceCodePathBefore, str_df.sourceCodePathAfter,
-                str_df.sourceCodeDirNameBefore, str_df.sourceCodeDirNameAfter);
-        diff.setPrmodelId(str_df.prmodelId);
+    private CodeChange loadCodeChange(PullRequest pullRequest, Commit commit, Str_CodeChange str_ch) {
+        CodeChange codeChange = new CodeChange( pullRequest);
+        codeChange.setPrmodelId(str_ch.prmodelId);
         
-        diff.hasJavaFile(str_df.hasJavaFile);
-        diff.setCommit(commit);
-        diff.getDiffFiles().addAll(loadDiffFiles(pullRequest, diff, str_df.diffFiles));
+        codeChange.setCommit(commit);
+        codeChange.hasJavaFile(str_ch.hasJavaFile);
         
-        return diff;
+        codeChange.getDiffFiles().addAll(loadDiffFiles(pullRequest, codeChange, str_ch.diffFiles));
+        
+        codeChange.getProjectChanges().addAll(loadProjectChange(pullRequest, codeChange, str_ch.projectChanges));
+        setReferenceRelation(codeChange);
+        codeChange.setFileChanges();
+        
+        return codeChange;
     }
     
-    private List<DiffFile> loadDiffFiles(PullRequest pullRequest, Diff diff, List<Str_DiffFile> str_dfs) {
+    private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
         List<DiffFile> diffFiles = new ArrayList<>();
         for (Str_DiffFile str_df : str_dfs) {
             DiffFile diffFile = new DiffFile(pullRequest, str_df.pathBefore, str_df.pathAfter,
@@ -428,7 +429,7 @@ public class JsonFileReader {
             diffFile.setPrmodelId(str_df.prmodelId);
             
             diffFile.setTest(str_df.isTest);
-            diffFile.setDiff(diff);
+            diffFile.setCodeChange(codeChange);
             
             diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
             
@@ -446,18 +447,6 @@ public class JsonFileReader {
             diffLine.setDiffFile(diffFile);
         }
         return diffLines;
-    }
-    
-    private CodeChange loadCodeChange(PullRequest pullRequest, Commit commit, Str_CodeChange str_ch) {
-        CodeChange codeChange = new CodeChange( pullRequest);
-        codeChange.setPrmodelId(str_ch.prmodelId);
-        
-        codeChange.setCommit(commit);
-        
-        codeChange.getProjectChanges().addAll(loadProjectChange(pullRequest, codeChange, str_ch.projectChanges));
-        setReferenceRelation(codeChange);
-        
-        return codeChange;
     }
     
     private Set<ProjectChange> loadProjectChange(PullRequest pullRequest, CodeChange codeChange,
@@ -537,7 +526,6 @@ public class JsonFileReader {
             fieldChange.setPrmodelId(str_fd.prmodelId);
             
             fieldChange.setTest(str_fd.isTest);
-            fieldChange.setCodeChange(codeChange);
             
             fieldChanges.add(fieldChange);
             
@@ -556,7 +544,6 @@ public class JsonFileReader {
             methodChange.setPrmodelId(str_md.prmodelId);
             
             methodChange.setTest(str_md.isTest);
-            methodChange.setCodeChange(codeChange);
             
             methodChanges.add(methodChange);
             
