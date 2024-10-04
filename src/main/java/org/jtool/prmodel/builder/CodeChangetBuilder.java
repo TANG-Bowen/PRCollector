@@ -137,7 +137,7 @@ public class CodeChangetBuilder {
                     
                     String[] dirsAfter = diffFile.getPathBefore().split(File.separator + "src");
                     pathAfter = dirsAfter[0] + File.separator + "src";
-                    String anames[] = dirsAfter [0].split(dirNameAfter + File.separator);
+                    String anames[] = dirsAfter[0].split(dirNameAfter + File.separator);
                     nameAfter = anames.length == 1 ? anames[0] : anames[1];
                     
                 } else if (containsPath(diffFile.getPathBefore(), "test") &&
