@@ -11,10 +11,8 @@ public class ProjectChange extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private final String nameBefore;
-    private final String nameAfter;
-    private final String pathBefore;
-    private final String pathAfter;
+    private final String name;
+    private final String path;
     
     /* -------- Attributes -------- */
     
@@ -25,24 +23,18 @@ public class ProjectChange extends PRElement {
         this.codeChange = codeChange;
     }
     
-    public ProjectChange(PullRequest pullRequest,
-            String nameBefore, String nameAfter, String pathBefore, String pathAfter) {
+    public ProjectChange(PullRequest pullRequest, String name, String path) {
         super(pullRequest);
-        this.nameBefore = nameBefore;
-        this.nameAfter = nameAfter;
-        this.pathBefore = pathBefore;
-        this.pathAfter = pathAfter;
-        
+        this.name = name;
+        this.path = path;
     }
     
     public void print() {
         String prefix = "ProjectChange ";
         System.out.println();
         System.out.println(prefix + super.toString());
-        System.out.println(prefix + "nameBefore : " + nameBefore);
-        System.out.println(prefix + "nameAfter : " + nameAfter);
-        System.out.println(prefix + "pathBefore : " + pathBefore);
-        System.out.println(prefix + "pathAfter : " + pathAfter);
+        System.out.println(prefix + "name : " + name);
+        System.out.println(prefix + "path : " + path);
     }
     
     @Override
@@ -51,34 +43,24 @@ public class ProjectChange extends PRElement {
     }
     
     public boolean equals(ProjectChange change) {
-        return change != null && (this == change ||
-              (pathBefore.equals(change.pathBefore) && pathAfter.equals(change.pathAfter)));
+        return change != null && (this == change || path.equals(change.path));
     }
     
     @Override
     public int hashCode() {
-        String str = pathBefore+ "/" + pathAfter;
-        return str.hashCode();
+        return path.hashCode();
     }
     
     /* ------------------------------------
      * API
      --------------------------------------*/
     
-    public String getNameBefore() {
-        return nameBefore;
+    public String getName() {
+        return name;
     }
     
-    public String getnameAfter() {
-        return nameAfter;
-    }
-    
-    public String getPathBefore() {
-        return pathBefore;
-    }
-    
-    public String getpathAfter() {
-        return pathAfter;
+    public String getPath() {
+        return path;
     }
     
     public CodeChange getCodeChange() {

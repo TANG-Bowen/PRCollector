@@ -291,10 +291,8 @@ public class StringConverter {
             
             str_df.prmodelId = diffFile.getPRModelId();
             
-            str_df.pathBefore = diffFile.getPathBefore();
-            str_df.pathAfter = diffFile.getPathAfter();
-            str_df.relativePath = diffFile.getRelativePath();
             str_df.changeType = diffFile.getChangeType().toString();
+            str_df.path = diffFile.getPath();
             str_df.bodyAll = diffFile.getBodyAll();
             str_df.bodyAdd = diffFile.getBodyAdd();
             str_df.bodyDel = diffFile.getBodyDel();
@@ -330,10 +328,8 @@ public class StringConverter {
             
             str_pj.prmodelId = pchange.getPRModelId();
             
-            str_pj.nameBefore = pchange.getNameBefore();
-            str_pj.nameAfter = pchange.getnameAfter();
-            str_pj.pathBefore = pchange.getPathBefore();
-            str_pj.pathAfter = pchange.getpathAfter();
+            str_pj.name = pchange.getName();
+            str_pj.path = pchange.getPath();
             
             str_pj.fileChanges = buildFileChange(pchange.getFileChanges());
         }
@@ -350,8 +346,7 @@ public class StringConverter {
             
             str_fl.changeType = fchange.getChangeType().toString();
             str_fl.name = fchange.getName();
-            str_fl.pathBefore = fchange.getPathBefore();
-            str_fl.pathAfter = fchange.getPathAfter();
+            str_fl.path = fchange.getPath();
             str_fl.sourceCodeBefore = fchange.getSourceCodeBefore();
             str_fl.sourceCodeAfter = fchange.getSourceCodeAfter();
             

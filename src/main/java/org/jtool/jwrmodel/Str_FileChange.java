@@ -8,8 +8,7 @@ public class Str_FileChange {
     
     String changeType;
     String name;
-    String pathBefore;
-    String pathAfter;
+    String path;
     String sourceCodeBefore;
     String sourceCodeAfter;
     boolean isTest;

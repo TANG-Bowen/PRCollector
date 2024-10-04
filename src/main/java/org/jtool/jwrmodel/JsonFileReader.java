@@ -422,8 +422,7 @@ public class JsonFileReader {
     private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
         List<DiffFile> diffFiles = new ArrayList<>();
         for (Str_DiffFile str_df : str_dfs) {
-            DiffFile diffFile = new DiffFile(pullRequest, str_df.pathBefore, str_df.pathAfter,
-                    str_df.relativePath, str_df.changeType,
+            DiffFile diffFile = new DiffFile(pullRequest, str_df.changeType, str_df.path,
                     str_df.bodyAll, str_df.bodyAdd, str_df.bodyDel,
                     str_df.sourceCodeBefore, str_df.sourceCodeAfter, str_df.isJavaFile);
             diffFile.setPrmodelId(str_df.prmodelId);
@@ -453,8 +452,7 @@ public class JsonFileReader {
             Set<Str_ProjectChange> str_pjs) {
         Set<ProjectChange> projectChanges = new HashSet<>();
         for (Str_ProjectChange str_pj : str_pjs) {
-            ProjectChange projectChange = new ProjectChange( pullRequest,
-                    str_pj.nameBefore, str_pj.nameAfter, str_pj.pathBefore, str_pj.pathAfter);
+            ProjectChange projectChange = new ProjectChange(pullRequest, str_pj.name, str_pj.path);
             projectChange.setPrmodelId(str_pj.prmodelId);
             
             projectChange.setCodeChange(codeChange);
@@ -471,8 +469,7 @@ public class JsonFileReader {
         Set<FileChange> fileChanges = new HashSet<>();
         for (Str_FileChange str_fl : str_fls) {
             FileChange fileChange = new FileChange(pullRequest, str_fl.changeType,
-                    str_fl.name, str_fl.pathBefore, str_fl.pathAfter,
-                    str_fl.sourceCodeBefore, str_fl.sourceCodeAfter);
+                    str_fl.name, str_fl.path, str_fl.sourceCodeBefore, str_fl.sourceCodeAfter);
             fileChange.setPrmodelId(str_fl.prmodelId);
             
             fileChange.setCodeChange(codeChange);

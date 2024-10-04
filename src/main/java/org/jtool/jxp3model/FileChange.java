@@ -13,8 +13,7 @@ public class FileChange extends PRElement {
     
     private final String changeType;
     private final String name;
-    private final String pathBefore;
-    private final String pathAfter;
+    private final String path;
     private final String sourceCodeBefore;
     private final String sourceCodeAfter;
     private boolean isTest = false;
@@ -26,13 +25,11 @@ public class FileChange extends PRElement {
     private Set<ClassChange> classChanges = new HashSet<>();
     
     public FileChange(PullRequest pullRequest, String changeType,
-            String name, String pathBefore, String pathAfter,
-            String sourceCodeBefore, String sourceCodeAfter) {
+            String name, String path, String sourceCodeBefore, String sourceCodeAfter) {
         super(pullRequest);
         this.changeType = changeType;
         this.name = name;
-        this.pathBefore = pathBefore;
-        this.pathAfter = pathAfter;
+        this.path = path;
         this.sourceCodeBefore = sourceCodeBefore;
         this.sourceCodeAfter = sourceCodeAfter;
     }
@@ -55,8 +52,7 @@ public class FileChange extends PRElement {
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "changeType : " + changeType);
         System.out.println(prefix + "name : " + name);
-        System.out.println(prefix + "pathBefore : " + pathBefore);
-        System.out.println(prefix + "pathAfter : " + pathAfter);
+        System.out.println(prefix + "path : " + path);
         System.out.println(prefix + "isTest : " + isTest);
     }
     
@@ -66,14 +62,12 @@ public class FileChange extends PRElement {
     }
     
     public boolean equals(FileChange change) {
-        return change != null && (this == change ||
-              (pathBefore.equals(change.pathBefore) && pathAfter.equals(change.pathAfter)));
+        return change != null && (this == change || path.equals(change.path));
     }
     
     @Override
     public int hashCode() {
-        String str = pathBefore+ "/" + pathAfter;
-        return str.hashCode();
+        return path.hashCode();
     }
     
     /* ------------------------------------
@@ -87,12 +81,8 @@ public class FileChange extends PRElement {
     public String getName() {
         return name;
     }
-    public String getPathBefore() {
-        return pathBefore;
-    }
-    
-    public String getPathAfter() {
-        return pathAfter;
+    public String getPath() {
+        return path;
     }
     
     public String getSourceCodeBefore() {

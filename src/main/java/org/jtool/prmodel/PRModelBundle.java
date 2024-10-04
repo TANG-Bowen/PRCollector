@@ -156,6 +156,14 @@ public class PRModelBundle {
         return dir;
     }
     
+    public static String getRelativePath(String absolutePath, String basePath) {
+        String[] paths = absolutePath.split(basePath + File.separator);
+        if (paths.length > 1) {
+            return paths[1];
+        }
+        return "";
+    }
+    
     public void downloadChangedFileNum(int min , int max) {
         this.changedFilesMin = min;
         this.changedFilesMax = max;

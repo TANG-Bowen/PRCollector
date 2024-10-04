@@ -117,7 +117,7 @@ public class PRModelBuilder {
                     diffBuilder.build();
                     System.out.println("built Diff element");
                     
-                    CodeChangetBuilder codeChangetBuilder = new CodeChangetBuilder(pullRequest);
+                    CodeChangetBuilder codeChangetBuilder = new CodeChangetBuilder(pullRequest, pullRequestDir);
                     codeChangetBuilder.build();
                     System.out.println("built CodeChange elements");
                     

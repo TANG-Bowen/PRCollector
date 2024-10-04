@@ -6,10 +6,8 @@ public class Str_ProjectChange {
     
     String prmodelId;
     
-    String nameBefore;
-    String nameAfter;
-    String pathBefore;
-    String pathAfter;
+    String name;
+    String path;
     
     Set<Str_FileChange> fileChanges;
 }

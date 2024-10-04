@@ -210,7 +210,7 @@ public class CommitFeature {
     }
     
     private static boolean checkFilenameExtention(DiffFile dfile) {
-        String[] names = dfile.getRelativePath().split(File.separator);
+        String[] names = dfile.getPath().split(File.separator);
         String ext = names[names.length - 1];
         return ext.contains(".md") || ext.contains(".html") || ext.contains(".adoc");
     }

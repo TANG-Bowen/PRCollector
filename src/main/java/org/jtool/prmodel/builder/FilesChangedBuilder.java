@@ -122,12 +122,12 @@ public class FilesChangedBuilder {
     private boolean isIn(DiffFile diffFile, List<GHFile> ghChangedFiles) {
         for (GHFile ghFile : ghChangedFiles) {
             if (diffFile.getChangeType() == PRElement.ADD || diffFile.getChangeType() == PRElement.REVISE) {
-                if (ghFile.path.equals(diffFile.getRelativePath()) &&
+                if (ghFile.path.equals(diffFile.getPath()) &&
                         ghFile.content.equals(diffFile.getSourceCodeAfter())) {
                     return true;
                 }
             } else if (diffFile.getChangeType() == PRElement.DELETE) {
-                if (ghFile.path.equals(diffFile.getRelativePath()) &&
+                if (ghFile.path.equals(diffFile.getPath()) &&
                         ghFile.content.contains(diffFile.getBodyDel())) {
                     return true;
                 }   
@@ -140,16 +140,14 @@ public class FilesChangedBuilder {
         if (fileChange.getChangeType() == PRElement.ADD || fileChange.getChangeType() == PRElement.REVISE) {
             String sourceCode  = fileChange.getSourceCodeAfter().replaceAll("\n", "");
             for (GHFile ghFile : ghChangedFiles) {
-                if (fileChange.getPathAfter().contains(ghFile.path) &&
-                        ghFile.content.equals(sourceCode)) {
+                if (fileChange.getPath().contains(ghFile.path) && ghFile.content.equals(sourceCode)) {
                     return true;
                 }
             }
         } else if (fileChange.getChangeType() == PRElement.DELETE) {
             String sourceCode = fileChange.getSourceCodeBefore().replaceAll("\n", "");
             for (GHFile ghFile : ghChangedFiles) {
-                if (fileChange.getPathBefore().contains(ghFile.path) &&
-                        ghFile.content.equals(sourceCode)) {
+                if (fileChange.getPath().contains(ghFile.path) && ghFile.content.equals(sourceCode)) {
                     return true;
                 }
             }
@@ -180,7 +178,7 @@ public class FilesChangedBuilder {
                     
                     if (lenAfter > lenBefore) {
                         for (DiffFile diffFile : filesChangedInfo.getDiffFiles()) {
-                            if (diffFile.getRelativePath().equals(fileBefore.getRelativePath()) &&
+                            if (diffFile.getPath().equals(fileBefore.getPath()) &&
                                 diffFile.getChangeType() == fileBefore.getChangeType() &&
                                 diffFile.getBodyAll().equals(fileBefore.getBodyAll())) {
                                 removedFiles.add(diffFile);
@@ -188,7 +186,7 @@ public class FilesChangedBuilder {
                         }
                     } else if (lenAfter < lenBefore) {
                         for (DiffFile diffFile : filesChangedInfo.getDiffFiles()) {
-                            if (diffFile.getRelativePath().equals(fileAfter.getRelativePath()) &&
+                            if (diffFile.getPath().equals(fileAfter.getPath()) &&
                                 diffFile.getChangeType() == fileAfter.getChangeType() &&
                                 diffFile.getBodyAll().equals(fileAfter.getBodyAll())) {
                                 removedFiles.add(diffFile);

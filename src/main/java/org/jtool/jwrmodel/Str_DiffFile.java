@@ -6,10 +6,8 @@ public class Str_DiffFile {
     
     String prmodelId;
     
-    String pathBefore;
-    String pathAfter;
-    String relativePath;
     String changeType;
+    String path;
     String bodyAll;
     String bodyAdd;
     String bodyDel;
