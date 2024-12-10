@@ -5,20 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-<<<<<<< HEAD
 import java.util.Map;
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-<<<<<<< HEAD
 import org.jtool.prmodel.IssueEvent;
-=======
-
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.PRModelBundle;
@@ -92,19 +85,11 @@ public class PRModelBuilder {
             
             ParticipantBuilder participantBuilder = new ParticipantBuilder(pullRequest, ghPullRequest);
             participantBuilder.build();
-<<<<<<< HEAD
             System.out.println("Built Participant elements");
             
             ConversationBuilder conversationBuilder = new ConversationBuilder(pullRequest, ghPullRequest);
             conversationBuilder.build();
             System.out.println("Built Conversation elements");
-=======
-            System.out.println("built Participant elements");
-            
-            ConversationBuilder conversationBuilder = new ConversationBuilder(pullRequest, ghPullRequest);
-            conversationBuilder.build();
-            System.out.println("built Conversation elements");
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             
             DescriptionBuilder descriptionBuilder = new DescriptionBuilder(pullRequest, ghPullRequest);
             descriptionBuilder.build();
@@ -116,7 +101,6 @@ public class PRModelBuilder {
             
             MarkdownDocBuilder markdownDocBuilder = new MarkdownDocBuilder(pullRequest, github);
             markdownDocBuilder.build();
-<<<<<<< HEAD
             System.out.println("Built MarkdownDoc element");
             
             LabelBuilder labelBuilder = new LabelBuilder(pullRequest, ghPullRequest, repository);
@@ -126,56 +110,29 @@ public class PRModelBuilder {
             CommitBuilder commitBuilder = new CommitBuilder(pullRequest, ghPullRequest);
             commitBuilder.build();
             System.out.println("Built Commit elements");
-=======
-            System.out.println("built MarkdownDoc element");
-            
-            LabelBuilder labelBuilder = new LabelBuilder(pullRequest, ghPullRequest, repository);
-            labelBuilder.build(conversationBuilder.eventMap);
-            System.out.println("built Label elements");
-            
-            CommitBuilder commitBuilder = new CommitBuilder(pullRequest, ghPullRequest);
-            commitBuilder.build();
-            System.out.println("built Commit elements");
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             
             if (pullRequest.isSourceCodeRetrievable()) {
                 boolean noBannedLabel = checkBannedLabels(pullRequest);
                 if (noBannedLabel) {
                     DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
                     diffBuilder.build();
-<<<<<<< HEAD
                     System.out.println("Built Diff element");
                     
                     CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
                     codeChangetBuilder.build();
                     System.out.println("Built CodeChange elements");
-=======
-                    System.out.println("built Diff element");
-                    
-                    CodeChangetBuilder codeChangetBuilder = new CodeChangetBuilder(pullRequest, pullRequestDir);
-                    codeChangetBuilder.build();
-                    System.out.println("built CodeChange elements");
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                     
                     diffBuilder.setTestForDiffFiles();
                     
                     FilesChangedBuilder filesChangedBuilder =
                             new FilesChangedBuilder(pullRequest, ghPullRequest, repository);
                     filesChangedBuilder.build();
-<<<<<<< HEAD
                     System.out.println("Built FilesChanged element");
-=======
-                    System.out.println("built FilesChanged element");
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                 }
             }
             return true;
             
-<<<<<<< HEAD
         } catch (Exception e) {
-=======
-        } catch (IOException | CommitMissingException e) {
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             recordException(e, repository, ghPullRequest);
             return false;
         }

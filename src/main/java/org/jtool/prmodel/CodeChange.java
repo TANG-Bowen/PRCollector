@@ -44,16 +44,12 @@ public class CodeChange extends PRElement {
         System.out.println();
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "hasJavaFile : " + hasJavaFile);
-<<<<<<< HEAD
         diffFiles.forEach(e->e.print());
         System.out.println("DiffFiles size in CodeChange : "+diffFiles.size());
         projectChanges.forEach(e -> e.print());
         System.out.println("ProjectChanges size in CodeChange : "+projectChanges.size());
         fileChanges.forEach(e->e.print());
         System.out.println("fileChanges size in CodeChange : "+fileChanges.size());
-=======
-        projectChanges.forEach(e -> e.print());
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     /* ------------------------------------

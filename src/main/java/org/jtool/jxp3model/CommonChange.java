@@ -28,13 +28,8 @@ public abstract class CommonChange extends PRElement {
         this.qualifiedName = qualifiedName;
         this.type = type;
         
-<<<<<<< HEAD
         this.before = new CodeElement(pullRequest,PRElement.BEFORE, qualifiedName, sourceCodeBefore);
         this.after = new CodeElement(pullRequest, PRElement.AFTER, qualifiedName, sourceCodeAfter);
-=======
-        this.before = new CodeElement(PRElement.BEFORE, qualifiedName, sourceCodeBefore);
-        this.after = new CodeElement(PRElement.AFTER, qualifiedName, sourceCodeAfter);
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     public void setFileChange(FileChange fileChange) {

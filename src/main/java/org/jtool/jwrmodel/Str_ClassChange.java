@@ -14,7 +14,6 @@ public class Str_ClassChange {
     String sourceCodeAfter;
     boolean isTest;
     
-<<<<<<< HEAD
 //    Set<String> afferentClassesBeforeIndices;
 //    Set<String> afferentClassesAfterIndices;
 //    Set<String> efferentClassesBeforeIndices;
@@ -24,12 +23,6 @@ public class Str_ClassChange {
     Set<Str_CodeElement> afferentClassesAfter;
     Set<Str_CodeElement> efferentClassesBefore;
     Set<Str_CodeElement> efferentClassesAfter;
-=======
-    Set<String> afferentClassesBeforeIndices;
-    Set<String> afferentClassesAfterIndices;
-    Set<String> efferentClassesBeforeIndices;
-    Set<String> efferentClassesAfterIndices;
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     
     Set<Str_FieldChange> fieldChanges;
     Set<Str_MethodChange> methodChanges;

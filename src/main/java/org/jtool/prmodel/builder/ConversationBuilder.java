@@ -185,7 +185,6 @@ public class ConversationBuilder {
             }
         }
     }
-<<<<<<< HEAD
 
 	public Map<Long, IssueEvent> getEventMap() {
 		return eventMap;
@@ -197,6 +196,4 @@ public class ConversationBuilder {
     
     
     
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 }

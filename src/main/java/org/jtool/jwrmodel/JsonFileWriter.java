@@ -56,7 +56,6 @@ public class JsonFileWriter {
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
             
-<<<<<<< HEAD
 //            File dirBefore = PRModelBundle.getDir(pathBefore);
 //            File dirAfter = PRModelBundle.getDir(pathAfter);
 //            
@@ -162,49 +161,4 @@ public class JsonFileWriter {
     		System.out.println(e);
     	}
 	}
-=======
-            File dirBefore = PRModelBundle.getDir(pathBefore);
-            File dirAfter = PRModelBundle.getDir(pathAfter);
-            
-            deleteFiles(dirBefore);
-            deleteFiles(dirAfter);
-        }
-    }
-    
-    private void deleteFiles(File file) {
-        Path path = Paths.get(file.getAbsolutePath());
-        deleteFiles(path);
-    }
-    
-    public void deleteFiles(Path path) {
-        try {
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-                
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                     if (!dir.equals(path)) {
-                         Files.delete(dir);
-                     } else {
-                         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-                             for (Path entry : stream) {
-                                 Files.delete(entry);
-                             }
-                         } catch (DirectoryNotEmptyException e) {
-                             return FileVisitResult.CONTINUE;
-                         }
-                     }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } catch (IOException e) {
-            /* empty */
-        }
-    }
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 }

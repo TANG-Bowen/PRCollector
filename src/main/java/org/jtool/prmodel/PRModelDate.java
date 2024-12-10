@@ -21,11 +21,7 @@ public class PRModelDate {
     }
     
     public PRModelDate(CharSequence text) {
-<<<<<<< HEAD
         localTime = LocalDateTime.parse(text, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-=======
-        localTime = LocalDateTime.parse(text, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     public PRModelDate(CharSequence text, DateTimeFormatter formatter) {
@@ -54,10 +50,6 @@ public class PRModelDate {
     
     @Override
     public String toString() {
-<<<<<<< HEAD
         return toString(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-=======
-        return toString(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
 }

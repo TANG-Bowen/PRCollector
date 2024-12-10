@@ -18,13 +18,8 @@ public class PRModel {
     }
     
     public void addAllPullRequests(Set<PullRequest> pullRequests) {
-<<<<<<< HEAD
         this.pullRequests.addAll(pullRequests);
         this.pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
-=======
-        pullRequests.addAll(pullRequests);
-        pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     public Set<String> getRepositoryNames() {

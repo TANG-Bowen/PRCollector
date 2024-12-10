@@ -164,11 +164,7 @@ public class DiffBuilder {
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-<<<<<<< HEAD
                 //System.out.println("      " + line + "****************");
-=======
-                System.out.println("      " + line + "****************");
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                 
                 diffOutput.append(line).append("\n");
             }
@@ -192,11 +188,7 @@ public class DiffBuilder {
                 String diffUnit= diffs[i];
                 String[] lines = diffUnit.split("\n");
                 
-<<<<<<< HEAD
                 if (lines.length > 0 && lines[0] != null && !lines[0].contains("/.git/") && !lines[0].contains(".DS_Store")) {
-=======
-                if (lines.length > 0 && lines[0] != null && !lines[0].contains("/.git/")) {
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                     String absolutePathBefore = "";
                     String absolutePathAfter = "";
                     

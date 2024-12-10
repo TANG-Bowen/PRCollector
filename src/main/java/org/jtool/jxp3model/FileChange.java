@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 package org.jtool.jxp3model;
 
 import java.util.Set;
@@ -58,11 +55,8 @@ public class FileChange extends PRElement {
         System.out.println(prefix + "name : " + name);
         System.out.println(prefix + "path : " + path);
         System.out.println(prefix + "isTest : " + isTest);
-<<<<<<< HEAD
         classChanges.forEach(e->e.print());
         System.out.println("classChanges size in fileChange : "+classChanges.size());
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     @Override

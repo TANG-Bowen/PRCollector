@@ -2,7 +2,6 @@ package org.jtool.prmodel.builder;
 
 import org.jtool.jxplatform.project.ModelBuilderImpl;
 import org.jtool.srcmodel.JavaProject;
-<<<<<<< HEAD
 import org.jtool.srcmodel.JavaFile;
 import org.jtool.srcmodel.JavaClass;
 import org.jtool.srcmodel.internal.JavaASTVisitor;
@@ -20,8 +19,6 @@ import java.util.Map;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 
 class TinyModelBuilderImpl extends ModelBuilderImpl {
     
@@ -51,7 +48,6 @@ class TinyModelBuilderImpl extends ModelBuilderImpl {
         jproject.setClassPath(srcpath);
         return jproject;
     }
-<<<<<<< HEAD
     
     @Override
     public void collectInfo(JavaProject jproject, List<JavaClass> classes) {
@@ -169,6 +165,4 @@ class TinyModelBuilderImpl extends ModelBuilderImpl {
             return source;
         }
     }
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 }

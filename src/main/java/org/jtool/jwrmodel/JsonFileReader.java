@@ -11,10 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
-<<<<<<< HEAD
 import java.util.regex.Pattern;
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -86,11 +83,7 @@ public class JsonFileReader {
             System.out.println("File or directory does not exist : " + filePath);
         } else {
             List<File> files = new ArrayList<>();
-<<<<<<< HEAD
             if (file.isFile() && isJsonFromPRCollector(file)) {
-=======
-            if (file.isFile() && getFileExtension(file).equals("json")) {
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                 files.add(file);
             } else if (file.isDirectory()) {
                 File directory = new File(filePath);
@@ -100,15 +93,12 @@ public class JsonFileReader {
         }
     }
     
-<<<<<<< HEAD
     private boolean isJsonFromPRCollector(File file)
     {
     	String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_str\\.json$";
     	return Pattern.matches(pattern, file.getName());
     }
     
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     private String getFileExtension(File file) {
         String name = file.getName();
         int dotIndex = name.lastIndexOf('.');
@@ -124,11 +114,7 @@ public class JsonFileReader {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
-<<<<<<< HEAD
                     if (isJsonFromPRCollector(file)) {
-=======
-                    if (getFileExtension(file).equals("json")) {
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                         fileList.add(file);
                     }
                 } else if (file.isDirectory()) {
@@ -149,11 +135,7 @@ public class JsonFileReader {
                 
                 PullRequest pullRequest = loadPRModel(str_pr);
                 pullRequests.add(pullRequest);
-<<<<<<< HEAD
                 System.out.println("Loaded PR model for " + file.getPath().toString());           
-=======
-                System.out.println("Loaded PR model for " + file.getPath().toString());
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             } catch (UnsupportedEncodingException e) {
                 System.err.println(e.getMessage());
             } catch (IOException e) {
@@ -438,11 +420,7 @@ public class JsonFileReader {
         codeChange.getDiffFiles().addAll(loadDiffFiles(pullRequest, codeChange, str_ch.diffFiles));
         
         codeChange.getProjectChanges().addAll(loadProjectChange(pullRequest, codeChange, str_ch.projectChanges));
-<<<<<<< HEAD
         setReferenceRelation(pullRequest, codeChange);
-=======
-        setReferenceRelation(codeChange);
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         codeChange.setFileChanges();
         
         return codeChange;
@@ -583,7 +561,6 @@ public class JsonFileReader {
         return methodChanges;
     }
     
-<<<<<<< HEAD
     private void setReferenceRelation(PullRequest pullRequest, CodeChange codeChange) {
         for (FileChange fileChange : codeChange.getFileChanges()) {
             fileChange.getClassChanges().forEach(c -> setReferenceRelation(pullRequest,c));
@@ -675,50 +652,6 @@ public class JsonFileReader {
     		methodElements.add(methodElement);
     	}
     	return methodElements;
-=======
-    private void setReferenceRelation(CodeChange codeChange) {
-        for (FileChange fileChange : codeChange.getFileChanges()) {
-            fileChange.getClassChanges().forEach(c -> setReferenceRelation(c));
-        }
-    }
-    private void setReferenceRelation(ClassChange classChange) {
-        Str_ClassChange str_cl = classMap.get(classChange);
-        classChange.getAfferentClassesBefore()
-                   .addAll(getElements(str_cl.afferentClassesBeforeIndices, classElementBeforeMap));
-        classChange.getAfferentClassesAfter()
-                   .addAll(getElements(str_cl.afferentClassesAfterIndices, classElementAfterMap));
-        classChange.getEfferentClassesBefore()
-                   .addAll(getElements(str_cl.efferentClassesBeforeIndices, classElementBeforeMap));
-        classChange.getEfferentClassesBefore()
-                   .addAll(getElements(str_cl.efferentClassesAfterIndices, classElementAfterMap));
-        
-        classChange.getFieldChanges().forEach(c -> setReferenceRelation(c));
-        classChange.getMethodChanges().forEach(c -> setReferenceRelation(c));
-    }
-    
-    private void setReferenceRelation(FieldChange fieldChange) {
-        Str_FieldChange str_fd = fieldMap.get(fieldChange);
-        fieldChange.getCallingMethodsBefore()
-                   .addAll(getElements(str_fd.callingMethodsBeforeIndices, methodElementBeforeMap));
-        fieldChange.getCalledMethodsAfter()
-                   .addAll(getElements(str_fd.callingMethodsAfterIndices, methodElementAfterMap));
-        fieldChange.getCalledMethodsBefore()
-                   .addAll(getElements(str_fd.calledMethodsBeforeIndices, methodElementBeforeMap));
-        fieldChange.getCalledMethodsAfter()
-                   .addAll(getElements(str_fd.callingMethodsAfterIndices, methodElementAfterMap));
-    }
-    
-    private void setReferenceRelation(MethodChange methodChange) {
-        Str_MethodChange str_md = methodMap.get(methodChange);
-        methodChange.getCallingMethodsBefore()
-                    .addAll(getElements(str_md.callingMethodsBeforeIndices, methodElementBeforeMap));
-        methodChange.getCalledMethodsAfter()
-                    .addAll(getElements(str_md.callingMethodsAfterIndices, methodElementAfterMap));
-        methodChange.getCalledMethodsBefore()
-                    .addAll(getElements(str_md.calledMethodsBeforeIndices, methodElementBeforeMap));
-        methodChange.getCalledMethodsAfter()
-                    .addAll(getElements(str_md.callingMethodsAfterIndices, methodElementAfterMap));
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     private Set<CodeElement> getElements(Set<String> indices, Map<String, CodeElement> elemMap) {

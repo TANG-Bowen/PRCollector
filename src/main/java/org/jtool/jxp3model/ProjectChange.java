@@ -35,11 +35,8 @@ public class ProjectChange extends PRElement {
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "name : " + name);
         System.out.println(prefix + "path : " + path);
-<<<<<<< HEAD
         fileChanges.forEach(e->e.print());
         System.out.println("fileChanges size in projectChange : "+fileChanges.size());
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     @Override

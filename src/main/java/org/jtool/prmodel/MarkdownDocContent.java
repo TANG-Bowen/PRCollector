@@ -13,13 +13,8 @@ public class MarkdownDocContent {
         this.text = text;
         this.startOffset = startOffset;
         this.endOffset = endOffset;
-<<<<<<< HEAD
         this.nodeStartOffset = nodeStartOffset;
         this.nodeEndOffset = nodeEndOffset;
-=======
-        this.nodeStartOffset = startOffset;
-        this.nodeEndOffset = endOffset;
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     public String getText() {

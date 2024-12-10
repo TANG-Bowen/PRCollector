@@ -21,11 +21,7 @@ public class Commit extends PRElement {
     private List<CIStatus> ciStatus = new ArrayList<>();
     
     public Commit(PullRequest pullRequest, String sha, String shortSha,
-<<<<<<< HEAD
             PRModelDate date, String message, String type) {
-=======
-            PRModelDate date, String type, String message) {
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         super(pullRequest);
         this.sha = sha;
         this.shortSha = shortSha;
@@ -60,10 +56,7 @@ public class Commit extends PRElement {
         System.out.println(prefix + "type : " + type);
         System.out.println(prefix + "message : " + message);
         System.out.println(prefix + "ciStatus : " + toPRElemList(ciStatus));
-<<<<<<< HEAD
         codeChange.print();
-=======
->>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     /* ------------------------------------
