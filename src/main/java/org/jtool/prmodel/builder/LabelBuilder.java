@@ -44,12 +44,20 @@ public class LabelBuilder {
                 String description = repoLabel.getDescription();
                 
                 Label label = new Label(pullRequest, name, color, description);
+<<<<<<< HEAD
+                long ghId = ghEvent.getId();
+                IssueEvent issueEvent = eventMap.get(ghId);
+                label.setIssueEvent(issueEvent);
+                pullRequest.getAddedLabels().add(label);
+     
+=======
                 pullRequest.getAddedLabels().add(label);
                 
                 long ghId = repoLabel.getId();
                 IssueEvent issueEvent = eventMap.get(ghId);
                 label.setIssueEvent(issueEvent);
                 
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             } else if (eventType.equals("unlabeled")) {
                 GHLabel ghLabel = ghEvent.getLabel();
                 String name = ghLabel.getName();
@@ -58,11 +66,20 @@ public class LabelBuilder {
                 String description = repoLabel.getDescription();
                 
                 Label label = new Label(pullRequest, name, color, description);
+<<<<<<< HEAD
+                long ghId = ghEvent.getId();
+                IssueEvent issueEvent = eventMap.get(ghId);
+                label.setIssueEvent(issueEvent);
+                pullRequest.getRemovedLabels().add(label);
+                
+                
+=======
                 pullRequest.getRemovedLabels().add(label);
                 
                 long ghId = repoLabel.getId();
                 IssueEvent issueEvent = eventMap.get(ghId);
                 label.setIssueEvent(issueEvent);
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             }
         }
         

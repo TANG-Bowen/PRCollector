@@ -97,12 +97,20 @@ public class PullRequest extends PRElement {
     public void print() {
         String prefix = "PullRequest ";
         printPRBase(prefix);
+<<<<<<< HEAD
+        description.print();
+        htmlDescription.print();
+        participants.forEach(e -> e.print());
+        conversation.print();
+        commits.forEach(e -> e.print());
+=======
         
         participants.forEach(e -> e.print());
         conversation.print();
         commits.forEach(e -> e.print());
         description.print();
         htmlDescription.print();
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         
         filesChanged.print();
         

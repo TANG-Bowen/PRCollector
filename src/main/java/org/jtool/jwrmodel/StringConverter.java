@@ -29,6 +29,10 @@ import org.jtool.prmodel.Label;
 import org.jtool.jxp3model.ProjectChange;
 import org.jtool.jxp3model.FileChange;
 import org.jtool.jxp3model.ClassChange;
+<<<<<<< HEAD
+import org.jtool.jxp3model.CodeElement;
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 import org.jtool.jxp3model.FieldChange;
 import org.jtool.jxp3model.MethodChange;
 
@@ -273,13 +277,24 @@ public class StringConverter {
     }
     
     private Str_CodeChange buildCodeChange(CodeChange codeChange) {
+<<<<<<< HEAD
+    	
+        Str_CodeChange str_ch = new Str_CodeChange();
+        if(codeChange!=null)
+    	{
+=======
         Str_CodeChange str_ch = new Str_CodeChange();
         
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         str_ch.prmodelId = codeChange.getPRModelId();
         str_ch.hasJavaFile = codeChange.hasJavaFile();
         
         str_ch.diffFiles = buildDiffFiles(codeChange.getDiffFiles());
         str_ch.projectChanges = buildProjectChange(codeChange.getProjectChanges());
+<<<<<<< HEAD
+    	}
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         return str_ch;
     }
     
@@ -371,6 +386,20 @@ public class StringConverter {
            str_cl.sourceCodeAfter = cchange.getSourceCodeAfter();
            str_cl.isTest = cchange.isTest();
            
+<<<<<<< HEAD
+//           str_cl.afferentClassesBeforeIndices = cchange.getAfferentClassesBefore().stream()
+//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
+//           str_cl.afferentClassesAfterIndices = cchange.getAfferentClassesAfter().stream()
+//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+//           str_cl.efferentClassesBeforeIndices = cchange.getEfferentClassesBefore().stream()
+//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
+//           str_cl.efferentClassesAfterIndices = cchange.getEfferentClassesAfter().stream()
+//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+           str_cl.afferentClassesBefore = buildClassElement(cchange.getAfferentClassesBefore());
+           str_cl.afferentClassesAfter = buildClassElement(cchange.getAfferentClassesAfter());
+           str_cl.efferentClassesBefore = buildClassElement(cchange.getEfferentClassesBefore());
+           str_cl.efferentClassesAfter = buildClassElement(cchange.getEfferentClassesAfter());
+=======
            str_cl.afferentClassesBeforeIndices = cchange.getAfferentClassesBefore().stream()
                                                         .map(e -> e.getIndex()).collect(Collectors.toSet());
            str_cl.afferentClassesAfterIndices = cchange.getAfferentClassesAfter().stream()
@@ -379,6 +408,7 @@ public class StringConverter {
                                                         .map(e -> e.getIndex()).collect(Collectors.toSet());
            str_cl.efferentClassesAfterIndices = cchange.getEfferentClassesAfter().stream()
                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
            
            str_cl.fieldChanges = buildFieldChange(cchange.getFieldChanges());
            str_cl.methodChanges = buildMethodChange(cchange.getMethodChanges());
@@ -386,6 +416,25 @@ public class StringConverter {
        return str_cls;
     }
     
+<<<<<<< HEAD
+    private Set<Str_CodeElement> buildClassElement(Set<CodeElement> codeElements){
+    	Set<Str_CodeElement> str_ces = new HashSet<>();
+    	for(CodeElement cei : codeElements)
+    	{
+    		Str_CodeElement str_ce = new Str_CodeElement();
+    		str_ces.add(str_ce);
+    		
+    		str_ce.prmodelId = cei.getPRModelId();
+    		
+    		str_ce.stage = cei.getStage();
+    		str_ce.qulifiedName = cei.getQualifiedName();
+    		str_ce.sourceCode = cei.getSourceCode();
+    	}
+    	return str_ces;
+    }
+    
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     private Set<Str_FieldChange> buildFieldChange(Set<FieldChange> fchanges) {
         Set<Str_FieldChange> str_fds = new HashSet<>();
         for (FieldChange fchange : fchanges) {
@@ -402,6 +451,20 @@ public class StringConverter {
             str_fd.sourceCodeAfter = fchange.getSourceCodeAfter();
             str_fd.isTest = fchange.isTest();
             
+<<<<<<< HEAD
+//            str_fd.callingMethodsBeforeIndices = fchange.getCallingMethodsBefore().stream()
+//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
+//            str_fd.callingMethodsAfterIndices = fchange.getCallingMethodsAfter().stream()
+//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+//            str_fd.calledMethodsBeforeIndices = fchange.getCalledMethodsBefore().stream()
+//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+//            str_fd.calledMethodsAfterIndices = fchange.getCalledMethodsAfter().stream()
+//                                                      .map(e -> e.getIndex()).collect(Collectors.toSet());
+            str_fd.AccessingMethodsBefore = buildMethodElement(fchange.getAccessingMethodsBefore());
+            str_fd.AccessingMethodsAfter = buildMethodElement(fchange.getAccessingMethodsAfter());
+            str_fd.calledMethodsBefore = buildMethodElement(fchange.getCalledMethodsBefore());
+            str_fd.calledMethodsAfter = buildMethodElement(fchange.getCalledMethodsAfter());
+=======
             str_fd.callingMethodsBeforeIndices = fchange.getCallingMethodsBefore().stream()
                                                         .map(e -> e.getIndex()).collect(Collectors.toSet());
             str_fd.callingMethodsAfterIndices = fchange.getCallingMethodsAfter().stream()
@@ -410,6 +473,7 @@ public class StringConverter {
                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
             str_fd.calledMethodsAfterIndices = fchange.getCalledMethodsAfter().stream()
                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         }
         return str_fds;
     }
@@ -430,6 +494,20 @@ public class StringConverter {
             str_md.sourceCodeAfter = mchange.getSourceCodeAfter();
             str_md.isTest = mchange.isTest();
             
+<<<<<<< HEAD
+//            str_md.callingMethodsBeforeIndices = mchange.getCallingMethodsBefore().stream()
+//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
+//            str_md.callingMethodsAfterIndices = mchange.getCallingMethodsAfter().stream()
+//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+//            str_md.calledMethodsBeforeIndices = mchange.getCalledMethodsBefore().stream()
+//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+//            str_md.calledMethodsAfterIndices = mchange.getCalledMethodsAfter().stream()
+//                                                      .map(e -> e.getIndex()).collect(Collectors.toSet());
+            str_md.callingMethodsBefore = buildMethodElement(mchange.getCallingMethodsBefore());
+            str_md.callingMethodsAfter = buildMethodElement(mchange.getCallingMethodsAfter());
+            str_md.calledMethodsBefore = buildMethodElement(mchange.getCalledMethodsBefore());
+            str_md.calledMethodsAfter = buildMethodElement(mchange.getCalledMethodsAfter());
+=======
             str_md.callingMethodsBeforeIndices = mchange.getCallingMethodsBefore().stream()
                                                         .map(e -> e.getIndex()).collect(Collectors.toSet());
             str_md.callingMethodsAfterIndices = mchange.getCallingMethodsAfter().stream()
@@ -438,10 +516,31 @@ public class StringConverter {
                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
             str_md.calledMethodsAfterIndices = mchange.getCalledMethodsAfter().stream()
                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         }
         return str_mds;
     }
     
+<<<<<<< HEAD
+    private Set<Str_CodeElement> buildMethodElement(Set<CodeElement> codeElements)
+    {
+    	Set<Str_CodeElement> str_mces = new HashSet<>();
+    	for(CodeElement cei : codeElements)
+    	{
+    		Str_CodeElement str_codeElement = new Str_CodeElement();
+    		str_mces.add(str_codeElement);
+    		
+    		str_codeElement.prmodelId = cei.getPRModelId();
+    		
+    		str_codeElement.qulifiedName = cei.getQualifiedName();
+    		str_codeElement.stage = cei.getStage();
+    		str_codeElement.sourceCode = cei.getSourceCode();
+    	}
+    	return str_mces;
+    }
+    
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     private List<Str_CIStatus> buildCIStatus(Commit commit) {
         List<Str_CIStatus> str_statuses = new ArrayList<>();
         for (CIStatus status : commit.getCIStatus()) {
@@ -462,7 +561,12 @@ public class StringConverter {
     
     private Str_FilesChanged buildAllFilesChanged(FilesChanged fileChanged) {
         Str_FilesChanged str_info = new Str_FilesChanged();
+<<<<<<< HEAD
+        if(fileChanged!=null)
+        {
+=======
         
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         str_info.prmodelId = fileChanged.getPRModelId();
         
         str_info.hasJavaFile = fileChanged.hasJavaFile();
@@ -471,6 +575,10 @@ public class StringConverter {
                 .collect(Collectors.toSet());
         str_info.fileChangeIds = fileChanged.getFileChanges().stream().map(c -> c.getPRModelId())
                 .collect(Collectors.toSet());
+<<<<<<< HEAD
+        }
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         return str_info;
     }
     

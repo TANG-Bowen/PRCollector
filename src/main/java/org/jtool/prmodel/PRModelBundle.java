@@ -5,7 +5,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+<<<<<<< HEAD
+import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
+=======
+import java.util.ArrayList;
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 
 import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHPullRequest;
@@ -44,6 +50,11 @@ public class PRModelBundle {
     private boolean writeFile = false;
     private boolean deleteSourceFile = false;
     
+<<<<<<< HEAD
+    private Set<PullRequest> pullRequests = new HashSet<>();
+    
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     public PRModelBundle(String ghToken, String repositoryName, String rootSrcPath, int pullRequestNumber) {
         this.ghToken = ghToken;
         this.repositoryName = repositoryName;
@@ -66,6 +77,14 @@ public class PRModelBundle {
     
     public PRModel build() {
         PRModel prmodel = new PRModel();
+<<<<<<< HEAD
+            if (pullRequestNumber >= 0) {
+                buildSingle(prmodel, pullRequestNumber);
+            } else {
+                build(prmodel);
+            }
+       
+=======
         String pullRequestPath = getPullRequestPath(pullRequestNumber);
         if (!alreadyBuilt(pullRequestPath)) {
             File pullRequestDir = getDir(pullRequestPath);
@@ -78,6 +97,7 @@ public class PRModelBundle {
         } else {
             System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
         }
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         return prmodel;
     }
     
@@ -95,9 +115,18 @@ public class PRModelBundle {
         return file.exists();
     }
     
+<<<<<<< HEAD
+    private void build(PRModel prmodel) {
+        PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
+        for (GHPullRequest ghPullRequest : ghPullRequests) {
+        	String pullRequestPath = getPullRequestPath(ghPullRequest.getNumber());
+        	if(!alreadyBuilt(pullRequestPath)){
+        		File pullRequestDir = getDir(pullRequestPath);
+=======
     private void build(PRModel prmodel, File pullRequestDir) {
         PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
         for (GHPullRequest ghPullRequest : ghPullRequests) {
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             PRModelBuilder builder = new PRModelBuilder(this,
                     ghToken, ghPullRequest.getNumber(), pullRequestDir);
             
@@ -105,6 +134,22 @@ public class PRModelBundle {
             if (result) {
                 PullRequest pullRequest = builder.getPullRequest();
                 prmodel.addPullRequest(pullRequest);
+<<<<<<< HEAD
+                pullRequests.add(pullRequest);
+                writePRModelToFile(pullRequest, pullRequestDir);
+            }
+            builder = null;
+        	}else {
+                System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
+            }
+        }
+    }
+    
+    private void buildSingle(PRModel prmodel, int pullRequestNumber) {
+    	String pullRequestPath = getPullRequestPath(pullRequestNumber);
+    	if(!alreadyBuilt(pullRequestPath)) {
+    	File pullRequestDir = getDir(pullRequestPath);
+=======
                 
                 writePRModelToFile(pullRequest, pullRequestDir);
             }
@@ -113,6 +158,7 @@ public class PRModelBundle {
     }
     
     private void buildSingle(PRModel prmodel, int pullRequestNumber, File pullRequestDir) {
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
         PRModelBuilder builder = new PRModelBuilder(this,
                 ghToken, pullRequestNumber, pullRequestDir);
         
@@ -120,10 +166,24 @@ public class PRModelBundle {
         if (result) {
             PullRequest pullRequest = builder.getPullRequest();
             prmodel.addPullRequest(pullRequest);
+<<<<<<< HEAD
+            pullRequests.add(pullRequest);
+            writePRModelToFile(pullRequest, pullRequestDir);
+        }else {
+        	
+        	JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
+        	System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath());
+        }
+        builder = null;
+    	}else {
+            System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
+        }
+=======
             
             writePRModelToFile(pullRequest, pullRequestDir);
         }
         builder = null;
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     private void writePRModelToFile(PullRequest pullRequest, File pullRequestDir) {
@@ -138,12 +198,22 @@ public class PRModelBundle {
                 jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
             }
         } else {
+<<<<<<< HEAD
+        	if(deleteSourceFile)
+        	{
+            jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
+            System.out.println("delete source files after error logs");
+        	}
+            Path path = Path.of(pullRequestDir.getAbsolutePath());        	
+            jfwriter.deleteFiles(pullRequestDir.getAbsolutePath(),true);            
+=======
             jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
             System.out.println("delete source files after error logs");
             
             Path path = Path.of(pullRequestDir.getAbsolutePath());
             jfwriter.deleteFiles(path);
             
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
             System.out.println("delete retained source files under the pr dir ");
         }
     }
@@ -390,4 +460,17 @@ public class PRModelBundle {
         LocalDate updateDate = LocalDate.parse(updated);
         prSearch.updatedBefore(updateDate, inclusive);
     }
+<<<<<<< HEAD
+
+	public Set<PullRequest> getPullRequests() {
+		return pullRequests;
+	}
+
+	public void setPullRequests(Set<PullRequest> pullRequests) {
+		this.pullRequests = pullRequests;
+	}
+    
+    
+=======
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 }

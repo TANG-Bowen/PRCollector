@@ -39,7 +39,13 @@ public class ClassChange extends CommonChange {
         super.print(prefix);
         
         fieldChanges.forEach(e -> e.print());
+<<<<<<< HEAD
+        System.out.println("fieldChanges size in ClassChange : "+fieldChanges.size());
         methodChanges.forEach(e -> e.print());
+        System.out.println("methodChanges size in ClassChange : "+methodChanges.size());
+=======
+        methodChanges.forEach(e -> e.print());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     /* ------------------------------------

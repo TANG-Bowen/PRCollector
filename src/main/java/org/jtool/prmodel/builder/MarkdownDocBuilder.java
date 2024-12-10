@@ -140,14 +140,24 @@ public class MarkdownDocBuilder {
     
     private MarkdownDocContent createMarkdownDocContent(Node node) {
         return new MarkdownDocContent(node.getChars().toString(),
+<<<<<<< HEAD
+                node.getChars().getStartOffset(), node.getChars().getEndOffset(),
+                node.getStartOffset(), node.getEndOffset());
+=======
                 node.getChars().getStartOffset(), node.getChars().getStartOffset(),
                 node.getStartOffset(), node.getStartOffset());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     private MarkdownDocContent createMarkdownDocContent(Text text) {
         return new MarkdownDocContent(text.getChars().unescape(),
+<<<<<<< HEAD
+                text.getChars().getStartOffset(), text.getChars().getEndOffset(),
+                text.getStartOffset(), text.getEndOffset());
+=======
                 text.getChars().getStartOffset(), text.getChars().getStartOffset(),
                 text.getStartOffset(), text.getStartOffset());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     private MarkdownDocContent createMarkdownDocContent(Link link) {
@@ -155,8 +165,13 @@ public class MarkdownDocBuilder {
         String linkUrl = link.getUrl().toString();
         String text = linkText + "->" + linkUrl;
         return new MarkdownDocContent(text,
+<<<<<<< HEAD
+                link.getChars().getStartOffset(), link.getChars().getEndOffset(),
+                link.getStartOffset(), link.getEndOffset());
+=======
                 link.getChars().getStartOffset(), link.getChars().getStartOffset(),
                 link.getStartOffset(), link.getStartOffset());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     private void buildMentionUsersInEachDoc(MarkdownDoc doc) {
@@ -169,8 +184,13 @@ public class MarkdownDocBuilder {
                         github.getUser(name); // Check the name
                         
                         MarkdownDocContent nameContent = new MarkdownDocContent(name,
+<<<<<<< HEAD
+                                content.getStartOffset(), content.getEndOffset(),
+                                content.getNodeStartOffset(), content.getNodeEndOffset());
+=======
                                 content.getStartOffset(), content.getStartOffset(),
                                 content.getNodeStartOffset(), content.getNodeStartOffset());
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                         doc.getMentionStrings().add(nameContent);
                     } catch (IOException e) {
                         /* empty */
@@ -186,7 +206,11 @@ public class MarkdownDocBuilder {
             Matcher issueMatch = issuePattern.matcher(text);
             while (issueMatch.find()) {
                 int start = issueMatch.start();
+<<<<<<< HEAD
+                int end = issueMatch.end();
+=======
                 int end = issueMatch.start();
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                 MarkdownDocContent issueContent = new MarkdownDocContent(issueMatch.group(),
                         start, end, start, end);
                 doc.getIssueLinkStrings().add(issueContent);
@@ -196,7 +220,11 @@ public class MarkdownDocBuilder {
             Matcher pullMatch = pullPattern.matcher(text);
             while (pullMatch.find()) {
                 int start = pullMatch.start();
+<<<<<<< HEAD
+                int end = pullMatch.end();
+=======
                 int end = pullMatch.start();
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
                 MarkdownDocContent pullContent = new MarkdownDocContent(pullMatch.group(),
                         start, end, start, end);
                 doc.getPullLinkStrings().add(pullContent);

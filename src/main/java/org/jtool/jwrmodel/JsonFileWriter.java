@@ -56,6 +56,113 @@ public class JsonFileWriter {
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
             
+<<<<<<< HEAD
+//            File dirBefore = PRModelBundle.getDir(pathBefore);
+//            File dirAfter = PRModelBundle.getDir(pathAfter);
+//            
+//            deleteFiles(dirBefore);
+//            deleteFiles(dirAfter);
+            deleteFiles(pathBefore,true);
+            deleteFiles(pathAfter,true);
+        }
+    }
+    
+    public static void deleteFiles(File file) {
+        Path path = Paths.get(file.getAbsolutePath());
+        //deleteFiles(path);
+        deleteDir(path);
+        boolean flag;
+        if(file.listFiles().length==0)
+        {
+        	flag = true;
+        }else {
+        	flag = false;
+        }
+        System.out.println("delete task finished : "+flag);
+    }
+    
+    public static void deleteFiles(String pathStr, boolean deleteCurrentDir) {
+    	File currentDir = new File(pathStr);
+    	if(currentDir.exists() && currentDir.isDirectory())
+    	{
+    		//File[] files = currentDir.listFiles();   		
+    		  deleteSubdirectories(currentDir);
+    		
+    		if(deleteCurrentDir)
+    		{
+    			currentDir.delete();   			
+    		}
+    		
+    	}else {
+    		System.out.println("Not valid directory to delete! ");
+    	}
+    }
+    
+    static void deleteSubdirectories(File sourceDir)
+    {
+    	File[] files = sourceDir.listFiles();
+    	if(files!=null)
+    	{
+    		for(File file : files)
+    		{
+    			if(file.isDirectory())
+    			{
+    				deleteDirectory(file);
+    			}else {
+    				file.delete();
+    			}
+    		}
+    	}else {
+    		sourceDir.delete();
+    	}
+    }
+    
+    static void deleteDirectory(File sourceDir)
+    {
+    	File[] files = sourceDir.listFiles();
+    	if(files !=null)
+    	{
+    		for(File file : files)
+    		{
+    			if(file.isFile())
+    			{
+    				file.delete();
+    			}else if(file.isDirectory())
+    			{
+    				deleteDirectory(file);
+    			}
+    		}
+    	}
+    	sourceDir.delete();
+    }
+    
+    public static void deleteDir(Path dir)
+	{
+    	try {
+		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+			@Override
+			 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+			@Override
+			 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+			@Override
+			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+		}
+		
+		);
+    	}catch(IOException e)
+    	{
+    		System.out.println(e);
+    	}
+	}
+=======
             File dirBefore = PRModelBundle.getDir(pathBefore);
             File dirAfter = PRModelBundle.getDir(pathAfter);
             
@@ -99,4 +206,5 @@ public class JsonFileWriter {
             /* empty */
         }
     }
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
 }

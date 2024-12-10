@@ -17,8 +17,13 @@ public class FieldChange extends CommonChange {
     // CodeElement after;
     // boolean isTest;
     
+<<<<<<< HEAD
+    private Set<CodeElement> accessingMethodsBefore = new HashSet<>();
+    private Set<CodeElement> accessingMethodsAfter = new HashSet<>();
+=======
     private Set<CodeElement> callingMethodsBefore = new HashSet<>();
     private Set<CodeElement> callingMethodsAfter = new HashSet<>();
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     private Set<CodeElement> calledMethodsBefore = new HashSet<>();
     private Set<CodeElement> calledMethodsAfter = new HashSet<>();
     
@@ -46,12 +51,21 @@ public class FieldChange extends CommonChange {
      * API
      --------------------------------------*/
     
+<<<<<<< HEAD
+    public Set<CodeElement> getAccessingMethodsBefore() {
+        return accessingMethodsBefore;
+    }
+    
+    public Set<CodeElement> getAccessingMethodsAfter() {
+        return accessingMethodsAfter;
+=======
     public Set<CodeElement> getCallingMethodsBefore() {
         return callingMethodsBefore;
     }
     
     public Set<CodeElement> getCallingMethodsAfter() {
         return callingMethodsAfter;
+>>>>>>> ce71da35411010c508025a48f729e2039d8b6792
     }
     
     public Set<CodeElement> getCalledMethodsBefore() {
