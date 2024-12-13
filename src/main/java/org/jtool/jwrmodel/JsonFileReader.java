@@ -426,50 +426,56 @@ public class JsonFileReader {
         return codeChange;
     }
     
-    private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
-        List<DiffFile> diffFiles = new ArrayList<>();
-        for (Str_DiffFile str_df : str_dfs) {
-            DiffFile diffFile = new DiffFile(pullRequest, str_df.changeType, str_df.path,
-                    str_df.bodyAll, str_df.bodyAdd, str_df.bodyDel,
-                    str_df.sourceCodeBefore, str_df.sourceCodeAfter, str_df.isJavaFile);
-            diffFile.setPrmodelId(str_df.prmodelId);
-            
-            diffFile.setTest(str_df.isTest);
-            diffFile.setCodeChange(codeChange);
-            
-            diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
-            
-            diffFileMap.put(diffFile.getPRModelId(), diffFile);
-        }
-        return diffFiles;
-    }
+	private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
+		List<DiffFile> diffFiles = new ArrayList<>();
+		if (str_dfs != null) {
+			for (Str_DiffFile str_df : str_dfs) {
+				DiffFile diffFile = new DiffFile(pullRequest, str_df.changeType, str_df.path, str_df.bodyAll,
+						str_df.bodyAdd, str_df.bodyDel, str_df.sourceCodeBefore, str_df.sourceCodeAfter,
+						str_df.isJavaFile);
+				diffFile.setPrmodelId(str_df.prmodelId);
+
+				diffFile.setTest(str_df.isTest);
+				diffFile.setCodeChange(codeChange);
+
+				diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
+
+				diffFileMap.put(diffFile.getPRModelId(), diffFile);
+			}
+		}
+		return diffFiles;
+	}
     
-    private List<DiffLine> loadDiffLines(PullRequest pullRequest, DiffFile diffFile, List<Str_DiffLine> str_dls) {
-        List<DiffLine> diffLines = new ArrayList<>();
-        for (Str_DiffLine str_dl : str_dls) {
-            DiffLine diffLine = new DiffLine(pullRequest, str_dl.changeType, str_dl.text);
-            diffLine.setPrmodelId(str_dl.prmodelId);
-            
-            diffLine.setDiffFile(diffFile);
-        }
-        return diffLines;
-    }
+	private List<DiffLine> loadDiffLines(PullRequest pullRequest, DiffFile diffFile, List<Str_DiffLine> str_dls) {
+		List<DiffLine> diffLines = new ArrayList<>();
+		if (str_dls != null) {
+			for (Str_DiffLine str_dl : str_dls) {
+				DiffLine diffLine = new DiffLine(pullRequest, str_dl.changeType, str_dl.text);
+				diffLine.setPrmodelId(str_dl.prmodelId);
+
+				diffLine.setDiffFile(diffFile);
+			}
+		}
+		return diffLines;
+	}
     
-    private Set<ProjectChange> loadProjectChange(PullRequest pullRequest, CodeChange codeChange,
-            Set<Str_ProjectChange> str_pjs) {
-        Set<ProjectChange> projectChanges = new HashSet<>();
-        for (Str_ProjectChange str_pj : str_pjs) {
-            ProjectChange projectChange = new ProjectChange(pullRequest, str_pj.name, str_pj.path);
-            projectChange.setPrmodelId(str_pj.prmodelId);
-            
-            projectChange.setCodeChange(codeChange);
-            projectChange.getFileChanges().addAll(loadFileChange(pullRequest, codeChange,
-                    projectChange, str_pj.fileChanges));
-            
-            projectChanges.add(projectChange);
-        }
-        return projectChanges;
-    }
+	private Set<ProjectChange> loadProjectChange(PullRequest pullRequest, CodeChange codeChange,
+			Set<Str_ProjectChange> str_pjs) {
+		Set<ProjectChange> projectChanges = new HashSet<>();
+		if (str_pjs != null) {
+			for (Str_ProjectChange str_pj : str_pjs) {
+				ProjectChange projectChange = new ProjectChange(pullRequest, str_pj.name, str_pj.path);
+				projectChange.setPrmodelId(str_pj.prmodelId);
+
+				projectChange.setCodeChange(codeChange);
+				projectChange.getFileChanges()
+						.addAll(loadFileChange(pullRequest, codeChange, projectChange, str_pj.fileChanges));
+
+				projectChanges.add(projectChange);
+			}
+		}
+		return projectChanges;
+	}
     
     private Set<FileChange> loadFileChange(PullRequest pullRequest, CodeChange codeChange,
             ProjectChange ProjectChange, Set<Str_FileChange> str_fls) {
@@ -568,14 +574,6 @@ public class JsonFileReader {
     }
     private void setReferenceRelation(PullRequest pullRequest, ClassChange classChange) {
         Str_ClassChange str_cl = classMap.get(classChange);
-//        classChange.getAfferentClassesBefore()
-//                   .addAll(getElements(str_cl.afferentClassesBeforeIndices, classElementBeforeMap));
-//        classChange.getAfferentClassesAfter()
-//                   .addAll(getElements(str_cl.afferentClassesAfterIndices, classElementAfterMap));
-//        classChange.getEfferentClassesBefore()
-//                   .addAll(getElements(str_cl.efferentClassesBeforeIndices, classElementBeforeMap));
-//        classChange.getEfferentClassesBefore()
-//                   .addAll(getElements(str_cl.efferentClassesAfterIndices, classElementAfterMap));
         classChange.getAfferentClassesBefore().addAll(loadClassElements(pullRequest, str_cl.afferentClassesBefore));
         classChange.getAfferentClassesAfter().addAll(loadClassElements(pullRequest, str_cl.afferentClassesAfter));
         classChange.getEfferentClassesBefore().addAll(loadClassElements(pullRequest, str_cl.efferentClassesBefore));
@@ -585,74 +583,61 @@ public class JsonFileReader {
         classChange.getMethodChanges().forEach(c -> setReferenceRelation(pullRequest,c));
     }
     
-    private Set<CodeElement> loadClassElements(PullRequest pullRequest,Set<Str_CodeElement> str_codeElements)
-    {
-    	Set<CodeElement> classElements = new HashSet<>();
-    	for(Str_CodeElement str_ce : str_codeElements)
-    	{
-    		CodeElement classElement = new CodeElement(pullRequest,str_ce.stage,str_ce.qulifiedName,str_ce.sourceCode);
-    		classElement.setPrmodelId(str_ce.prmodelId);
-    		classElements.add(classElement);
-    	}
-    	
-    	return classElements;
-    }
+	private Set<CodeElement> loadClassElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
+		Set<CodeElement> classElements = new HashSet<>();
+		if (str_codeElements != null) {
+			for (Str_CodeElement str_ce : str_codeElements) {
+				CodeElement classElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
+						str_ce.sourceCode);
+				classElement.setPrmodelId(str_ce.prmodelId);
+				classElements.add(classElement);
+			}
+		}
+
+		return classElements;
+	}
     
     private void setReferenceRelation(PullRequest pullRequest, FieldChange fieldChange) {
         Str_FieldChange str_fd = fieldMap.get(fieldChange);
-//        fieldChange.getCallingMethodsBefore()
-//                   .addAll(getElements(str_fd.callingMethodsBeforeIndices, methodElementBeforeMap));
-//        fieldChange.getCalledMethodsAfter()
-//                   .addAll(getElements(str_fd.callingMethodsAfterIndices, methodElementAfterMap));
-//        fieldChange.getCalledMethodsBefore()
-//                   .addAll(getElements(str_fd.calledMethodsBeforeIndices, methodElementBeforeMap));
-//        fieldChange.getCalledMethodsAfter()
-//                   .addAll(getElements(str_fd.callingMethodsAfterIndices, methodElementAfterMap));
         fieldChange.getAccessingMethodsBefore().addAll(loadFieldElements(pullRequest,str_fd.AccessingMethodsBefore));
         fieldChange.getAccessingMethodsAfter().addAll(loadFieldElements(pullRequest, str_fd.AccessingMethodsAfter));
         fieldChange.getCalledMethodsBefore().addAll(loadFieldElements(pullRequest, str_fd.calledMethodsBefore));
         fieldChange.getCalledMethodsAfter().addAll(loadFieldElements(pullRequest,str_fd.calledMethodsAfter));
     }
     
-    private Set<CodeElement> loadFieldElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements)
-    {
-    	Set<CodeElement> fieldElements = new HashSet<>();
-    	for(Str_CodeElement str_ce : str_codeElements)
-    	{
-    		CodeElement fieldElement = new CodeElement(pullRequest, str_ce.stage,str_ce.qulifiedName,str_ce.sourceCode);
-    		fieldElement.setPrmodelId(str_ce.prmodelId);
-    		fieldElements.add(fieldElement);
-    	}
-    	return fieldElements;
-    }
+	private Set<CodeElement> loadFieldElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
+		Set<CodeElement> fieldElements = new HashSet<>();
+		if (str_codeElements != null) {
+			for (Str_CodeElement str_ce : str_codeElements) {
+				CodeElement fieldElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
+						str_ce.sourceCode);
+				fieldElement.setPrmodelId(str_ce.prmodelId);
+				fieldElements.add(fieldElement);
+			}
+		}
+		return fieldElements;
+	}
     
     private void setReferenceRelation(PullRequest pullRequest , MethodChange methodChange) {
         Str_MethodChange str_md = methodMap.get(methodChange);
-//        methodChange.getCallingMethodsBefore()
-//                    .addAll(getElements(str_md.callingMethodsBeforeIndices, methodElementBeforeMap));
-//        methodChange.getCallingMethodsAfter()
-//                    .addAll(getElements(str_md.callingMethodsAfterIndices, methodElementAfterMap));
-//        methodChange.getCalledMethodsBefore()
-//                    .addAll(getElements(str_md.calledMethodsBeforeIndices, methodElementBeforeMap));
-//        methodChange.getCalledMethodsAfter()
-//                    .addAll(getElements(str_md.callingMethodsAfterIndices, methodElementAfterMap));
         methodChange.getCallingMethodsBefore().addAll(loadMethodElements(pullRequest,str_md.callingMethodsBefore));
         methodChange.getCallingMethodsAfter().addAll(loadMethodElements(pullRequest,str_md.callingMethodsAfter));
         methodChange.getCalledMethodsBefore().addAll(loadMethodElements(pullRequest, str_md.calledMethodsBefore));
         methodChange.getCalledMethodsAfter().addAll(loadMethodElements(pullRequest,str_md.calledMethodsAfter));
     }
     
-    private Set<CodeElement> loadMethodElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements)
-    {
-    	Set<CodeElement> methodElements = new HashSet<>();
-    	for(Str_CodeElement str_ce : str_codeElements)
-    	{
-    		CodeElement methodElement = new CodeElement(pullRequest, str_ce.stage,str_ce.qulifiedName,str_ce.sourceCode);
-    		methodElement.setPrmodelId(str_ce.prmodelId);
-    		methodElements.add(methodElement);
-    	}
-    	return methodElements;
-    }
+	private Set<CodeElement> loadMethodElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
+		Set<CodeElement> methodElements = new HashSet<>();
+		if (str_codeElements != null) {
+			for (Str_CodeElement str_ce : str_codeElements) {
+				CodeElement methodElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
+						str_ce.sourceCode);
+				methodElement.setPrmodelId(str_ce.prmodelId);
+				methodElements.add(methodElement);
+			}
+		}
+		return methodElements;
+	}
     
     private Set<CodeElement> getElements(Set<String> indices, Map<String, CodeElement> elemMap) {
         Set<CodeElement> elems = new HashSet<>();
@@ -680,19 +665,21 @@ public class JsonFileReader {
         return ciStaruses;
     }
     
-    private FilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChanged str_info) {
-        FilesChanged info = new FilesChanged(pullRequest, str_info.hasJavaFile);
-        info.setPrmodelId(str_info.prmodelId);
-        
-        for (String id : str_info.diffFileIds) {
-            info.getDiffFiles().add(diffFileMap.get(id));
-        }
-        
-        for (String id : str_info.fileChangeIds) {
-            info.getFileChanges().add(fileChangeMap.get(id));
-        }
-        return info;
-    }
+	private FilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChanged str_info) {
+		FilesChanged info = new FilesChanged(pullRequest, str_info.hasJavaFile);
+		info.setPrmodelId(str_info.prmodelId);
+		if (str_info.diffFileIds != null) {
+			for (String id : str_info.diffFileIds) {
+				info.getDiffFiles().add(diffFileMap.get(id));
+			}
+		}
+		if (str_info.fileChangeIds != null) {
+			for (String id : str_info.fileChangeIds) {
+				info.getFileChanges().add(fileChangeMap.get(id));
+			}
+		}
+		return info;
+	}
     
     private Set<Label> loadLabels(PullRequest pullRequest, Set<Str_Label> str_lbs) {
         Set<Label> labels = new HashSet<>();

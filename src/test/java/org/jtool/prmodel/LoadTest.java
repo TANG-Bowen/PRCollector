@@ -17,15 +17,5 @@ public class LoadTest {
         }
         System.out.println("total " + pullRequests.size() + " prs");
         
-//        String filePath2 = "/Users/tangbowen/PRDataset-te/PRCollector/spring-boot";
-//        PRModelLoader loader2 = new PRModelLoader(filePath2);
-//        
-//        PRModel prmodel2 = loader2.load();
-//        Set<PullRequest> pullRequests2 = prmodel2.getPullRequests();
-//        if (pullRequests2.size() == 1) {
-//            PullRequest pr2 = pullRequests2.iterator().next();
-//            System.out.println(" PR : " + pr2.getTitle() + "   createDate : " + pr2.getCreateDate());
-//            pr2.print();
-//        }
     }
 }

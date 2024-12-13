@@ -22,6 +22,7 @@ public class QuickAccessAPITest {
         printTimeFeature();
     }
     
+    
     public void printCommitFeature() {
         System.out.println();
         System.out.println("Commit : ");
