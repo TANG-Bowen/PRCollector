@@ -116,7 +116,7 @@ public class PullRequest extends PRElement {
         System.out.println(prefix + "id : " + id);
         System.out.println(prefix + "title : " + title);
         System.out.println(prefix + "repositoryName : " + repositoryName);
-        System.out.println(prefix + "state : " + state.toString());
+        System.out.println(prefix + "state : " + state);
         
         System.out.println(prefix + "createDate : " + createDate.toString());
         System.out.println(prefix + "endDate : " + endDate.toString());

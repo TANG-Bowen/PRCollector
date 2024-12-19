@@ -55,6 +55,7 @@ public class DiffFile extends PRElement {
         System.out.println(prefix + "bodyAll : " + bodyAll);
         System.out.println(prefix + "bodyAdd : "+ bodyAdd);
         System.out.println(prefix + "bodyDel : " + bodyDel );
+        System.out.println(prefix + "diffLine(size) : "+diffLines.size());
         diffLines.forEach(e -> e.print());
     }
     

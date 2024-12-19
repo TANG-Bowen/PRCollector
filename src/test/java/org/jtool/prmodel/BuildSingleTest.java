@@ -14,7 +14,7 @@ public class BuildSingleTest {
         
         String filePath = "/Users/tangbowen/PRDataset-te";
         
-        PRModelBundle bundle = new PRModelBundle(psnToken_ac_0109, repoName_dubbo, filePath, 9774);
+        PRModelBundle bundle = new PRModelBundle(psnToken_ac_0109, repoName_arrow, filePath, 12640);
         //PRModelBundle bundle = new PRModelBundle(psnToken_tf_1004, repoName_cassandra, filePath, 3008);
         //PRModelBundle bundle = new PRModelBundle(psnToken_tf_1004, repoName_dubbo, filePath, 9846);
         
@@ -27,9 +27,14 @@ public class BuildSingleTest {
         bundle.build();
         
         System.out.println("Collection was over");
-//        for(PullRequest pri : bundle.getPullRequests())
-//        {
-//        	pri.print();
-//        }
+        for(PullRequest pri : bundle.getPullRequests())
+        {
+        	pri.print();
+        }
+        
+        for(DataLoss dli : bundle.getDataLosses())
+        {
+        	dli.print();
+        }
     }
 }

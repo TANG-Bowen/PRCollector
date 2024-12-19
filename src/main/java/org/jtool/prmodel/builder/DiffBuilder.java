@@ -323,7 +323,7 @@ public class DiffBuilder {
                 if (diffFile.isJavaFile()) {
                     for (FileChange fileChange : codeChange.getFileChanges()) {
                         if (diffFile.getChangeType() == fileChange.getChangeType()) {
-                            if (diffFile.getPath().equals(fileChange.getPath())) {
+                            if (fileChange.getPath().contains(diffFile.getPath())) {
                                 diffFile.setTest(fileChange.isTest());
                             }
                         }

@@ -16,17 +16,21 @@ import com.google.gson.Gson;
 
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Commit;
+import org.jtool.prmodel.DataLoss;
 import org.jtool.prmodel.PRElement;
 import org.jtool.prmodel.PRModelBundle;
 
 public class JsonFileWriter {
     
-    private final PullRequest pullRequest;
+    private  PullRequest pullRequest;
     
-    private final StringConverter strBuilder;
-    private final Str_PullRequest strPullRequest;
+    private  StringConverter strBuilder;
+    private  Str_PullRequest strPullRequest;
     
-    private final File outputFile;
+    private  File outputFile;
+    
+    private DataLoss dataLoss;
+    private Str_DataLoss strDataLoss;
     
     public JsonFileWriter(PullRequest pullRequest, String outputFilePath) {
         this.pullRequest = pullRequest;
@@ -34,6 +38,14 @@ public class JsonFileWriter {
         
         this.strBuilder = new StringConverter(pullRequest);
         this.strPullRequest = strBuilder.buildPullRequest();
+    }
+    
+    public JsonFileWriter(DataLoss dataLoss, String outputFilePath)
+    {
+    	this.dataLoss = dataLoss;
+    	this.outputFile = new File(outputFilePath);
+    	this.strBuilder = new StringConverter(dataLoss);
+    	this.strDataLoss = strBuilder.buildDataLoss();
     }
     
     public void write() {
@@ -47,6 +59,19 @@ public class JsonFileWriter {
         } catch (IOException e) {
             System.err.println("Could not write " + outputFile);
         }
+    }
+    
+    public void writeDataLoss()
+    {
+    	Gson gson = new Gson();
+    	String jsonStr = gson.toJson(strDataLoss);
+    	
+    	try(FileWriter writer = new FileWriter(outputFile,false)){
+    		writer.write(jsonStr);
+    		System.out.println("Succeeded to write DataLoss "+ dataLoss.getId() + " into a json file !");
+    	}catch(IOException e) {
+    		System.err.println("Could not write " + outputFile);
+    	}
     }
     
     public void deleteGitSourceFile(PullRequest pullRequest, File pullRequestDir) {

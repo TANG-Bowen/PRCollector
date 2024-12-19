@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.Conversation;
+import org.jtool.prmodel.DataLoss;
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
@@ -69,6 +70,8 @@ public class JsonFileReader {
     private Map<String, CodeElement> methodElementBeforeMap = new HashMap<>();
     private Map<String, CodeElement> methodElementAfterMap = new HashMap<>();
     
+    private Set<DataLoss> dataLosses = new HashSet<>();
+    
     public JsonFileReader(String filePath) {
         this.filePath = filePath;
     }
@@ -77,14 +80,21 @@ public class JsonFileReader {
         return pullRequests;
     }
     
+    public Set<DataLoss> getDataLosses()
+    {
+    	return dataLosses;
+    }
+    
     public void read() {
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("File or directory does not exist : " + filePath);
         } else {
             List<File> files = new ArrayList<>();
-            if (file.isFile() && isJsonFromPRCollector(file)) {
+            if (file.isFile()) {
+            	if(isPRJsonFromPRCollector(file) || isDataLossJsonFromPRCollector(file)) {
                 files.add(file);
+            	}
             } else if (file.isDirectory()) {
                 File directory = new File(filePath);
                 files.addAll(listAllFiles(directory));
@@ -93,9 +103,15 @@ public class JsonFileReader {
         }
     }
     
-    private boolean isJsonFromPRCollector(File file)
+    private boolean isPRJsonFromPRCollector(File file)
     {
     	String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_str\\.json$";
+    	return Pattern.matches(pattern, file.getName());
+    }
+    
+    private boolean isDataLossJsonFromPRCollector(File file)
+    {
+    	String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_dl\\.json$";
     	return Pattern.matches(pattern, file.getName());
     }
     
@@ -114,7 +130,7 @@ public class JsonFileReader {
         if (files != null) {
             for (File file : files) {
                 if (file.isFile()) {
-                    if (isJsonFromPRCollector(file)) {
+                    if (isPRJsonFromPRCollector(file)|| isDataLossJsonFromPRCollector(file)) {
                         fileList.add(file);
                     }
                 } else if (file.isDirectory()) {
@@ -125,24 +141,30 @@ public class JsonFileReader {
         return fileList;
     }
     
-    private void readFiles(List<File> files) {
-        for (File file : files) {
-            try {
-                String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
-                content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
-                Gson gson = new Gson();
-                Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
-                
-                PullRequest pullRequest = loadPRModel(str_pr);
-                pullRequests.add(pullRequest);
-                System.out.println("Loaded PR model for " + file.getPath().toString());           
-            } catch (UnsupportedEncodingException e) {
-                System.err.println(e.getMessage());
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
-        }
-    }
+	private void readFiles(List<File> files) {
+		for (File file : files) {
+			try {
+				String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
+				content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
+				Gson gson = new Gson();
+				if (isPRJsonFromPRCollector(file)) {
+					Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
+					PullRequest pullRequest = loadPRModel(str_pr);
+					pullRequests.add(pullRequest);
+					System.out.println("Loaded PR model for " + file.getPath().toString());
+				} else if (isDataLossJsonFromPRCollector(file)) {
+					Str_DataLoss str_dl = gson.fromJson(content, Str_DataLoss.class);
+					DataLoss dataLoss = loadDataLoss(str_dl);
+					dataLosses.add(dataLoss);
+					System.out.println("Loaded dataLoss model for " + file.getPath().toString());
+				}
+			} catch (UnsupportedEncodingException e) {
+				System.err.println(e.getMessage());
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+			}
+		}
+	}
     
     private PullRequest loadPRModel(Str_PullRequest str_pr) {
         PRModelDate createDate = new PRModelDate(str_pr.createDate);
@@ -439,7 +461,7 @@ public class JsonFileReader {
 				diffFile.setCodeChange(codeChange);
 
 				diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
-
+                diffFiles.add(diffFile);
 				diffFileMap.put(diffFile.getPRModelId(), diffFile);
 			}
 		}
@@ -452,8 +474,8 @@ public class JsonFileReader {
 			for (Str_DiffLine str_dl : str_dls) {
 				DiffLine diffLine = new DiffLine(pullRequest, str_dl.changeType, str_dl.text);
 				diffLine.setPrmodelId(str_dl.prmodelId);
-
 				diffLine.setDiffFile(diffFile);
+				diffLines.add(diffLine);
 			}
 		}
 		return diffLines;
@@ -692,5 +714,18 @@ public class JsonFileReader {
             labels.add(label);
         }
         return labels;
+    }
+    
+    private DataLoss loadDataLoss(Str_DataLoss str_dataLoss)
+    {
+    	PRModelDate createDate = new PRModelDate(str_dataLoss.createDate);
+        PRModelDate endDate = new PRModelDate(str_dataLoss.endDate);
+        
+        DataLoss dataLoss = new DataLoss(str_dataLoss.lossType, str_dataLoss.exceptionOutput, str_dataLoss.id,
+        		 str_dataLoss.title, str_dataLoss.repositoryName, str_dataLoss.state, createDate, endDate, str_dataLoss.mergeBranch,
+        		 str_dataLoss.headBranch, str_dataLoss.pageUrl, str_dataLoss.repositorySrcDLUrl, str_dataLoss.headRepositorySrcDLUrl,
+        		 str_dataLoss.isMerged, str_dataLoss.isStandardMerged, str_dataLoss.sourceCodeRetrievable);
+        
+        return dataLoss;
     }
 }

@@ -24,14 +24,14 @@ public class FilesChanged extends PRElement {
     public void collect() {
         for (Commit commit : pullRequest.getTragetCommits()) {
             for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
-                if (diffFiles.contains(diffFile)) {
+                if (!diffFiles.contains(diffFile)) {
                     diffFiles.add(diffFile);
                 }
             }
         }
         for (Commit commit : pullRequest.getTragetCommits()) {
             for (FileChange fileChange : commit.getCodeChange().getFileChanges()) {
-                if (fileChanges.contains(fileChange)) {
+                if (!fileChanges.contains(fileChange)) {
                     fileChanges.add(fileChange);
                 }
             }
@@ -43,6 +43,10 @@ public class FilesChanged extends PRElement {
         System.out.println();
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "hasJavaFile : " + hasJavaFile);
+        diffFiles.forEach(e->e.print());
+        System.out.println(prefix + "diffFiles(size) : "+diffFiles.size());
+        fileChanges.forEach(e->e.print());
+        System.out.println(prefix + "fileChanges(size) : "+fileChanges.size());
     }
     
     /* ------------------------------------

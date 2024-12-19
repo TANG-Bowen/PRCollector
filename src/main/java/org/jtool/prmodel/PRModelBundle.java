@@ -47,6 +47,7 @@ public class PRModelBundle {
     private boolean deleteSourceFile = false;
     
     private Set<PullRequest> pullRequests = new HashSet<>();
+    private Set<DataLoss> dataLosses = new HashSet<>();
     
     public PRModelBundle(String ghToken, String repositoryName, String rootSrcPath, int pullRequestNumber) {
         this.ghToken = ghToken;
@@ -93,28 +94,34 @@ public class PRModelBundle {
         return file.exists();
     }
     
-    private void build(PRModel prmodel) {
-        PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
-        for (GHPullRequest ghPullRequest : ghPullRequests) {
-        	String pullRequestPath = getPullRequestPath(ghPullRequest.getNumber());
-        	if(!alreadyBuilt(pullRequestPath)){
-        		File pullRequestDir = getDir(pullRequestPath);
-            PRModelBuilder builder = new PRModelBuilder(this,
-                    ghToken, ghPullRequest.getNumber(), pullRequestDir);
-            
-            boolean result = builder.build();
-            if (result) {
-                PullRequest pullRequest = builder.getPullRequest();
-                prmodel.addPullRequest(pullRequest);
-                pullRequests.add(pullRequest);
-                writePRModelToFile(pullRequest, pullRequestDir);
-            }
-            builder = null;
-        	}else {
-                System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
-            }
-        }
-    }
+	private void build(PRModel prmodel) {
+		PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
+		for (GHPullRequest ghPullRequest : ghPullRequests) {
+			String pullRequestPath = getPullRequestPath(ghPullRequest.getNumber());
+			if (!alreadyBuilt(pullRequestPath)) {
+				File pullRequestDir = getDir(pullRequestPath);
+				PRModelBuilder builder = new PRModelBuilder(this, ghToken, ghPullRequest.getNumber(), pullRequestDir);
+				boolean result = builder.build();
+				if (result) {
+					PullRequest pullRequest = builder.getPullRequest();
+					prmodel.addPullRequest(pullRequest);
+					pullRequests.add(pullRequest);
+					writePRModelToFile(pullRequest, pullRequestDir);
+				}else {
+					JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
+		        	System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
+		        	
+		        	DataLoss dataLoss = builder.getDataLoss();
+		        	prmodel.addDataLoss(dataLoss);
+		        	dataLosses.add(dataLoss);
+		        	writeDataLossToFile(dataLoss, pullRequestDir);
+				}
+				builder = null;
+			} else {
+				System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
+			}
+		}
+	}
     
     private void buildSingle(PRModel prmodel, int pullRequestNumber) {
     	String pullRequestPath = getPullRequestPath(pullRequestNumber);
@@ -132,7 +139,13 @@ public class PRModelBundle {
         }else {
         	
         	JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
-        	System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath());
+        	System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
+        	
+        	DataLoss dataLoss = builder.getDataLoss();
+        	prmodel.addDataLoss(dataLoss);
+        	dataLosses.add(dataLoss);
+        	writeDataLossToFile(dataLoss, pullRequestDir);
+        	
         }
         builder = null;
     	}else {
@@ -161,6 +174,13 @@ public class PRModelBundle {
             jfwriter.deleteFiles(pullRequestDir.getAbsolutePath(),true);            
             System.out.println("delete retained source files under the pr dir ");
         }
+    }
+    
+    private void writeDataLossToFile(DataLoss dataLoss, File pullRequestDir)
+    {
+    	String jsonPath = pullRequestDir + File.separator + dataLoss.getRepositoryName() + "_" + dataLoss.getId()+"_dl.json";
+    	JsonFileWriter jfwriter = new JsonFileWriter(dataLoss, jsonPath);
+    	jfwriter.writeDataLoss();
     }
     
     public static File getDir(String path) {
@@ -412,6 +432,14 @@ public class PRModelBundle {
 
 	public void setPullRequests(Set<PullRequest> pullRequests) {
 		this.pullRequests = pullRequests;
+	}
+
+	public Set<DataLoss> getDataLosses() {
+		return dataLosses;
+	}
+
+	public void setDataLosses(Set<DataLoss> dataLosses) {
+		this.dataLosses = dataLosses;
 	}
     
     

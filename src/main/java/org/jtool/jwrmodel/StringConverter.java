@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.Conversation;
+import org.jtool.prmodel.DataLoss;
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
@@ -36,9 +37,15 @@ import org.jtool.jxp3model.MethodChange;
 public class StringConverter {
     
     private PullRequest pullRequest;
+    private DataLoss dataLoss;
     
     public StringConverter(PullRequest pullRequest) {
         this.pullRequest = pullRequest;
+    }
+    
+    public StringConverter(DataLoss dataLoss)
+    {
+    	this.dataLoss = dataLoss;
     }
     
     public Str_PullRequest buildPullRequest() {
@@ -541,4 +548,33 @@ public class StringConverter {
         }
         return str_labels;
      }
+    
+    public Str_DataLoss buildDataLoss()
+    {
+    	Str_DataLoss str_dataLoss = new Str_DataLoss();
+    	str_dataLoss.lossType = dataLoss.getLossType();
+    	str_dataLoss.exceptionOutput = dataLoss.getExceptionOutput();
+    	
+        str_dataLoss.id= dataLoss.getId();        
+        str_dataLoss.title = dataLoss.getTitle();
+        str_dataLoss.repositoryName = dataLoss.getRepositoryName();
+        str_dataLoss.state = dataLoss.getState();
+        
+        str_dataLoss.createDate = dataLoss.getCreateDate().toString();
+        str_dataLoss.endDate = dataLoss.getEndDate().toString();
+        
+        str_dataLoss.mergeBranch = dataLoss.getMergeBranch();
+        str_dataLoss.headBranch = dataLoss.getHeadBranch();
+        str_dataLoss.pageUrl = dataLoss.getPageUrl();
+        str_dataLoss.repositorySrcDLUrl = dataLoss.getRepositorySrcDLUrl();
+        
+        str_dataLoss.isMerged = dataLoss.isMerged();
+        str_dataLoss.isStandardMerged = dataLoss.isStandardMerged();
+        str_dataLoss.sourceCodeRetrievable = dataLoss.isSourceCodeRetrievable();
+        
+        str_dataLoss.headRepositorySrcDLUrl = dataLoss.getHeadRepositorySrcDLUrl();
+        
+        return str_dataLoss;
+    	
+    }
 }

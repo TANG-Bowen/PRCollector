@@ -42,7 +42,7 @@ public class LabelBuilder {
                 String color = ghLabel.getColor();
                 GHLabel repoLabel = getGHLabel(repoLabels, name, color);
                 String description = repoLabel.getDescription();
-                
+              
                 Label label = new Label(pullRequest, name, color, description);
                 long ghId = ghEvent.getId();
                 IssueEvent issueEvent = eventMap.get(ghId);
