@@ -10,7 +10,7 @@ import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.ReviewEvent;
 
-public class ConversationFeature {
+public class ConversationRelevance {
     
     public static int numIssueComments(PullRequest pullRequest) {
         return pullRequest.getConversation().getIssueComments().size();
@@ -21,7 +21,7 @@ public class ConversationFeature {
     }
     
     public static int numComments(PullRequest pullRequest) {
-        return  numReviewComments(pullRequest) + numIssueComments(pullRequest);
+        return numReviewComments(pullRequest) + numIssueComments(pullRequest);
     }
     
     public static List<IssueComment> getIssueCommentsWithMentions(PullRequest pullRequest) {
@@ -44,20 +44,45 @@ public class ConversationFeature {
         return comments;
     }
     
-    public static List<ReviewEvent> getReviewEventsWithMentions(PullRequest pullRequest) {
-        List<ReviewEvent> events = new ArrayList<>();
-        for (ReviewEvent event : pullRequest.getConversation().getReviewEvents()) {
-            if (!event.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                events.add(event);
+    public static boolean mentionExists(PullRequest pullRequest) {
+        boolean hasMention = false;
+        for (IssueComment comment : pullRequest.getConversation().getIssueComments()) {
+            if (!comment.getMarkdownDoc().getMentionStrings().isEmpty()) {
+                hasMention = true;
+                break;
             }
         }
-        return events;
+        
+        for (ReviewComment comment : pullRequest.getConversation().getReviewComments()) {
+            if (!comment.getMarkdownDoc().getMentionStrings().isEmpty()) {
+                hasMention = true;
+                break;
+            }
+        }
+        
+        for (ReviewEvent review : pullRequest.getConversation().getReviewEvents()) {
+            if (!review.getMarkdownDoc().getMentionStrings().isEmpty()) {
+                hasMention = true;
+                break;
+            }
+        }
+        return hasMention;
     }
     
     public static List<IssueEvent> getIssueEventsByParticipant(PullRequest pullRequest, Participant participant) {
         List<IssueEvent> events = new ArrayList<>();
         for (IssueEvent event : pullRequest.getConversation().getIssueEvents()) {
             if (event.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
+                events.add(event);
+            }
+        }
+        return events;
+    }
+    
+    public static List<ReviewEvent> getReviewEventsWithMentions(PullRequest pullRequest) {
+        List<ReviewEvent> events = new ArrayList<>();
+        for (ReviewEvent event : pullRequest.getConversation().getReviewEvents()) {
+            if (!event.getMarkdownDoc().getMentionStrings().isEmpty()) {
                 events.add(event);
             }
         }
@@ -94,28 +119,17 @@ public class ConversationFeature {
         return comments;
     }
     
-    public static boolean mentionExists(PullRequest pullRequest) {
-        boolean hasMention = false;
-        for (IssueComment comment : pullRequest.getConversation().getIssueComments()) {
-            if (!comment.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                hasMention = true;
-                break;
+    public static int numPriorInteractionsByParticipant(PullRequest pullRequest, Participant participant) {
+        int num = 0;
+        for (Participant pa : pullRequest.getParticipants()) {
+            if (pa.getLogin().equals(participant.getLogin())) {
+                for (IssueEvent event : pullRequest.getConversation().getIssueEvents()) {
+                    if (event.getParticipant().getLogin().equals(participant.getLogin())) {
+                        num++;
+                    }
+                }
             }
         }
-        
-        for (ReviewComment comment : pullRequest.getConversation().getReviewComments()) {
-            if (!comment.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                hasMention = true;
-                break;
-            }
-        }
-        
-        for (ReviewEvent review : pullRequest.getConversation().getReviewEvents()) {
-            if (!review.getMarkdownDoc().getMentionStrings().isEmpty()) {
-                hasMention = true;
-                break;
-            }
-        }
-        return hasMention;
+        return num;
     }
 }

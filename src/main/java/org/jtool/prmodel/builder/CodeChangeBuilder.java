@@ -101,28 +101,27 @@ public class CodeChangeBuilder {
                 pathBefore = basePathBefore + File.separator + projectPath;
                 pathAfter = basePathAfter + File.separator + projectPath;
             }
-        	if(projectPath!="")
-        	{
-        		File fb = new File(pathBefore);
-        		File fa = new File(pathAfter);
-        		if(fb.exists()==true && fa.exists()==false)
-        		{
-        			System.out.println("Project build(delete)   "+ fb.getAbsolutePath());
-        			buildProjectChange(codeChange, PRElement.DELETE,projectName,projectPath,pathBefore,pathAfter);
-        		}else if(fb.exists() == false && fa.exists() == true)
-        		{
-        			System.out.println("Project build(add)   "+fa.getAbsolutePath());
-        			buildProjectChange(codeChange, PRElement.ADD, projectName, projectPath, pathBefore,pathAfter);
-        		}else if(fb.exists() == true && fa.exists()== true)
-        		{
-        			System.out.println("Project build(revise-before)   "+fb.getAbsolutePath() );
-        			System.out.println("Project build(revise-after)   "+fa.getAbsolutePath() );
-        			buildProjectChange(codeChange, PRElement.REVISE,projectName,projectPath,pathBefore,pathAfter);
-        		}else {
-        			System.out.println("No input path for code change building !");
-        		}
-        		
-        	}
+            
+            if (projectPath != "") {
+                File fb = new File(pathBefore);
+                File fa = new File(pathAfter);
+                if (fb.exists() && !fa.exists()) {
+                    System.out.println("Project build(delete)   " + fb.getAbsolutePath());
+                    buildProjectChange(codeChange, PRElement.DELETE,
+                            projectName, projectPath, pathBefore, pathAfter);
+                } else if (!fb.exists() && fa.exists()) {
+                    System.out.println("Project build(add)   " + fa.getAbsolutePath());
+                    buildProjectChange(codeChange, PRElement.ADD,
+                            projectName, projectPath, pathBefore, pathAfter);
+                } else if (fb.exists() && fa.exists()) {
+                    System.out.println("Project build(revise-before)   " + fb.getAbsolutePath() );
+                    System.out.println("Project build(revise-after)   " + fa.getAbsolutePath() );
+                    buildProjectChange(codeChange, PRElement.REVISE,
+                            projectName, projectPath, pathBefore, pathAfter);
+                }else {
+                    System.out.println("No input path for code change building !");
+                }
+            }
         }
     }
     
@@ -158,7 +157,6 @@ public class CodeChangeBuilder {
             }
             
             existingProjects.put(projectPath, new ProjectInfo(projectChange, projectBefore, projectAfter));
-           
         }
         projectInfo = existingProjects.get(projectPath);
         buildFileChanges(codeChange, projectInfo.projectChange, changeType,
@@ -219,16 +217,10 @@ public class CodeChangeBuilder {
         }
     }
     
-    private boolean inBuiltFiles(JavaFile jfile, ProjectChange projectChange)
-    {
-    	for(FileChange fileChange : projectChange.getFileChanges())
-    	{
-    		if(jfile.getPath().equals(fileChange.getPath()))
-    		{
-    			return true;
-    		}
-    	}
-    	return false;
+    private boolean inBuiltFiles(JavaFile jfile, ProjectChange projectChange) {
+        return projectChange.getFileChanges().stream()
+                            .map(c -> c.getPath())
+                            .anyMatch(p -> p.equals(jfile.getPath()));
     }
     
     private FileChange createFileDeleted(CodeChange codeChange, JavaFile jfile) {
@@ -664,6 +656,7 @@ public class CodeChangeBuilder {
         }
     }
     
+    @SuppressWarnings("unused")
     private Set<CodeElement> getClassElements(Set<JavaClass> classes, Map<JavaClass, CodeElement> classElemMap) {
         Set<CodeElement> elems = new HashSet<>();
         for (JavaClass jclass : classes) {
@@ -675,17 +668,17 @@ public class CodeChangeBuilder {
         return elems;
     }
     
-    private Set<CodeElement> getClassElements(Set<JavaClass> classes, String stage)
-    {
-    	Set<CodeElement> elems = new HashSet<>();
-    	for(JavaClass jclass : classes)
-    	{
-    		CodeElement codeElem = new CodeElement(pullRequest, stage, jclass.getQualifiedName().fqn(), jclass.getSource());
-    		elems.add(codeElem);
-    	}
-    	return elems;
+    private Set<CodeElement> getClassElements(Set<JavaClass> classes, String stage) {
+        Set<CodeElement> elems = new HashSet<>();
+        for(JavaClass jclass : classes)
+        {
+            CodeElement codeElem = new CodeElement(pullRequest, stage, jclass.getQualifiedName().fqn(), jclass.getSource());
+            elems.add(codeElem);
+        }
+        return elems;
     }
     
+    @SuppressWarnings("unused")
     private Set<CodeElement> getMethodElements(Set<JavaMethod> methods, Map<JavaMethod, CodeElement> methodElemMap) {
         Set<CodeElement> elems = new HashSet<>();
         for (JavaMethod jmethod : methods) {
@@ -697,16 +690,15 @@ public class CodeChangeBuilder {
         return elems;
     }
     
-    private Set<CodeElement> getMethodElements(Set<JavaMethod> methods, String stage)
-    {
-    	Set<CodeElement> elems = new HashSet<>();
-    	for(JavaMethod jmethod : methods)
-    	{
-    		CodeElement codeElem = new CodeElement(pullRequest,stage,jmethod.getQualifiedName().fqn(), jmethod.getSource());
-    		
-    		elems.add(codeElem);
-    	}
-    	return elems;
+    private Set<CodeElement> getMethodElements(Set<JavaMethod> methods, String stage) {
+        Set<CodeElement> elems = new HashSet<>();
+        for(JavaMethod jmethod : methods)
+        {
+            CodeElement codeElem = new CodeElement(pullRequest,stage,jmethod.getQualifiedName().fqn(), jmethod.getSource());
+            
+            elems.add(codeElem);
+        }
+        return elems;
     }
     
     private void setTest(CodeChange codeChange) {

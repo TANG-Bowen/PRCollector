@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.Conversation;
-import org.jtool.prmodel.DataLoss;
+import org.jtool.prmodel.DeficientPullRequest;
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
@@ -50,6 +50,7 @@ public class JsonFileReader {
     private final String filePath;
     
     private Set<PullRequest> pullRequests = new HashSet<>();
+    private Set<DeficientPullRequest> deficientPullRequests = new HashSet<>();
     
     private Map<String, Participant> participantMap = new HashMap<>();
     
@@ -70,8 +71,6 @@ public class JsonFileReader {
     private Map<String, CodeElement> methodElementBeforeMap = new HashMap<>();
     private Map<String, CodeElement> methodElementAfterMap = new HashMap<>();
     
-    private Set<DataLoss> dataLosses = new HashSet<>();
-    
     public JsonFileReader(String filePath) {
         this.filePath = filePath;
     }
@@ -80,9 +79,8 @@ public class JsonFileReader {
         return pullRequests;
     }
     
-    public Set<DataLoss> getDataLosses()
-    {
-    	return dataLosses;
+    public Set<DeficientPullRequest> getDeficientPullRequests() {
+    	return deficientPullRequests;
     }
     
     public void read() {
@@ -115,6 +113,7 @@ public class JsonFileReader {
     	return Pattern.matches(pattern, file.getName());
     }
     
+    @SuppressWarnings("unused")
     private String getFileExtension(File file) {
         String name = file.getName();
         int dotIndex = name.lastIndexOf('.');
@@ -141,30 +140,30 @@ public class JsonFileReader {
         return fileList;
     }
     
-	private void readFiles(List<File> files) {
-		for (File file : files) {
-			try {
-				String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
-				content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
-				Gson gson = new Gson();
-				if (isPRJsonFromPRCollector(file)) {
-					Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
-					PullRequest pullRequest = loadPRModel(str_pr);
-					pullRequests.add(pullRequest);
-					System.out.println("Loaded PR model for " + file.getPath().toString());
-				} else if (isDataLossJsonFromPRCollector(file)) {
-					Str_DataLoss str_dl = gson.fromJson(content, Str_DataLoss.class);
-					DataLoss dataLoss = loadDataLoss(str_dl);
-					dataLosses.add(dataLoss);
-					System.out.println("Loaded dataLoss model for " + file.getPath().toString());
-				}
-			} catch (UnsupportedEncodingException e) {
-				System.err.println(e.getMessage());
-			} catch (IOException e) {
-				System.err.println(e.getMessage());
-			}
-		}
-	}
+    private void readFiles(List<File> files) {
+        for (File file : files) {
+            try {
+                String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
+                content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
+                Gson gson = new Gson();
+                if (isPRJsonFromPRCollector(file)) {
+                    Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
+                    PullRequest pullRequest = loadPRModel(str_pr);
+                    pullRequests.add(pullRequest);
+                    System.out.println("Loaded PR model for " + file.getPath().toString());
+                } else if (isDataLossJsonFromPRCollector(file)) {
+                    Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
+                    DeficientPullRequest deficientPullRequest = loadDeficientPullRequest(str_pr);
+                    deficientPullRequests.add(deficientPullRequest);
+                    System.out.println("Loaded deficient PR for " + file.getPath().toString());
+                }
+            } catch (UnsupportedEncodingException e) {
+                System.err.println(e.getMessage());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+    }
     
     private PullRequest loadPRModel(Str_PullRequest str_pr) {
         PRModelDate createDate = new PRModelDate(str_pr.createDate);
@@ -448,56 +447,56 @@ public class JsonFileReader {
         return codeChange;
     }
     
-	private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
-		List<DiffFile> diffFiles = new ArrayList<>();
-		if (str_dfs != null) {
-			for (Str_DiffFile str_df : str_dfs) {
-				DiffFile diffFile = new DiffFile(pullRequest, str_df.changeType, str_df.path, str_df.bodyAll,
-						str_df.bodyAdd, str_df.bodyDel, str_df.sourceCodeBefore, str_df.sourceCodeAfter,
-						str_df.isJavaFile);
-				diffFile.setPrmodelId(str_df.prmodelId);
-
-				diffFile.setTest(str_df.isTest);
-				diffFile.setCodeChange(codeChange);
-
-				diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
+    private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
+        List<DiffFile> diffFiles = new ArrayList<>();
+        if (str_dfs != null) {
+            for (Str_DiffFile str_df : str_dfs) {
+                DiffFile diffFile = new DiffFile(pullRequest, str_df.changeType, str_df.path, str_df.bodyAll,
+                        str_df.bodyAdd, str_df.bodyDel, str_df.sourceCodeBefore, str_df.sourceCodeAfter,
+                        str_df.isJavaFile);
+                diffFile.setPrmodelId(str_df.prmodelId);
+                
+                diffFile.setTest(str_df.isTest);
+                diffFile.setCodeChange(codeChange);
+                
+                diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
                 diffFiles.add(diffFile);
-				diffFileMap.put(diffFile.getPRModelId(), diffFile);
-			}
-		}
-		return diffFiles;
-	}
+                diffFileMap.put(diffFile.getPRModelId(), diffFile);
+            }
+        }
+        return diffFiles;
+    }
     
-	private List<DiffLine> loadDiffLines(PullRequest pullRequest, DiffFile diffFile, List<Str_DiffLine> str_dls) {
-		List<DiffLine> diffLines = new ArrayList<>();
-		if (str_dls != null) {
-			for (Str_DiffLine str_dl : str_dls) {
-				DiffLine diffLine = new DiffLine(pullRequest, str_dl.changeType, str_dl.text);
-				diffLine.setPrmodelId(str_dl.prmodelId);
-				diffLine.setDiffFile(diffFile);
-				diffLines.add(diffLine);
-			}
-		}
-		return diffLines;
-	}
+    private List<DiffLine> loadDiffLines(PullRequest pullRequest, DiffFile diffFile, List<Str_DiffLine> str_dls) {
+        List<DiffLine> diffLines = new ArrayList<>();
+        if (str_dls != null) {
+            for (Str_DiffLine str_dl : str_dls) {
+                DiffLine diffLine = new DiffLine(pullRequest, str_dl.changeType, str_dl.text);
+                diffLine.setPrmodelId(str_dl.prmodelId);
+                diffLine.setDiffFile(diffFile);
+                diffLines.add(diffLine);
+            }
+        }
+        return diffLines;
+    }
     
-	private Set<ProjectChange> loadProjectChange(PullRequest pullRequest, CodeChange codeChange,
-			Set<Str_ProjectChange> str_pjs) {
-		Set<ProjectChange> projectChanges = new HashSet<>();
-		if (str_pjs != null) {
-			for (Str_ProjectChange str_pj : str_pjs) {
-				ProjectChange projectChange = new ProjectChange(pullRequest, str_pj.name, str_pj.path);
-				projectChange.setPrmodelId(str_pj.prmodelId);
+    private Set<ProjectChange> loadProjectChange(PullRequest pullRequest, CodeChange codeChange,
+            Set<Str_ProjectChange> str_pjs) {
+        Set<ProjectChange> projectChanges = new HashSet<>();
+        if (str_pjs != null) {
+            for (Str_ProjectChange str_pj : str_pjs) {
+                ProjectChange projectChange = new ProjectChange(pullRequest, str_pj.name, str_pj.path);
+                projectChange.setPrmodelId(str_pj.prmodelId);
 
-				projectChange.setCodeChange(codeChange);
-				projectChange.getFileChanges()
-						.addAll(loadFileChange(pullRequest, codeChange, projectChange, str_pj.fileChanges));
+                projectChange.setCodeChange(codeChange);
+                projectChange.getFileChanges()
+                        .addAll(loadFileChange(pullRequest, codeChange, projectChange, str_pj.fileChanges));
 
-				projectChanges.add(projectChange);
-			}
-		}
-		return projectChanges;
-	}
+                projectChanges.add(projectChange);
+            }
+        }
+        return projectChanges;
+    }
     
     private Set<FileChange> loadFileChange(PullRequest pullRequest, CodeChange codeChange,
             ProjectChange ProjectChange, Set<Str_FileChange> str_fls) {
@@ -605,19 +604,18 @@ public class JsonFileReader {
         classChange.getMethodChanges().forEach(c -> setReferenceRelation(pullRequest,c));
     }
     
-	private Set<CodeElement> loadClassElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
-		Set<CodeElement> classElements = new HashSet<>();
-		if (str_codeElements != null) {
-			for (Str_CodeElement str_ce : str_codeElements) {
-				CodeElement classElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
-						str_ce.sourceCode);
-				classElement.setPrmodelId(str_ce.prmodelId);
-				classElements.add(classElement);
-			}
-		}
-
-		return classElements;
-	}
+    private Set<CodeElement> loadClassElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
+        Set<CodeElement> classElements = new HashSet<>();
+        if (str_codeElements != null) {
+            for (Str_CodeElement str_ce : str_codeElements) {
+                CodeElement classElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
+                        str_ce.sourceCode);
+                classElement.setPrmodelId(str_ce.prmodelId);
+                classElements.add(classElement);
+            }
+        }
+        return classElements;
+    }
     
     private void setReferenceRelation(PullRequest pullRequest, FieldChange fieldChange) {
         Str_FieldChange str_fd = fieldMap.get(fieldChange);
@@ -648,19 +646,20 @@ public class JsonFileReader {
         methodChange.getCalledMethodsAfter().addAll(loadMethodElements(pullRequest,str_md.calledMethodsAfter));
     }
     
-	private Set<CodeElement> loadMethodElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
-		Set<CodeElement> methodElements = new HashSet<>();
-		if (str_codeElements != null) {
-			for (Str_CodeElement str_ce : str_codeElements) {
-				CodeElement methodElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
-						str_ce.sourceCode);
-				methodElement.setPrmodelId(str_ce.prmodelId);
-				methodElements.add(methodElement);
-			}
-		}
-		return methodElements;
-	}
+    private Set<CodeElement> loadMethodElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
+        Set<CodeElement> methodElements = new HashSet<>();
+        if (str_codeElements != null) {
+            for (Str_CodeElement str_ce : str_codeElements) {
+                CodeElement methodElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
+                        str_ce.sourceCode);
+                methodElement.setPrmodelId(str_ce.prmodelId);
+                methodElements.add(methodElement);
+            }
+        }
+        return methodElements;
+    }
     
+    @SuppressWarnings("unused")
     private Set<CodeElement> getElements(Set<String> indices, Map<String, CodeElement> elemMap) {
         Set<CodeElement> elems = new HashSet<>();
         for (String index : indices) {
@@ -687,21 +686,21 @@ public class JsonFileReader {
         return ciStaruses;
     }
     
-	private FilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChanged str_info) {
-		FilesChanged info = new FilesChanged(pullRequest, str_info.hasJavaFile);
-		info.setPrmodelId(str_info.prmodelId);
-		if (str_info.diffFileIds != null) {
-			for (String id : str_info.diffFileIds) {
-				info.getDiffFiles().add(diffFileMap.get(id));
-			}
-		}
-		if (str_info.fileChangeIds != null) {
-			for (String id : str_info.fileChangeIds) {
-				info.getFileChanges().add(fileChangeMap.get(id));
-			}
-		}
-		return info;
-	}
+    private FilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChanged str_info) {
+        FilesChanged info = new FilesChanged(pullRequest, str_info.hasJavaFile);
+        info.setPrmodelId(str_info.prmodelId);
+        if (str_info.diffFileIds != null) {
+            for (String id : str_info.diffFileIds) {
+                info.getDiffFiles().add(diffFileMap.get(id));
+            }
+        }
+        if (str_info.fileChangeIds != null) {
+            for (String id : str_info.fileChangeIds) {
+                info.getFileChanges().add(fileChangeMap.get(id));
+            }
+        }
+        return info;
+    }
     
     private Set<Label> loadLabels(PullRequest pullRequest, Set<Str_Label> str_lbs) {
         Set<Label> labels = new HashSet<>();
@@ -716,16 +715,16 @@ public class JsonFileReader {
         return labels;
     }
     
-    private DataLoss loadDataLoss(Str_DataLoss str_dataLoss)
-    {
-    	PRModelDate createDate = new PRModelDate(str_dataLoss.createDate);
-        PRModelDate endDate = new PRModelDate(str_dataLoss.endDate);
+    private DeficientPullRequest loadDeficientPullRequest(Str_DeficientPullRequest str_pr) {
+        PRModelDate createDate = new PRModelDate(str_pr.createDate);
+        PRModelDate endDate = new PRModelDate(str_pr.endDate);
         
-        DataLoss dataLoss = new DataLoss(str_dataLoss.lossType, str_dataLoss.exceptionOutput, str_dataLoss.id,
-        		 str_dataLoss.title, str_dataLoss.repositoryName, str_dataLoss.state, createDate, endDate, str_dataLoss.mergeBranch,
-        		 str_dataLoss.headBranch, str_dataLoss.pageUrl, str_dataLoss.repositorySrcDLUrl, str_dataLoss.headRepositorySrcDLUrl,
-        		 str_dataLoss.isMerged, str_dataLoss.isStandardMerged, str_dataLoss.sourceCodeRetrievable);
-        
-        return dataLoss;
+        DeficientPullRequest pullRequest = new DeficientPullRequest(str_pr.lossType, str_pr.exceptionOutput,
+                str_pr.id, str_pr.title, str_pr.repositoryName, str_pr.state, 
+                createDate, endDate,
+                str_pr.mergeBranch, str_pr.headBranch, str_pr.pageUrl, str_pr.repositorySrcDLUrl,
+                str_pr.headRepositorySrcDLUrl,
+                str_pr.isMerged, str_pr.isStandardMerged, str_pr.sourceCodeRetrievable);
+        return pullRequest;
     }
 }

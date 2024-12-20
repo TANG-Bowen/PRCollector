@@ -12,10 +12,10 @@ public class LoadTest {
         Set<PullRequest> pullRequests = prmodel.getPullRequests();
         
         System.out.println("Output head : ");
+        
         for (PullRequest pr : pullRequests) {
             System.out.println(" PR : " + pr.getTitle()+"   createDate : " + pr.getCreateDate());
         }
         System.out.println("total " + pullRequests.size() + " prs");
-        
     }
 }

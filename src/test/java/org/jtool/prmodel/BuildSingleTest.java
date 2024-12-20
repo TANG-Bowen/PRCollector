@@ -27,14 +27,13 @@ public class BuildSingleTest {
         bundle.build();
         
         System.out.println("Collection was over");
-        for(PullRequest pri : bundle.getPullRequests())
-        {
-        	pri.print();
+        
+        for (PullRequest pr : bundle.getPullRequests()) {
+            pr.print();
         }
         
-        for(DataLoss dli : bundle.getDataLosses())
-        {
-        	dli.print();
+        for (DeficientPullRequest pr : bundle.getDeficientPullRequests()) {
+            pr.print();
         }
     }
 }

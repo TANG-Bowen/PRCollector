@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
 
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-import org.jtool.prmodel.DataLoss;
-import org.jtool.prmodel.IssueEvent;
+
+import org.jtool.prmodel.DeficientPullRequest;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.PRModelBundle;
@@ -36,7 +35,7 @@ public class PRModelBuilder {
     private final boolean writeErrorLog;
     
     private PullRequest pullRequest;
-    private DataLoss dataLoss;
+    private DeficientPullRequest deficientPullRequest;
     
     public PRModelBuilder(PRModelBundle bundle, String ghToken, int pullRequestNumber, File pullRequestDir) {
         this.repositoryName = bundle.getRepositoryName();
@@ -136,28 +135,24 @@ public class PRModelBuilder {
             return true;
             
         } catch (Exception e) {
-            recordException(e, repository, ghPullRequest);            
+            recordException(e, repository, ghPullRequest); 
             PullRequestBuilder pullRequestBuilder = new PullRequestBuilder(ghPullRequest);
             try {
-				pullRequest = pullRequestBuilder.build();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+                pullRequest = pullRequestBuilder.build();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             
-            DataLossBuilder dataLossBuilder = new DataLossBuilder(pullRequest, getStackTraceAsString(e));
-            dataLoss = dataLossBuilder.build();
+            DeficientPullRequestBuilder deficientPullRequestBuilder = new DeficientPullRequestBuilder(pullRequest, getStackTraceAsString(e));
+            deficientPullRequest = deficientPullRequestBuilder.build();
             
             return false;
         }
     }
     
-    public DataLoss getDataLoss()
-    {
-    	return dataLoss;
+    public DeficientPullRequest getDeficientPullRequest() {
+    	return deficientPullRequest;
     }
-    
-    
     
     private boolean checkDownloadingChangedFiles(GHPullRequest ghPullRequest) throws IOException {
         int changedFilesSize = ghPullRequest.listFiles().toList().size();
@@ -204,9 +199,9 @@ public class PRModelBuilder {
     }
     
     private static String getStackTraceAsString(Throwable e) {
-    	StringWriter stringWriter = new StringWriter();
-    	PrintWriter printWriter = new PrintWriter(stringWriter);
-    	e.printStackTrace(printWriter);
-    	return stringWriter.toString();
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        return stringWriter.toString();
     }
 }

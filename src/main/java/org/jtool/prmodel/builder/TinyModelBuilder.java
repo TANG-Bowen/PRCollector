@@ -23,7 +23,6 @@ public class TinyModelBuilder extends ModelBuilder {
         return jproject;
     }
     
-    
     public JavaProject buildSingle(String name, String[] srcpath) {
         JavaProject jproject = getModelBuilderImpl().buildSingle(this, name, srcpath);
         return jproject;
