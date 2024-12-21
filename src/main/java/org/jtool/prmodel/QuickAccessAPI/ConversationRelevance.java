@@ -72,7 +72,7 @@ public class ConversationRelevance {
     public static List<IssueEvent> getIssueEventsByParticipant(PullRequest pullRequest, Participant participant) {
         List<IssueEvent> events = new ArrayList<>();
         for (IssueEvent event : pullRequest.getConversation().getIssueEvents()) {
-            if (event.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
+            if (event.getParticipant().equals(participant)) {
                 events.add(event);
             }
         }
@@ -92,7 +92,7 @@ public class ConversationRelevance {
     public static List<ReviewEvent> getReviewEventsByParticipant(PullRequest pullRequest, Participant participant) {
         List<ReviewEvent> events = new ArrayList<>();
         for (ReviewEvent event : pullRequest.getConversation().getReviewEvents()) {
-            if (event.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
+            if (event.getParticipant().equals(participant)) {
                 events.add(event);
             }
         }
@@ -102,7 +102,7 @@ public class ConversationRelevance {
     public static List<IssueComment> getIssueCommentsByParticipant(PullRequest pullRequest, Participant participant) {
         List<IssueComment> comments = new ArrayList<>();
         for (IssueComment comment : pullRequest.getConversation().getIssueComments()) {
-            if (comment.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
+            if (comment.getParticipant().equals(participant)) {
                 comments.add(comment);
             }
         }
@@ -112,7 +112,7 @@ public class ConversationRelevance {
     public static List<ReviewComment> getReviewCommentsByParticipant(PullRequest pullRequest, Participant participant) {
         List<ReviewComment> comments = new ArrayList<>();
         for (ReviewComment comment: pullRequest.getConversation().getReviewComments()) {
-            if (comment.getParticipant().getPRModelId().equals(participant.getPRModelId())) {
+            if (comment.getParticipant().equals(participant)) {
                 comments.add(comment);
             }
         }
