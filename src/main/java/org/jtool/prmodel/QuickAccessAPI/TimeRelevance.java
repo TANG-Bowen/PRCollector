@@ -10,7 +10,7 @@ import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.ReviewEvent;
 
-public class TimeFeature {
+public class TimeRelevance {
     
     public static long lifetime_ms(PullRequest pullRequest) {
         return pullRequest.getEndDate().from(pullRequest.getCreateDate());

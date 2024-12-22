@@ -91,26 +91,25 @@ public class UsingGitHubAPI {
                 System.out.println("mentionExists " + mentionExists(pullRequest));
                 System.out.println("numComplexDescription " + numComplexDescription(pullRequest));
                 
-            System.out.println("numCommits " + numCommits(pullRequest));
-            System.out.println("numSrcChurns " + numSrcChurns(pullRequest));
-            System.out.println("numTestChurns " + numTestChurns(pullRequest));
-            System.out.println("numSrcFiles " + numSrcFiles(pullRequest));
-            System.out.println("numFilesAdded " + numFilesAdded(pullRequest));
-            System.out.println("numFilesDeleted " + numFilesDeleted(pullRequest));
-            System.out.println("numFilesRevised " + numFilesRevised(pullRequest));
-            System.out.println("numFilesModified " + numFilesModified(pullRequest));
-            System.out.println("numDocFiles " + numDocFiles(pullRequest));
-            System.out.println("numOtherFiles " + numOtherFiles(pullRequest));
-            System.out.println("testIncluded " + testIncluded(pullRequest));
-            System.out.println("numCIFailures " + numCIFailures(pullRequest));
-            
-            System.out.println("numParticipants: " + numParticipants(pullRequest));
-            System.out.println("socialDistanceExists: " + socialDistanceExists(pullRequest));
-            
-            System.out.println("lifetimeMinutes " + lifetimeMinutes(pullRequest));
-            System.out.println("mergetimeMinutes " + mergetimeMinutes(pullRequest));
-            System.out.println("totalCILatencyMinutes " + totalCILatencyMinutes(pullRequest));
-            
+                System.out.println("numCommits " + numCommits(pullRequest));
+                System.out.println("numSrcChurns " + numSrcChurns(pullRequest));
+                System.out.println("numTestChurns " + numTestChurns(pullRequest));
+                System.out.println("numSrcFiles " + numSrcFiles(pullRequest));
+                System.out.println("numFilesAdded " + numFilesAdded(pullRequest));
+                System.out.println("numFilesDeleted " + numFilesDeleted(pullRequest));
+                System.out.println("numFilesRevised " + numFilesRevised(pullRequest));
+                System.out.println("numFilesModified " + numFilesModified(pullRequest));
+                System.out.println("numDocFiles " + numDocFiles(pullRequest));
+                System.out.println("numOtherFiles " + numOtherFiles(pullRequest));
+                System.out.println("testIncluded " + testIncluded(pullRequest));
+                System.out.println("numCIFailures " + numCIFailures(pullRequest));
+                
+                System.out.println("numParticipants: " + numParticipants(pullRequest));
+                System.out.println("socialDistanceExists: " + socialDistanceExists(pullRequest));
+                
+                System.out.println("lifetimeMinutes " + lifetimeMinutes(pullRequest));
+                System.out.println("mergetimeMinutes " + mergetimeMinutes(pullRequest));
+                System.out.println("totalCILatencyMinutes " + totalCILatencyMinutes(pullRequest));
             } catch (IOException e) { /* empty */ }
         }
     }

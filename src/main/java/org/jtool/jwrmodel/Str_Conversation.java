@@ -9,6 +9,6 @@ public class Str_Conversation {
     LinkedHashSet<Str_ReviewComment> reviewComments;
     LinkedHashSet<Str_CodeReviewSnippet> codeReviews;
     LinkedHashSet<Str_IssueEvent> issueEvents;
-    LinkedHashSet<Str_ReviewEvent> reviewEvents;    
+    LinkedHashSet<Str_ReviewEvent> reviewEvents;
     LinkedHashSet<String> timeLineIds;
 }

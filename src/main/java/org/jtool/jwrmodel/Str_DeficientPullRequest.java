@@ -1,10 +1,10 @@
 package org.jtool.jwrmodel;
 
-public class Str_DataLoss {
-	
-	String lossType;
-	String exceptionOutput;
-	
+public class Str_DeficientPullRequest {
+    
+    String lossType;
+    String exceptionOutput;
+    
     String id;
     String title;
     String repositoryName;
@@ -22,5 +22,4 @@ public class Str_DataLoss {
     boolean isMerged;
     boolean isStandardMerged;
     boolean sourceCodeRetrievable;
-
 }

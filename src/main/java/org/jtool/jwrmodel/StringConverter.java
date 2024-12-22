@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.Conversation;
-import org.jtool.prmodel.DataLoss;
+import org.jtool.prmodel.DeficientPullRequest;
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.ReviewComment;
 import org.jtool.prmodel.IssueEvent;
@@ -36,19 +36,10 @@ import org.jtool.jxp3model.MethodChange;
 
 public class StringConverter {
     
-    private PullRequest pullRequest;
-    private DataLoss dataLoss;
-    
-    public StringConverter(PullRequest pullRequest) {
-        this.pullRequest = pullRequest;
+    public StringConverter() {
     }
     
-    public StringConverter(DataLoss dataLoss)
-    {
-    	this.dataLoss = dataLoss;
-    }
-    
-    public Str_PullRequest buildPullRequest() {
+    public Str_PullRequest buildPullRequest(PullRequest pullRequest) {
         Str_PullRequest str_pr = new Str_PullRequest();
         
         str_pr.prmodelId = pullRequest.getPRModelId();
@@ -246,7 +237,7 @@ public class StringConverter {
             str_sp.diffHunk = review.getDiffHunk();
             
             str_sp.reviewCommentIds = review.getReviewComments().stream().map(c -> c.getPRModelId())
-                                                            .collect(Collectors.toList());
+                                            .collect(Collectors.toList());
         }
         return str_rvs;
     }
@@ -360,7 +351,7 @@ public class StringConverter {
             str_fl.path = fchange.getPath();
             str_fl.sourceCodeBefore = fchange.getSourceCodeBefore();
             str_fl.sourceCodeAfter = fchange.getSourceCodeAfter();
-            
+            str_fl.isTest = fchange.isTest();
             str_fl.classChanges = buildClassChange(fchange.getClassChanges());
         }
         return str_fls;
@@ -402,19 +393,19 @@ public class StringConverter {
     }
     
     private Set<Str_CodeElement> buildClassElement(Set<CodeElement> codeElements){
-    	Set<Str_CodeElement> str_ces = new HashSet<>();
-    	for(CodeElement cei : codeElements)
-    	{
-    		Str_CodeElement str_ce = new Str_CodeElement();
-    		str_ces.add(str_ce);
-    		
-    		str_ce.prmodelId = cei.getPRModelId();
-    		
-    		str_ce.stage = cei.getStage();
-    		str_ce.qulifiedName = cei.getQualifiedName();
-    		str_ce.sourceCode = cei.getSourceCode();
-    	}
-    	return str_ces;
+        Set<Str_CodeElement> str_ces = new HashSet<>();
+        for(CodeElement cei : codeElements)
+        {
+            Str_CodeElement str_ce = new Str_CodeElement();
+            str_ces.add(str_ce);
+            
+            str_ce.prmodelId = cei.getPRModelId();
+            
+            str_ce.stage = cei.getStage();
+            str_ce.qulifiedName = cei.getQualifiedName();
+            str_ce.sourceCode = cei.getSourceCode();
+        }
+        return str_ces;
     }
     
     private Set<Str_FieldChange> buildFieldChange(Set<FieldChange> fchanges) {
@@ -481,21 +472,20 @@ public class StringConverter {
         return str_mds;
     }
     
-    private Set<Str_CodeElement> buildMethodElement(Set<CodeElement> codeElements)
-    {
-    	Set<Str_CodeElement> str_mces = new HashSet<>();
-    	for(CodeElement cei : codeElements)
-    	{
-    		Str_CodeElement str_codeElement = new Str_CodeElement();
-    		str_mces.add(str_codeElement);
-    		
-    		str_codeElement.prmodelId = cei.getPRModelId();
-    		
-    		str_codeElement.qulifiedName = cei.getQualifiedName();
-    		str_codeElement.stage = cei.getStage();
-    		str_codeElement.sourceCode = cei.getSourceCode();
-    	}
-    	return str_mces;
+    private Set<Str_CodeElement> buildMethodElement(Set<CodeElement> codeElements) {
+        Set<Str_CodeElement> str_mces = new HashSet<>();
+        for(CodeElement cei : codeElements)
+        {
+            Str_CodeElement str_codeElement = new Str_CodeElement();
+            str_mces.add(str_codeElement);
+            
+            str_codeElement.prmodelId = cei.getPRModelId();
+            
+            str_codeElement.qulifiedName = cei.getQualifiedName();
+            str_codeElement.stage = cei.getStage();
+            str_codeElement.sourceCode = cei.getSourceCode();
+        }
+        return str_mces;
     }
     
     private List<Str_CIStatus> buildCIStatus(Commit commit) {
@@ -549,32 +539,28 @@ public class StringConverter {
         return str_labels;
      }
     
-    public Str_DataLoss buildDataLoss()
-    {
-    	Str_DataLoss str_dataLoss = new Str_DataLoss();
-    	str_dataLoss.lossType = dataLoss.getLossType();
-    	str_dataLoss.exceptionOutput = dataLoss.getExceptionOutput();
-    	
-        str_dataLoss.id= dataLoss.getId();        
-        str_dataLoss.title = dataLoss.getTitle();
-        str_dataLoss.repositoryName = dataLoss.getRepositoryName();
-        str_dataLoss.state = dataLoss.getState();
+    public Str_DeficientPullRequest buildDeficientPullRequest(DeficientPullRequest deficientPullRequest) {
+        Str_DeficientPullRequest str_pr = new Str_DeficientPullRequest();
+        str_pr.lossType = deficientPullRequest.getLossType();
+        str_pr.exceptionOutput = deficientPullRequest.getExceptionOutput();
         
-        str_dataLoss.createDate = dataLoss.getCreateDate().toString();
-        str_dataLoss.endDate = dataLoss.getEndDate().toString();
+        str_pr.id= deficientPullRequest.getId();
+        str_pr.title = deficientPullRequest.getTitle();
+        str_pr.repositoryName = deficientPullRequest.getRepositoryName();
+        str_pr.state = deficientPullRequest.getState();
         
-        str_dataLoss.mergeBranch = dataLoss.getMergeBranch();
-        str_dataLoss.headBranch = dataLoss.getHeadBranch();
-        str_dataLoss.pageUrl = dataLoss.getPageUrl();
-        str_dataLoss.repositorySrcDLUrl = dataLoss.getRepositorySrcDLUrl();
+        str_pr.createDate = deficientPullRequest.getCreateDate().toString();
+        str_pr.endDate = deficientPullRequest.getEndDate().toString();
         
-        str_dataLoss.isMerged = dataLoss.isMerged();
-        str_dataLoss.isStandardMerged = dataLoss.isStandardMerged();
-        str_dataLoss.sourceCodeRetrievable = dataLoss.isSourceCodeRetrievable();
+        str_pr.mergeBranch = deficientPullRequest.getMergeBranch();
+        str_pr.headBranch = deficientPullRequest.getHeadBranch();
+        str_pr.pageUrl = deficientPullRequest.getPageUrl();
+        str_pr.repositorySrcDLUrl = deficientPullRequest.getRepositorySrcDLUrl();
+        str_pr.headRepositorySrcDLUrl = deficientPullRequest.getHeadRepositorySrcDLUrl();
         
-        str_dataLoss.headRepositorySrcDLUrl = dataLoss.getHeadRepositorySrcDLUrl();
-        
-        return str_dataLoss;
-    	
+        str_pr.isMerged = deficientPullRequest.isMerged();
+        str_pr.isStandardMerged = deficientPullRequest.isStandardMerged();
+        str_pr.sourceCodeRetrievable = deficientPullRequest.isSourceCodeRetrievable();
+        return str_pr;
     }
 }

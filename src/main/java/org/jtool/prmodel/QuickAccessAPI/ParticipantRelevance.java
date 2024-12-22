@@ -7,7 +7,7 @@ import org.jtool.prmodel.IssueEvent;
 import org.jtool.prmodel.Participant;
 import org.jtool.prmodel.PullRequest;
 
-public class ParticipantFeature {
+public class ParticipantRelevance {
     
     public static int numParticipants(PullRequest pullRequest) {
         return pullRequest.getParticipants().size();

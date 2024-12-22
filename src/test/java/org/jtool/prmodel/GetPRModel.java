@@ -1,8 +1,5 @@
 package org.jtool.prmodel;
 
-import org.jtool.prmodel.PRModelBundle;
-import org.jtool.prmodel.PRModel;
-import org.jtool.prmodel.PullRequest;
 import java.util.Set;
 
 public class GetPRModel {

@@ -16,7 +16,7 @@ public class PRModelLoader {
         JsonFileReader jsonFileReader = new JsonFileReader(filePath);
         jsonFileReader.read();
         prmodel.addAllPullRequests(jsonFileReader.getPullRequests());
-        prmodel.addAllDataLosses(jsonFileReader.getDataLosses());
+        prmodel.addAllDeficientPullRequests(jsonFileReader.getDeficientPullRequests());
         return prmodel;
     }
 }

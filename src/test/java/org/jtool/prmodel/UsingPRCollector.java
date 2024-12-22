@@ -1,20 +1,5 @@
 package org.jtool.prmodel;
 
-import org.jtool.prmodel.PRModelBundle;
-import org.jtool.prmodel.PRModelLoader;
-import org.jtool.prmodel.Participant;
-import org.jtool.prmodel.CIStatus;
-import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.DiffFile;
-import org.jtool.prmodel.IssueComment;
-import org.jtool.prmodel.IssueEvent;
-import org.jtool.prmodel.PRElement;
-import org.jtool.prmodel.PRModel;
-import org.jtool.prmodel.PullRequest;
-import org.jtool.prmodel.ReviewComment;
-import org.jtool.prmodel.ReviewEvent;
-
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -41,11 +26,6 @@ public class UsingPRCollector {
     }
     
     private void buildPRModel(String ghToken, String repositoryName, String rootSrcPath) {
-        File file = new File(MODEL_STORAGE);
-//        if (file.exists()) {
-//            return;
-//        }
-        
         PRModelBundle bundle = new PRModelBundle(ghToken, repositoryName, rootSrcPath);
         bundle.writeFile(true);
         bundle.deleteSourceFile(true);

@@ -3,8 +3,6 @@ package org.jtool.jwrmodel;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,36 +14,35 @@ import com.google.gson.Gson;
 
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Commit;
-import org.jtool.prmodel.DataLoss;
+import org.jtool.prmodel.DeficientPullRequest;
 import org.jtool.prmodel.PRElement;
-import org.jtool.prmodel.PRModelBundle;
 
 public class JsonFileWriter {
     
     private  PullRequest pullRequest;
-    
-    private  StringConverter strBuilder;
     private  Str_PullRequest strPullRequest;
     
-    private  File outputFile;
+    private DeficientPullRequest deficientPullRequest;
+    private Str_DeficientPullRequest strDeficientPullRequest;
     
-    private DataLoss dataLoss;
-    private Str_DataLoss strDataLoss;
+    private  StringConverter strBuilder;
+    
+    private  File outputFile;
     
     public JsonFileWriter(PullRequest pullRequest, String outputFilePath) {
         this.pullRequest = pullRequest;
         this.outputFile = new File(outputFilePath);
         
-        this.strBuilder = new StringConverter(pullRequest);
-        this.strPullRequest = strBuilder.buildPullRequest();
+        this.strBuilder = new StringConverter();
+        this.strPullRequest = strBuilder.buildPullRequest(pullRequest);
     }
     
-    public JsonFileWriter(DataLoss dataLoss, String outputFilePath)
-    {
-    	this.dataLoss = dataLoss;
-    	this.outputFile = new File(outputFilePath);
-    	this.strBuilder = new StringConverter(dataLoss);
-    	this.strDataLoss = strBuilder.buildDataLoss();
+    public JsonFileWriter(DeficientPullRequest deficientPullRequest, String outputFilePath) {
+        this.deficientPullRequest = deficientPullRequest;
+        this.outputFile = new File(outputFilePath);
+        
+        this.strBuilder = new StringConverter();
+        this.strDeficientPullRequest = strBuilder.buildDeficientPullRequest(deficientPullRequest);
     }
     
     public void write() {
@@ -55,26 +52,24 @@ public class JsonFileWriter {
         try (FileWriter writer = new FileWriter(outputFile, false)) {
             writer.write(jsonStr);
             System.out.println("Succeeded to write PR "+ pullRequest.getId() + " into a json file !");
-            
         } catch (IOException e) {
             System.err.println("Could not write " + outputFile);
         }
     }
     
-    public void writeDataLoss()
-    {
-    	Gson gson = new Gson();
-    	String jsonStr = gson.toJson(strDataLoss);
-    	
-    	try(FileWriter writer = new FileWriter(outputFile,false)){
-    		writer.write(jsonStr);
-    		System.out.println("Succeeded to write DataLoss "+ dataLoss.getId() + " into a json file !");
-    	}catch(IOException e) {
-    		System.err.println("Could not write " + outputFile);
-    	}
+    public void writeDataLoss() {
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(strDeficientPullRequest);
+        
+        try(FileWriter writer = new FileWriter(outputFile,false)){
+            writer.write(jsonStr);
+            System.out.println("Succeeded to write Deficient PR "+ deficientPullRequest.getId() + " into a json file !");
+        }catch(IOException e) {
+            System.err.println("Could not write " + outputFile);
+        }
     }
     
-    public void deleteGitSourceFile(PullRequest pullRequest, File pullRequestDir) {
+    public static void deleteGitSourceFile(PullRequest pullRequest, File pullRequestDir) {
         for (Commit commit : pullRequest.getTragetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore; 
@@ -86,8 +81,8 @@ public class JsonFileWriter {
 //            
 //            deleteFiles(dirBefore);
 //            deleteFiles(dirAfter);
-            deleteFiles(pathBefore,true);
-            deleteFiles(pathAfter,true);
+            deleteFiles(pathBefore, true);
+            deleteFiles(pathAfter, true);
         }
     }
     
@@ -106,84 +101,71 @@ public class JsonFileWriter {
     }
     
     public static void deleteFiles(String pathStr, boolean deleteCurrentDir) {
-    	File currentDir = new File(pathStr);
-    	if(currentDir.exists() && currentDir.isDirectory())
-    	{
-    		//File[] files = currentDir.listFiles();   		
-    		  deleteSubdirectories(currentDir);
-    		
-    		if(deleteCurrentDir)
-    		{
-    			currentDir.delete();   			
-    		}
-    		
-    	}else {
-    		System.out.println("Not valid directory to delete! ");
-    	}
+        File currentDir = new File(pathStr);
+        if (currentDir.exists() && currentDir.isDirectory()) {
+            //File[] files = currentDir.listFiles();
+            deleteSubdirectories(currentDir);
+            
+            if(deleteCurrentDir) {
+                currentDir.delete();
+            }
+        } else {
+            System.out.println("Not valid directory to delete! ");
+        }
     }
     
-    static void deleteSubdirectories(File sourceDir)
-    {
-    	File[] files = sourceDir.listFiles();
-    	if(files!=null)
-    	{
-    		for(File file : files)
-    		{
-    			if(file.isDirectory())
-    			{
-    				deleteDirectory(file);
-    			}else {
-    				file.delete();
-    			}
-    		}
-    	}else {
-    		sourceDir.delete();
-    	}
+    static void deleteSubdirectories(File sourceDir) {
+        File[] files = sourceDir.listFiles();
+        if (files!=null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        } else {
+            sourceDir.delete();
+        }
     }
     
-    static void deleteDirectory(File sourceDir)
-    {
-    	File[] files = sourceDir.listFiles();
-    	if(files !=null)
-    	{
-    		for(File file : files)
-    		{
-    			if(file.isFile())
-    			{
-    				file.delete();
-    			}else if(file.isDirectory())
-    			{
-    				deleteDirectory(file);
-    			}
-    		}
-    	}
-    	sourceDir.delete();
+    static void deleteDirectory(File sourceDir) {
+        File[] files = sourceDir.listFiles();
+        if (files !=null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete();
+                } else if(file.isDirectory()) {
+                    deleteDirectory(file);
+                }
+            }
+        }
+        sourceDir.delete();
     }
     
-    public static void deleteDir(Path dir)
-	{
-    	try {
-		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-			@Override
-			 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-			@Override
-			 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-			@Override
-			public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
-		}
-		
-		);
-    	}catch(IOException e)
-    	{
-    		System.out.println(e);
-    	}
-	}
+    public static void deleteDir(Path dir) {
+        try {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                
+                @Override
+                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+                
+                @Override
+                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch(IOException e) {
+            System.out.println(e);
+        }
+    }
 }

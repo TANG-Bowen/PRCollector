@@ -2,7 +2,6 @@ package org.jtool.prmodel;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +46,7 @@ public class PRModelBundle {
     private boolean deleteSourceFile = false;
     
     private Set<PullRequest> pullRequests = new HashSet<>();
-    private Set<DataLoss> dataLosses = new HashSet<>();
+    private Set<DeficientPullRequest> deficientPullRequests = new HashSet<>();
     
     public PRModelBundle(String ghToken, String repositoryName, String rootSrcPath, int pullRequestNumber) {
         this.ghToken = ghToken;
@@ -94,93 +93,91 @@ public class PRModelBundle {
         return file.exists();
     }
     
-	private void build(PRModel prmodel) {
-		PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
-		for (GHPullRequest ghPullRequest : ghPullRequests) {
-			String pullRequestPath = getPullRequestPath(ghPullRequest.getNumber());
-			if (!alreadyBuilt(pullRequestPath)) {
-				File pullRequestDir = getDir(pullRequestPath);
-				PRModelBuilder builder = new PRModelBuilder(this, ghToken, ghPullRequest.getNumber(), pullRequestDir);
-				boolean result = builder.build();
-				if (result) {
-					PullRequest pullRequest = builder.getPullRequest();
-					prmodel.addPullRequest(pullRequest);
-					pullRequests.add(pullRequest);
-					writePRModelToFile(pullRequest, pullRequestDir);
-				}else {
-					JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
-		        	System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
-		        	
-		        	DataLoss dataLoss = builder.getDataLoss();
-		        	prmodel.addDataLoss(dataLoss);
-		        	dataLosses.add(dataLoss);
-		        	writeDataLossToFile(dataLoss, pullRequestDir);
-				}
-				builder = null;
-			} else {
-				System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
-			}
-		}
-	}
+    private void build(PRModel prmodel) {
+        PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
+        for (GHPullRequest ghPullRequest : ghPullRequests) {
+            String pullRequestPath = getPullRequestPath(ghPullRequest.getNumber());
+            if (!alreadyBuilt(pullRequestPath)) {
+                File pullRequestDir = getDir(pullRequestPath);
+                PRModelBuilder builder = new PRModelBuilder(this, ghToken, ghPullRequest.getNumber(), pullRequestDir);
+                boolean result = builder.build();
+                if (result) {
+                    PullRequest pullRequest = builder.getPullRequest();
+                    prmodel.addPullRequest(pullRequest);
+                    pullRequests.add(pullRequest);
+                    writePRModelToFile(pullRequest, pullRequestDir);
+                } else {
+                    JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
+                    System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
+                    
+                    DeficientPullRequest deficientPullRequest = builder.getDeficientPullRequest();
+                    if(deficientPullRequest!=null) {
+                    prmodel.addDeficientPullRequest(deficientPullRequest);
+                    deficientPullRequests.add(deficientPullRequest);
+                    writeDataLossToFile(deficientPullRequest, pullRequestDir);
+                    }
+                }
+                builder = null;
+            } else {
+                System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
+            }
+        }
+    }
     
     private void buildSingle(PRModel prmodel, int pullRequestNumber) {
-    	String pullRequestPath = getPullRequestPath(pullRequestNumber);
-    	if(!alreadyBuilt(pullRequestPath)) {
-    	File pullRequestDir = getDir(pullRequestPath);
-        PRModelBuilder builder = new PRModelBuilder(this,
-                ghToken, pullRequestNumber, pullRequestDir);
-        
-        boolean result = builder.build();
-        if (result) {
-            PullRequest pullRequest = builder.getPullRequest();
-            prmodel.addPullRequest(pullRequest);
-            pullRequests.add(pullRequest);
-            writePRModelToFile(pullRequest, pullRequestDir);
-        }else {
-        	
-        	JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
-        	System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
-        	
-        	DataLoss dataLoss = builder.getDataLoss();
-        	prmodel.addDataLoss(dataLoss);
-        	dataLosses.add(dataLoss);
-        	writeDataLossToFile(dataLoss, pullRequestDir);
-        	
-        }
-        builder = null;
-    	}else {
+        String pullRequestPath = getPullRequestPath(pullRequestNumber);
+        if (!alreadyBuilt(pullRequestPath)) {
+            File pullRequestDir = getDir(pullRequestPath);
+            PRModelBuilder builder = new PRModelBuilder(this, ghToken, pullRequestNumber, pullRequestDir);
+            
+            boolean result = builder.build();
+            if (result) {
+                PullRequest pullRequest = builder.getPullRequest();
+                prmodel.addPullRequest(pullRequest);
+                pullRequests.add(pullRequest);
+                writePRModelToFile(pullRequest, pullRequestDir);
+            } else {
+                JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
+                System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
+                
+                DeficientPullRequest deficientPullRequest = builder.getDeficientPullRequest();
+                if(deficientPullRequest!=null) {
+                prmodel.addDeficientPullRequest(deficientPullRequest);
+                deficientPullRequests.add(deficientPullRequest);
+                writeDataLossToFile(deficientPullRequest, pullRequestDir);
+                }
+            }
+            builder = null;
+        } else {
             System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
         }
     }
     
     private void writePRModelToFile(PullRequest pullRequest, File pullRequestDir) {
         String jsonPath = pullRequestDir + File.separator
-                          + pullRequest.getRepositoryName() + "_" + pullRequest.getId() + "_str.json";
+                        + pullRequest.getRepositoryName() + "_" + pullRequest.getId() + "_str.json";
         JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
         
         if (writeFile) {
             jfwriter.write();
             
             if (deleteSourceFile) {
-                jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
+                JsonFileWriter.deleteGitSourceFile(pullRequest, pullRequestDir);
             }
         } else {
-        	if(deleteSourceFile)
-        	{
-            jfwriter.deleteGitSourceFile(pullRequest, pullRequestDir);
-            System.out.println("delete source files after error logs");
-        	}
-            Path path = Path.of(pullRequestDir.getAbsolutePath());        	
-            jfwriter.deleteFiles(pullRequestDir.getAbsolutePath(),true);            
+            if (deleteSourceFile) {
+                JsonFileWriter.deleteGitSourceFile(pullRequest, pullRequestDir);
+                System.out.println("delete source files after error logs");
+            }
+            JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),true);
             System.out.println("delete retained source files under the pr dir ");
         }
     }
     
-    private void writeDataLossToFile(DataLoss dataLoss, File pullRequestDir)
-    {
-    	String jsonPath = pullRequestDir + File.separator + dataLoss.getRepositoryName() + "_" + dataLoss.getId()+"_dl.json";
-    	JsonFileWriter jfwriter = new JsonFileWriter(dataLoss, jsonPath);
-    	jfwriter.writeDataLoss();
+    private void writeDataLossToFile(DeficientPullRequest pullRequest, File pullRequestDir) {
+        String jsonPath = pullRequestDir + File.separator + pullRequest.getRepositoryName() + "_" + pullRequest.getId()+"_dl.json";
+        JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
+        jfwriter.writeDataLoss();
     }
     
     public static File getDir(String path) {
@@ -425,22 +422,20 @@ public class PRModelBundle {
         LocalDate updateDate = LocalDate.parse(updated);
         prSearch.updatedBefore(updateDate, inclusive);
     }
-
-	public Set<PullRequest> getPullRequests() {
-		return pullRequests;
-	}
-
-	public void setPullRequests(Set<PullRequest> pullRequests) {
-		this.pullRequests = pullRequests;
-	}
-
-	public Set<DataLoss> getDataLosses() {
-		return dataLosses;
-	}
-
-	public void setDataLosses(Set<DataLoss> dataLosses) {
-		this.dataLosses = dataLosses;
-	}
     
+    public Set<PullRequest> getPullRequests() {
+        return pullRequests;
+    }
     
+    public void setPullRequests(Set<PullRequest> pullRequests) {
+        this.pullRequests = pullRequests;
+    }
+    
+    public Set<DeficientPullRequest> getDeficientPullRequests() {
+        return deficientPullRequests;
+    }
+    
+    public void setDataLosses(Set<DeficientPullRequest> deficientPullRequests) {
+        this.deficientPullRequests = deficientPullRequests;
+    }
 }

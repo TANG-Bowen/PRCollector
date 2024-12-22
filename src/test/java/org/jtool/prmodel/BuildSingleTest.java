@@ -12,9 +12,9 @@ public class BuildSingleTest {
        
         String psnToken_ac_0109 = "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";
         
-        String filePath = "/Users/tangbowen/PRDataset-te";
+        String filePath = "/Users/tangbowen/PRDataset-sce";
         
-        PRModelBundle bundle = new PRModelBundle(psnToken_ac_0109, repoName_arrow, filePath, 12640);
+        PRModelBundle bundle = new PRModelBundle(psnToken_ac_0109, repoName_dubbo, filePath, 12910);
         //PRModelBundle bundle = new PRModelBundle(psnToken_tf_1004, repoName_cassandra, filePath, 3008);
         //PRModelBundle bundle = new PRModelBundle(psnToken_tf_1004, repoName_dubbo, filePath, 9846);
         
@@ -27,14 +27,13 @@ public class BuildSingleTest {
         bundle.build();
         
         System.out.println("Collection was over");
-        for(PullRequest pri : bundle.getPullRequests())
-        {
-        	pri.print();
+        
+        for (PullRequest pr : bundle.getPullRequests()) {
+            pr.print();
         }
         
-        for(DataLoss dli : bundle.getDataLosses())
-        {
-        	dli.print();
+        for (DeficientPullRequest pr : bundle.getDeficientPullRequests()) {
+            pr.print();
         }
     }
 }

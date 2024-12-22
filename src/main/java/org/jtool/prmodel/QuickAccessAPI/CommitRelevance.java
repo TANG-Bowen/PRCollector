@@ -1,24 +1,20 @@
 package org.jtool.prmodel.QuickAccessAPI;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.jtool.jxp3model.ClassChange;
+import org.jtool.jxp3model.FieldChange;
+import org.jtool.jxp3model.FileChange;
+import org.jtool.jxp3model.MethodChange;
 import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.Commit;
 import org.jtool.prmodel.DiffFile;
 import org.jtool.prmodel.PRElement;
 import org.jtool.prmodel.PullRequest;
 
-public class CommitFeature {
-    
-    /**
-     * Returns the commit having the sha number in a pull-request.
-     * @param pullRequest a pull-request
-     * @param commitSha the sha number of a commit
-     * @return the found commit
-     */
-    public static Commit getCommit(PullRequest pullRequest, String commitSha) {
-        return pullRequest.getCommits().stream().filter(c -> c.getSha().equals(commitSha)).findFirst().orElse(null);
-    }
+public class CommitRelevance {
     
     /**
      * Returns the number of commits in a pull-request.
@@ -50,7 +46,7 @@ public class CommitFeature {
      */
     public static int numSrcChurns(PullRequest pullRequest, String commitSha) {
         int churns = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -84,7 +80,7 @@ public class CommitFeature {
      */
     public static int numTestChurns(PullRequest pullRequest, String commitSha) {
         int churns = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -109,7 +105,7 @@ public class CommitFeature {
     
     public static int numFilesAdded(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -134,7 +130,7 @@ public class CommitFeature {
     
     public static int numFilesDeleted(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -159,7 +155,7 @@ public class CommitFeature {
     
     public static int numFilesRevised(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -177,7 +173,7 @@ public class CommitFeature {
     }
     
     public static int numFilesModified(PullRequest pullRequest, String commitSha) {
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -196,7 +192,7 @@ public class CommitFeature {
     
     public static int numSrcFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -227,7 +223,7 @@ public class CommitFeature {
     
     public static int numDocFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -252,7 +248,7 @@ public class CommitFeature {
     
     public static int numOtherFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
-        Commit commit = CommitFeature.getCommit(pullRequest, commitSha);
+        Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
             return 0;
         }
@@ -283,5 +279,72 @@ public class CommitFeature {
             }
         }
         return failures;
+    }
+    
+    public static List<ClassChange> changedClasses(PullRequest pullRequest) {
+        List<ClassChange> classes = new ArrayList<>();
+        for (Commit commit : pullRequest.getCommits()) {
+            for (FileChange fchange : commit.getCodeChange().getFileChanges()) {
+                for (ClassChange cchange : fchange.getClassChanges()) {
+                    classes.add(cchange);
+                }
+            }
+        }
+        return classes;
+    }
+    
+    public static List<ClassChange> changedClasses(PullRequest pullRequest, String commitSha) {
+        List<ClassChange> classes = new ArrayList<>();
+        Commit commit = pullRequest.getCommit(commitSha);
+        if (commit == null) {
+            return classes;
+        }
+        
+        for (FileChange fchange : commit.getCodeChange().getFileChanges()) {
+            for (ClassChange cchange : fchange.getClassChanges()) {
+                classes.add(cchange);
+            }
+        }
+        return classes;
+    }
+    
+    public static List<MethodChange> changedMethods(PullRequest pullRequest) {
+        List<MethodChange> methods = new ArrayList<>();
+        for (ClassChange cchange : changedClasses(pullRequest)) {
+            for (MethodChange mchange : cchange.getMethodChanges()) {
+                methods.add(mchange);
+            }
+        }
+        return methods;
+    }
+    
+    public static List<MethodChange> changedMethods(PullRequest pullRequest, String commitSha) {
+        List<MethodChange> methods = new ArrayList<>();
+        for (ClassChange cchange : changedClasses(pullRequest, commitSha)) {
+            for (MethodChange mchange : cchange.getMethodChanges()) {
+                methods.add(mchange);
+            }
+        }
+        return methods;
+    }
+    
+    public static List<FieldChange> changedFields(PullRequest pullRequest) {
+        List<FieldChange> fields = new ArrayList<>();
+        for (ClassChange cchange : changedClasses(pullRequest)) {
+            for (FieldChange fchange : cchange.getFieldChanges()) {
+                fields.add(fchange);
+            }
+        }
+        return fields;
+    }
+    
+    public static List<FieldChange> changedFields(PullRequest pullRequest, String commitSha) {
+        List<FieldChange> fields = new ArrayList<>();
+        for (ClassChange cchange : changedClasses(pullRequest, commitSha)) {
+            for (FieldChange fchange : cchange.getFieldChanges()) {
+                fields.add(fchange);
+            }
+        }
+        return fields;
     }
 }

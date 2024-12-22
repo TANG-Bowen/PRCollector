@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.jtool.prmodel.PullRequest;
 
-public class DescriptionFeature {
+public class DescriptionRelevance {
     
     public static int numComplexTitle(PullRequest pullRequest) {
         String[] words = pullRequest.getTitle().split("\\s+");

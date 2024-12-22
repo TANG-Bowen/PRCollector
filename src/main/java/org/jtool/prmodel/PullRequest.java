@@ -110,7 +110,7 @@ public class PullRequest extends PRElement {
         finalLabels.forEach(e -> e.print());
     }
     
-    private void printPRBase(String prefix) {
+    protected void printPRBase(String prefix) {
         System.out.println();
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "id : " + id);
@@ -226,12 +226,20 @@ public class PullRequest extends PRElement {
         return participants;
     }
     
+    public Participant getParticipant(String name) {
+        return participants.stream().filter(c -> c.getName().equals(name)).findFirst().orElse(null);
+    }
+    
     public Conversation getConversation() {
         return conversation;
     }
     
     public List<Commit> getCommits() {
         return commits;
+    }
+    
+    public Commit getCommit(String commitSha) {
+        return commits.stream().filter(c -> c.getSha().equals(commitSha)).findFirst().orElse(null);
     }
     
     public Description getDescription() {

@@ -1,14 +1,16 @@
 package org.jtool.prmodel;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.HashSet;
+import java.util.List;
 
 public class PRModel {
     
     private Set<String> repositoryNames = new HashSet<>();
     
     private Set<PullRequest> pullRequests = new HashSet<>();
-    private Set<DataLoss> dataLosses = new HashSet<>();
+    private Set<DeficientPullRequest> deficientPullRequests = new HashSet<>();
     
     public PRModel() {
     }
@@ -20,30 +22,90 @@ public class PRModel {
     
     public void addAllPullRequests(Set<PullRequest> pullRequests) {
         this.pullRequests.addAll(pullRequests);
-        this.pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
+        pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
     }
     
-    public void addDataLoss(DataLoss dataLoss)
-    {
-    	dataLosses.add(dataLoss);
-    	repositoryNames.add(dataLoss.getRepositoryName());
+    public void addDeficientPullRequest(DeficientPullRequest deficientPullRequest) {
+    	
+        deficientPullRequests.add(deficientPullRequest);
+        repositoryNames.add(deficientPullRequest.getRepositoryName());
     }
     
-    public void addAllDataLosses(Set<DataLoss> dataLosses)
-    {
-    	this.dataLosses.addAll(dataLosses);
-    	this.dataLosses.forEach(dl -> repositoryNames.add(dl.getRepositoryName()));
+    public void addAllDeficientPullRequests(Set<DeficientPullRequest> deficientPullRequests) {
+        this.deficientPullRequests.addAll(deficientPullRequests);
+        deficientPullRequests.forEach(dl -> repositoryNames.add(dl.getRepositoryName()));
     }
     
+    /* ------------------------------------
+     * API
+     --------------------------------------*/
+    
+    /**
+     * Return the names of all repositories.
+     * @return the collection of the repository names
+     */
     public Set<String> getRepositoryNames() {
         return repositoryNames;
     }
     
+    /**
+     * Returns all pull-requests in a pull-request model.
+     * @return the collection of the pull-requests
+     */
     public Set<PullRequest> getPullRequests() {
         return pullRequests;
     }
     
-    public Set<DataLoss> getDataLosses(){
-    	return dataLosses;
+    /**
+     * Returns all pull-requests in a pull-request model.
+     * @return the collection of the pull-requests in the pull-request number's order
+     */
+    public List<PullRequest> getPullRequestList() {
+        return pullRequests.stream()
+                           .sorted((pr1, pr2) -> pr1.getId().compareTo(pr2.getId()))
+                           .collect(Collectors.toList());
+    }
+    
+    /**
+     * Returns all deficient pull-requests in a pull-request model.
+     * @return the collection of the pull-requests in the pull-request number's order
+     */
+    public Set<DeficientPullRequest> getDeficientPullRequests(){
+        return deficientPullRequests;
+    }
+    
+    /**
+     * Returns all deficient pull-requests in a pull-request model.
+     * @return the collection of the pull-requests in the pull-request number's order
+     */
+    public List<DeficientPullRequest> getDeficientPullRequestList(){
+        return deficientPullRequests.stream()
+                                    .sorted((pr1, pr2) -> pr1.getId().compareTo(pr2.getId()))
+                                    .collect(Collectors.toList());
+    }
+    
+    /**
+     * Returns all pull-requests having the repository name in a pull-request model.
+     * @param prmodel a pull-request model 
+     * @param repositoryName the name of a repository
+     * @return the collection of the pull-requests
+     */
+    public Set<PullRequest> getPullRequests(PRModel prmodel, String repositoryName) {
+        return prmodel.getPullRequests().stream()
+                .filter(pr -> pr.getRepositoryName().equals(repositoryName)).collect(Collectors.toSet());
+    }
+    
+    /**
+     * Returns all pull-requests having the repository name in a pull-request model.
+     * @param prmodel a pull-request model 
+     * @param repositoryName the name of a repository
+     * @return the collection of the pull-requestsitoryName
+     * @return the collection of the pull-requests in the pull-request number's order
+     */
+    public List<PullRequest> getPullRequestList(PRModel prmodel, String repositoryName) {
+        return getPullRequestList(prmodel, repositoryName)
+                .stream()
+                .sorted((pr1, pr2) -> pr1.getId().compareTo(pr2.getId()))
+                .collect(Collectors.toList());
     }
 }
