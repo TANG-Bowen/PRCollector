@@ -1,8 +1,22 @@
-package org.jtool.prmodel;
+package org.jtool.prmodel.sample;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.jtool.prmodel.CIStatus;
+import org.jtool.prmodel.Commit;
+import org.jtool.prmodel.DiffFile;
+import org.jtool.prmodel.IssueComment;
+import org.jtool.prmodel.IssueEvent;
+import org.jtool.prmodel.PRElement;
+import org.jtool.prmodel.PRModel;
+import org.jtool.prmodel.PRModelBundle;
+import org.jtool.prmodel.PRModelLoader;
+import org.jtool.prmodel.Participant;
+import org.jtool.prmodel.PullRequest;
+import org.jtool.prmodel.ReviewComment;
+import org.jtool.prmodel.ReviewEvent;
 
 public class UsingPRCollector {
     
@@ -72,8 +86,8 @@ public class UsingPRCollector {
             System.out.println("testIncluded " + testIncluded(pullRequest));
             System.out.println("numCIFailures " + numCIFailures(pullRequest));
             
-            System.out.println("numParticipants: " + numParticipants(pullRequest));
-            System.out.println("socialDistanceExists: " + socialDistanceExists(pullRequest));
+            System.out.println("numParticipants " + numParticipants(pullRequest));
+            System.out.println("socialDistanceExists " + socialDistanceExists(pullRequest));
             
             System.out.println("lifetimeMinutes " + lifetimeMinutes(pullRequest));
             System.out.println("mergetimeMinutes " + mergetimeMinutes(pullRequest));
@@ -151,14 +165,13 @@ public class UsingPRCollector {
     
     public int numComplexDescription(PullRequest pullRequest) {
         String title = pullRequest.getTitle();
-        if(pullRequest.getDescription().getBody()!=null)
-        {
-        String body = pullRequest.getDescription().getBody();        
-        String[] titleWords = title.split("\\s+");
-        String[] bodyWords = body.split("\\s+");
-        return titleWords.length + bodyWords.length;
-        }else {
-        	return -1;
+        if (pullRequest.getDescription().getBody()!=null) {
+            String body = pullRequest.getDescription().getBody();
+            String[] titleWords = title.split("\\s+");
+            String[] bodyWords = body.split("\\s+");
+            return titleWords.length + bodyWords.length;
+        } else {
+            return -1;
         }
     }
     

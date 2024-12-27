@@ -1,19 +1,23 @@
-package org.jtool.prmodel;
+package org.jtool.prmodel.sample;
 
 import java.util.Set;
 
-public class GetPRModel {
+import org.jtool.prmodel.PRModel;
+import org.jtool.prmodel.PRModelBundle;
+import org.jtool.prmodel.PullRequest;
+
+public class WritePRModel {
     
     private final static String GITHUB_TOKEN = "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";
     private final static String ROOT_SOURCE_PATH = "/Users/tangbowen/PRDataset-sce";
     private final static String REPOSITORY_NAME = "spring-projects/spring-boot";
     
-    GetPRModel() {
+    WritePRModel() {
     }
     
     public static void main(String[] args) {
-        GetPRModel getPRModel = new GetPRModel();
-        Set<PullRequest> pullRequests = getPRModel.getPRs(GITHUB_TOKEN, REPOSITORY_NAME, ROOT_SOURCE_PATH);
+        WritePRModel writer = new WritePRModel();
+        Set<PullRequest> pullRequests = writer.getPRs(GITHUB_TOKEN, REPOSITORY_NAME, ROOT_SOURCE_PATH);
         pullRequests.forEach(pr -> pr.print());
     }
     
@@ -22,8 +26,8 @@ public class GetPRModel {
         bundle.writeFile(true);
         
         bundle.searchByIsClosed();
-        bundle.searchByCreated("2024-04-01", "2024-04-03");
-        bundle.setWriteErrorLog(true);
+        bundle.searchByCreated("2024-04-01", "2024-05-20");
+        
         PRModel prmodel = bundle.build();
         return prmodel.getPullRequests();
     }

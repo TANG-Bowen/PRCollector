@@ -1,4 +1,4 @@
-package org.jtool.prmodel;
+package org.jtool.prmodel.sample;
 
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHCommitStatus;
@@ -104,8 +104,8 @@ public class UsingGitHubAPI {
                 System.out.println("testIncluded " + testIncluded(pullRequest));
                 System.out.println("numCIFailures " + numCIFailures(pullRequest));
                 
-                System.out.println("numParticipants: " + numParticipants(pullRequest));
-                System.out.println("socialDistanceExists: " + socialDistanceExists(pullRequest));
+                System.out.println("numParticipants " + numParticipants(pullRequest));
+                System.out.println("socialDistanceExists " + socialDistanceExists(pullRequest));
                 
                 System.out.println("lifetimeMinutes " + lifetimeMinutes(pullRequest));
                 System.out.println("mergetimeMinutes " + mergetimeMinutes(pullRequest));
