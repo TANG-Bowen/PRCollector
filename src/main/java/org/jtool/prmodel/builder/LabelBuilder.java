@@ -3,6 +3,8 @@ package org.jtool.prmodel.builder;
 import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.kohsuke.github.GHIssueEvent;
@@ -16,6 +18,8 @@ import org.jtool.prmodel.PullRequest;
 
 public class LabelBuilder {
     
+    private List<Exception> exceptions = new ArrayList<>();
+    
     private final PullRequest pullRequest;
     private final GHPullRequest ghPullRequest;
     private final GHRepository repository;
@@ -26,50 +30,52 @@ public class LabelBuilder {
         this.repository = repository;
     }
     
-    void build(Map<Long, IssueEvent> eventMap) throws IOException {
+    void build(Map<Long, IssueEvent> eventMap) {
         if (eventMap == null) {
             return;
         }
         
-        Set<GHLabel> repoLabels = new HashSet<>(repository.listLabels().toSet());
-        
-        for (GHIssueEvent ghEvent : ghPullRequest.listEvents().toList()) {
-            String eventType = ghEvent.getEvent();
+        try {
+            Set<GHLabel> repoLabels = new HashSet<>(repository.listLabels().toSet());
             
-            if (eventType.equals("labeled")) {
-                GHLabel ghLabel = ghEvent.getLabel();
-                String name = ghLabel.getName();
-                String color = ghLabel.getColor();
-                GHLabel repoLabel = getGHLabel(repoLabels, name, color);
-                String description = repoLabel.getDescription();
-              
-                Label label = new Label(pullRequest, name, color, description);
-                long ghId = ghEvent.getId();
-                IssueEvent issueEvent = eventMap.get(ghId);
-                label.setIssueEvent(issueEvent);
-                pullRequest.getAddedLabels().add(label);
-     
-            } else if (eventType.equals("unlabeled")) {
-                GHLabel ghLabel = ghEvent.getLabel();
-                String name = ghLabel.getName();
-                String color = ghLabel.getColor();
-                GHLabel repoLabel = getGHLabel(repoLabels, name, color);
-                String description = repoLabel.getDescription();
+            for (GHIssueEvent ghEvent : ghPullRequest.listEvents().toList()) {
+                String eventType = ghEvent.getEvent();
                 
-                Label label = new Label(pullRequest, name, color, description);
-                long ghId = ghEvent.getId();
-                IssueEvent issueEvent = eventMap.get(ghId);
-                label.setIssueEvent(issueEvent);
-                pullRequest.getRemovedLabels().add(label);
-                
-                
+                if (eventType.equals("labeled")) {
+                    GHLabel ghLabel = ghEvent.getLabel();
+                    String name = ghLabel.getName();
+                    String color = ghLabel.getColor();
+                    GHLabel repoLabel = getGHLabel(repoLabels, name, color);
+                    String description = repoLabel.getDescription();
+                    
+                    Label label = new Label(pullRequest, name, color, description);
+                    long ghId = ghEvent.getId();
+                    IssueEvent issueEvent = eventMap.get(ghId);
+                    label.setIssueEvent(issueEvent);
+                    pullRequest.getAddedLabels().add(label);
+                    
+                } else if (eventType.equals("unlabeled")) {
+                    GHLabel ghLabel = ghEvent.getLabel();
+                    String name = ghLabel.getName();
+                    String color = ghLabel.getColor();
+                    GHLabel repoLabel = getGHLabel(repoLabels, name, color);
+                    String description = repoLabel.getDescription();
+                    
+                    Label label = new Label(pullRequest, name, color, description);
+                    long ghId = ghEvent.getId();
+                    IssueEvent issueEvent = eventMap.get(ghId);
+                    label.setIssueEvent(issueEvent);
+                    pullRequest.getRemovedLabels().add(label);
+                }
             }
-        }
-        
-        for (Label label : pullRequest.getAddedLabels()) {
-            if (!isIn(label, pullRequest.getRemovedLabels())) {
-                pullRequest.getFinalLabels().add(label);
+            
+            for (Label label : pullRequest.getAddedLabels()) {
+                if (!isIn(label, pullRequest.getRemovedLabels())) {
+                    pullRequest.getFinalLabels().add(label);
+                }
             }
+        } catch (IOException e) {
+            exceptions.add(e);
         }
     }
     
@@ -89,5 +95,9 @@ public class LabelBuilder {
             }
         }
         return false;
+    }
+    
+    List<Exception> getExceptions() {
+        return exceptions;
     }
 }

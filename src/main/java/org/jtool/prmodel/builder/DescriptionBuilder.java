@@ -1,7 +1,5 @@
 package org.jtool.prmodel.builder;
 
-import java.io.IOException;
-
 import org.kohsuke.github.GHPullRequest;
 
 import org.jtool.prmodel.PullRequest;
@@ -17,7 +15,7 @@ public class DescriptionBuilder {
         this.ghPullRequest = ghPullRequest;
     }
     
-    void build() throws IOException {
+    void build() {
         String body = ghPullRequest.getBody();
         Description description = new Description(pullRequest, body);
         

@@ -153,7 +153,7 @@ public class JsonFileReader {
                     System.out.println("Loaded PR model for " + file.getPath().toString());
                 } else if (isDataLossJsonFromPRCollector(file)) {
                     Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
-                    DeficientPullRequest deficientPullRequest = loadDeficientPullRequest(str_pr);
+                    DeficientPullRequest deficientPullRequest = loadPRModelWithDataLoss(str_pr);
                     deficientPullRequests.add(deficientPullRequest);
                     System.out.println("Loaded deficient PR for " + file.getPath().toString());
                 }
@@ -169,13 +169,72 @@ public class JsonFileReader {
         PRModelDate createDate = new PRModelDate(str_pr.createDate);
         PRModelDate endDate = new PRModelDate(str_pr.endDate);
         
-        PullRequest pullRequest = new PullRequest(str_pr.id, str_pr.title, str_pr.repositoryName, str_pr.state,
+        PullRequest pullRequest = new PullRequest(
+                str_pr.id, str_pr.title, str_pr.repositoryName, str_pr.state,
                 createDate, endDate,
-                str_pr.mergeBranch, str_pr.headBranch, str_pr.pageUrl, str_pr.repositorySrcDLUrl,
-                str_pr.headRepositorySrcDLUrl,
-                str_pr.isMerged, str_pr.isStandardMerged, str_pr.sourceCodeRetrievable,
+                str_pr.mergeBranch, str_pr.headBranch, str_pr.pageUrl,
+                str_pr.repositorySrcDLUrl, str_pr.headRepositorySrcDLUrl,
+                str_pr.isMerged, str_pr.isStandardMerged,
                 str_pr.repositoryBranches, str_pr.headRepositoryBranches);
         pullRequest.setPrmodelId(str_pr.prmodelId);
+        
+        pullRequest.setParticipantRetrievable(str_pr.participantRetrievable);
+        pullRequest.setCommentRetrievable(str_pr.commentRetrievable);
+        pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
+        pullRequest.setEventRetrievable(str_pr.eventRetrievable);
+        pullRequest.setReviewEventRetrievable(str_pr.reviewEventRetrievable);
+        pullRequest.setCommitRetrievable(str_pr.commitRetrievable);
+        pullRequest.setSourceCodeRetrievable(str_pr.sourceCodeRetrievable);
+        
+        Set<Participant> participants = loadParticipants(pullRequest, str_pr.participants);
+        pullRequest.getParticipants().addAll(participants);
+        
+        Description description = loadDescription(pullRequest, str_pr.description);
+        pullRequest.setDescription(description);
+        
+        HTMLDescription htmlDescription = loadHTMLDescription(pullRequest, str_pr.htmlDescription);
+        pullRequest.setHTMLDescription(htmlDescription);
+        
+        Conversation conversation = loadConversation(pullRequest, str_pr.conversation);
+        pullRequest.setConversation(conversation);
+        
+        List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
+        pullRequest.getCommits().addAll(commits);
+        
+        FilesChanged fileChanged = loadFilesChangedInfo(pullRequest, str_pr.filesChanged);
+        pullRequest.setFilesChanged(fileChanged);
+        
+        Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
+        pullRequest.getAddedLabels().addAll(addedLabels);
+        Set<Label> removedLabels = loadLabels(pullRequest, str_pr.removedLabels);
+        pullRequest.getRemovedLabels().addAll(removedLabels);
+        Set<Label> finalLabels = loadLabels(pullRequest, str_pr.finalLabels);
+        pullRequest.getFinalLabels().addAll(finalLabels);
+        
+        return pullRequest;
+    }
+    
+    private DeficientPullRequest loadPRModelWithDataLoss(Str_DeficientPullRequest str_pr) {
+        PRModelDate createDate = new PRModelDate(str_pr.createDate);
+        PRModelDate endDate = new PRModelDate(str_pr.endDate);
+        
+        DeficientPullRequest pullRequest = new DeficientPullRequest(
+                str_pr.id, str_pr.title, str_pr.repositoryName, str_pr.state,
+                createDate, endDate,
+                str_pr.mergeBranch, str_pr.headBranch, str_pr.pageUrl,
+                str_pr.repositorySrcDLUrl, str_pr.headRepositorySrcDLUrl,
+                str_pr.isMerged, str_pr.isStandardMerged,
+                str_pr.repositoryBranches, str_pr.headRepositoryBranches,
+                str_pr.exceptionOutput);
+        pullRequest.setPrmodelId(str_pr.prmodelId);
+        
+        pullRequest.setParticipantRetrievable(str_pr.participantRetrievable);
+        pullRequest.setCommentRetrievable(str_pr.commentRetrievable);
+        pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
+        pullRequest.setEventRetrievable(str_pr.eventRetrievable);
+        pullRequest.setReviewEventRetrievable(str_pr.reviewEventRetrievable);
+        pullRequest.setCommitRetrievable(str_pr.commitRetrievable);
+        pullRequest.setSourceCodeRetrievable(str_pr.sourceCodeRetrievable);
         
         Set<Participant> participants = loadParticipants(pullRequest, str_pr.participants);
         pullRequest.getParticipants().addAll(participants);
@@ -713,18 +772,5 @@ public class JsonFileReader {
             labels.add(label);
         }
         return labels;
-    }
-    
-    private DeficientPullRequest loadDeficientPullRequest(Str_DeficientPullRequest str_pr) {
-        PRModelDate createDate = new PRModelDate(str_pr.createDate);
-        PRModelDate endDate = new PRModelDate(str_pr.endDate);
-        
-        DeficientPullRequest pullRequest = new DeficientPullRequest(str_pr.lossType, str_pr.exceptionOutput,
-                str_pr.id, str_pr.title, str_pr.repositoryName, str_pr.state, 
-                createDate, endDate,
-                str_pr.mergeBranch, str_pr.headBranch, str_pr.pageUrl, str_pr.repositorySrcDLUrl,
-                str_pr.headRepositorySrcDLUrl,
-                str_pr.isMerged, str_pr.isStandardMerged, str_pr.sourceCodeRetrievable);
-        return pullRequest;
     }
 }

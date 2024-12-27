@@ -19,8 +19,8 @@ import org.jtool.prmodel.PRElement;
 
 public class JsonFileWriter {
     
-    private  PullRequest pullRequest;
-    private  Str_PullRequest strPullRequest;
+    private PullRequest pullRequest;
+    private Str_PullRequest strPullRequest;
     
     private DeficientPullRequest deficientPullRequest;
     private Str_DeficientPullRequest strDeficientPullRequest;
@@ -45,7 +45,7 @@ public class JsonFileWriter {
         this.strDeficientPullRequest = strBuilder.buildDeficientPullRequest(deficientPullRequest);
     }
     
-    public void write() {
+    public void writePRModel() {
         Gson gson = new Gson();
         String jsonStr = gson.toJson(strPullRequest);
         
@@ -57,11 +57,11 @@ public class JsonFileWriter {
         }
     }
     
-    public void writeDataLoss() {
+    public void writePRModelWithDataLoss() {
         Gson gson = new Gson();
         String jsonStr = gson.toJson(strDeficientPullRequest);
         
-        try(FileWriter writer = new FileWriter(outputFile,false)){
+        try(FileWriter writer = new FileWriter(outputFile, false)){
             writer.write(jsonStr);
             System.out.println("Succeeded to write Deficient PR "+ deficientPullRequest.getId() + " into a json file !");
         }catch(IOException e) {

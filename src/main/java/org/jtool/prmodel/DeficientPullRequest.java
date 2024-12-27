@@ -1,26 +1,55 @@
 package org.jtool.prmodel;
 
+import java.util.List;
+
 public class DeficientPullRequest extends PullRequest {
     
     /* -------- Attributes -------- */
     
-    private final String lossType;
     private final String exceptionOutput;
     
     /* -------- Attributes -------- */
     
-    public DeficientPullRequest(String lossType, String exceptionOutput, 
-            String id, String title, String repositoryName, String state,
+    public DeficientPullRequest(String id, String title, String repositoryName, String state,
             PRModelDate createDate, PRModelDate endDate,
-            String mergeBranch, String headBranch, String pageUrl, String repositorySrcDLUrl,
-            String headRepositorySrcDLUrl,
-            boolean isMerged, boolean isStandardMerged, boolean sourceCodeRetrievable) {
-        super(id, title, repositoryName, state, createDate, endDate, 
-                mergeBranch, headBranch, pageUrl, repositorySrcDLUrl, headRepositorySrcDLUrl,
-                isMerged, isStandardMerged, sourceCodeRetrievable,
-                null, null);
-        this.lossType = lossType;
+            String mergeBranch, String headBranch, String pageUrl,
+            String repositorySrcDLUrl, String headRepositorySrcDLUrl,
+            boolean isMerged, boolean isStandardMerged,
+            List<String> repositoryBranches, List<String> headRepositoryBranches, String exceptionOutput) {
+        super(id, title, repositoryName, state,
+                createDate, endDate, 
+                mergeBranch, headBranch, pageUrl,
+                repositorySrcDLUrl, headRepositorySrcDLUrl,
+                isMerged, isStandardMerged,
+                repositoryBranches, headRepositoryBranches);
         this.exceptionOutput = exceptionOutput;
+    }
+    
+    public DeficientPullRequest(PullRequest pr, String exceptionOutput) {
+        this(pr.id, pr.title, pr.repositoryName, pr.state,
+                pr.createDate, pr.endDate, 
+                pr.mergeBranch, pr.headBranch, pr.pageUrl,
+                pr.repositorySrcDLUrl, pr.headRepositorySrcDLUrl,
+                pr.isMerged, pr.isStandardMerged,
+                pr.repositoryBranches, pr.headRepositoryBranches, exceptionOutput);
+        
+        this.participantRetrievable = pr.participantRetrievable;
+        this.reviewCommentRetrievable = pr.reviewCommentRetrievable;
+        this.eventRetrievable = pr.eventRetrievable;
+        this.reviewEventRetrievable = pr.reviewEventRetrievable;
+        this.commitRetrievable = pr.commitRetrievable;
+        this.sourceCodeRetrievable = pr.sourceCodeRetrievable;
+        
+        this.participants = pr.participants;
+        this.conversation = pr.conversation;
+        this.commits = pr.commits;
+        this.description = pr.description;
+        this.htmlDescription = pr.htmlDescription;
+        this.filesChanged = pr.filesChanged;
+        
+        this.addedLabels = pr.addedLabels;
+        this.removedLabels = pr.removedLabels;
+        this.finalLabels = pr.finalLabels;
     }
     
     @Override
@@ -28,7 +57,6 @@ public class DeficientPullRequest extends PullRequest {
         String prefix = "DeficientPullRequest ";
         printPRBase(prefix);
         System.out.println();
-        System.out.println("lossType : " + this.lossType);
         System.out.println("exceptionOutput : " + this.exceptionOutput);
     }
     
@@ -36,8 +64,18 @@ public class DeficientPullRequest extends PullRequest {
      * API
      --------------------------------------*/
     
-    public String getLossType() {
-        return lossType;
+    @Override
+    public boolean isDeficient() {
+        return true;
+    }
+    
+    public boolean nonCategorized() {
+        return commentRetrievable &&
+               reviewCommentRetrievable &&
+               eventRetrievable &&
+               reviewEventRetrievable &&
+               commitRetrievable &&
+               sourceCodeRetrievable;
     }
     
     public String getExceptionOutput() {

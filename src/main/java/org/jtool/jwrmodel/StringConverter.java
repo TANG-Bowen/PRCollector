@@ -56,14 +56,69 @@ public class StringConverter {
         str_pr.headBranch = pullRequest.getHeadBranch();
         str_pr.pageUrl = pullRequest.getPageUrl();
         str_pr.repositorySrcDLUrl = pullRequest.getRepositorySrcDLUrl();
-        str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
+        str_pr.headRepositorySrcDLUrl = pullRequest.getHeadRepositorySrcDLUrl();
         
         str_pr.isMerged = pullRequest.isMerged();
         str_pr.isStandardMerged = pullRequest.isStandardMerged();
+        
+        str_pr.repositoryBranches = pullRequest.getRepositoryBranches();
+        str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
+        
+        str_pr.participantRetrievable = pullRequest.isParticipantRetrievable();
+        str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
+        str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.eventRetrievable = pullRequest.isEventRetrievable();
+        str_pr.reviewEventRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.commitRetrievable = pullRequest.isCommitRetrievable();
         str_pr.sourceCodeRetrievable = pullRequest.isSourceCodeRetrievable();
         
+        str_pr.participants = buildParticipants(pullRequest.getParticipants());
+        str_pr.description = buildDescription(pullRequest.getDescription());
+        str_pr.htmlDescription = buildHTMLDescription(pullRequest.getHtmlDescription());
+        str_pr.conversation = buildConversation(pullRequest.getConversation());
+        str_pr.commits = buildCommits(pullRequest.getCommits());
+        str_pr.filesChanged = buildAllFilesChanged(pullRequest.getFilesChanged());
+        str_pr.addedLabels = buildLabels(pullRequest.getAddedLabels());
+        str_pr.removedLabels = buildLabels(pullRequest.getRemovedLabels());
+        str_pr.finalLabels = buildLabels(pullRequest.getFinalLabels());
+        
+        return str_pr;
+    }
+    
+    public Str_DeficientPullRequest buildDeficientPullRequest(DeficientPullRequest pullRequest) {
+        Str_DeficientPullRequest str_pr = new Str_DeficientPullRequest();
+        
+        str_pr.prmodelId = pullRequest.getPRModelId();
+        
+        str_pr.id = pullRequest.getId();
+        str_pr.title = pullRequest.getTitle();
+        str_pr.repositoryName = pullRequest.getRepositoryName();
+        str_pr.state = pullRequest.getState();
+        
+        str_pr.createDate = pullRequest.getCreateDate().toString();
+        str_pr.endDate = pullRequest.getEndDate().toString();
+        
+        str_pr.mergeBranch = pullRequest.getMergeBranch();
+        str_pr.headBranch = pullRequest.getHeadBranch();
+        str_pr.pageUrl = pullRequest.getPageUrl();
+        str_pr.repositorySrcDLUrl = pullRequest.getRepositorySrcDLUrl();
         str_pr.headRepositorySrcDLUrl = pullRequest.getHeadRepositorySrcDLUrl();
+        
+        str_pr.isMerged = pullRequest.isMerged();
+        str_pr.isStandardMerged = pullRequest.isStandardMerged();
+        
         str_pr.repositoryBranches = pullRequest.getRepositoryBranches();
+        str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
+        
+        str_pr.participantRetrievable = pullRequest.isParticipantRetrievable();
+        str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
+        str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.eventRetrievable = pullRequest.isEventRetrievable();
+        str_pr.reviewEventRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.commitRetrievable = pullRequest.isCommitRetrievable();
+        str_pr.sourceCodeRetrievable = pullRequest.isSourceCodeRetrievable();
+        
+        str_pr.exceptionOutput = pullRequest.getExceptionOutput();
         
         str_pr.participants = buildParticipants(pullRequest.getParticipants());
         str_pr.description = buildDescription(pullRequest.getDescription());
@@ -538,29 +593,4 @@ public class StringConverter {
         }
         return str_labels;
      }
-    
-    public Str_DeficientPullRequest buildDeficientPullRequest(DeficientPullRequest deficientPullRequest) {
-        Str_DeficientPullRequest str_pr = new Str_DeficientPullRequest();
-        str_pr.lossType = deficientPullRequest.getLossType();
-        str_pr.exceptionOutput = deficientPullRequest.getExceptionOutput();
-        
-        str_pr.id= deficientPullRequest.getId();
-        str_pr.title = deficientPullRequest.getTitle();
-        str_pr.repositoryName = deficientPullRequest.getRepositoryName();
-        str_pr.state = deficientPullRequest.getState();
-        
-        str_pr.createDate = deficientPullRequest.getCreateDate().toString();
-        str_pr.endDate = deficientPullRequest.getEndDate().toString();
-        
-        str_pr.mergeBranch = deficientPullRequest.getMergeBranch();
-        str_pr.headBranch = deficientPullRequest.getHeadBranch();
-        str_pr.pageUrl = deficientPullRequest.getPageUrl();
-        str_pr.repositorySrcDLUrl = deficientPullRequest.getRepositorySrcDLUrl();
-        str_pr.headRepositorySrcDLUrl = deficientPullRequest.getHeadRepositorySrcDLUrl();
-        
-        str_pr.isMerged = deficientPullRequest.isMerged();
-        str_pr.isStandardMerged = deficientPullRequest.isStandardMerged();
-        str_pr.sourceCodeRetrievable = deficientPullRequest.isSourceCodeRetrievable();
-        return str_pr;
-    }
 }

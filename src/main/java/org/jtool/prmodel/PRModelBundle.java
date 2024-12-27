@@ -107,7 +107,7 @@ public class PRModelBundle {
                     pullRequests.add(pullRequest);
                     writePRModelToFile(pullRequest, pullRequestDir);
                 } else {
-                    JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
+                    JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(), false);
                     System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
                     
                     DeficientPullRequest deficientPullRequest = builder.getDeficientPullRequest();
@@ -155,7 +155,7 @@ public class PRModelBundle {
         JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
         
         if (writeFile) {
-            jfwriter.write();
+            jfwriter.writePRModel();
             
             if (deleteSourceFile) {
                 JsonFileWriter.deleteGitSourceFile(pullRequest, pullRequestDir);
@@ -165,15 +165,15 @@ public class PRModelBundle {
                 JsonFileWriter.deleteGitSourceFile(pullRequest, pullRequestDir);
                 System.out.println("delete source files after error logs");
             }
-            JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),true);
+            JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(), true);
             System.out.println("delete retained source files under the pr dir ");
         }
     }
     
     private void writeDataLossToFile(DeficientPullRequest pullRequest, File pullRequestDir) {
-        String jsonPath = pullRequestDir + File.separator + pullRequest.getRepositoryName() + "_" + pullRequest.getId()+"_dl.json";
+        String jsonPath = pullRequestDir + File.separator + pullRequest.getRepositoryName() + "_" + pullRequest.getId()+"_loss.json";
         JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
-        jfwriter.writeDataLoss();
+        jfwriter.writePRModelWithDataLoss();
     }
     
     public static File getDir(String path) {

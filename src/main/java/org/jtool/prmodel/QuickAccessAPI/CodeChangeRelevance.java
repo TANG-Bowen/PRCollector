@@ -49,6 +49,7 @@ public class CodeChangeRelevance {
         }
         return classes;
     }
+    
     public static List<MethodChange> changedMethods(PullRequest pullRequest) {
         return changedMethods(changedClasses(pullRequest));
     }

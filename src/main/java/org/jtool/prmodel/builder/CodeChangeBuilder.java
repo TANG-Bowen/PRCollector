@@ -1,7 +1,6 @@
 package org.jtool.prmodel.builder;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class CodeChangeBuilder {
         this.pullRequestDir = pullRequestDir;
     }
     
-    public void build() throws IOException, CommitMissingException {
+    public void build() {
         for (Commit commit : pullRequest.getTragetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore;
@@ -74,7 +73,7 @@ public class CodeChangeBuilder {
                 setReferenceRelation(codeChange);
                 setTest(codeChange);
             }
-            this.existingProjects.clear();
+            existingProjects.clear();
         }
     }
     

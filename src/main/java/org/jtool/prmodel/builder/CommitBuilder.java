@@ -18,6 +18,8 @@ import org.jtool.prmodel.PullRequest;
 
 public class CommitBuilder {
     
+    private List<Exception> exceptions = new ArrayList<>();
+    
     private final PullRequest pullRequest;
     private final GHPullRequest ghPullRequest;
     
@@ -26,46 +28,67 @@ public class CommitBuilder {
         this.ghPullRequest = ghPullRequest;
     }
     
-    void build() throws IOException {
+    void build() {
         List<Commit> commits = new ArrayList<>();
         
         for (GHPullRequestCommitDetail ghCommitDetail : ghPullRequest.listCommits()) {
-            GHCommit ghCommit = ghPullRequest.getRepository().getCommit(ghCommitDetail.getSha());
-            
-            String sha = ghCommitDetail.getSha();
-            String shortSha = ghCommitDetail.getSha().substring(0, 6);
-            PRModelDate date = new PRModelDate(ghCommit.getCommitDate());
-            String message = ghCommit.getCommitShortInfo().getMessage();
-            String type = getCommitType(ghCommit, message);
-            
-            Commit commit = new Commit(pullRequest, sha, shortSha, date, message, type);
-            commits.add(commit);
-            
-            Participant commiter = ParticipantBuilder.existsParticipant(pullRequest, ghCommit.getAuthor().getId());
-            if (commiter == null) {
-                commiter = ParticipantBuilder.createParticipant(pullRequest, ghCommit.getAuthor(), "Commiter");
-            }
-            commit.setCommiter(commiter);
-            
-            List<CIStatus> statusList = new ArrayList<>();
-            for (GHCommitStatus ghStatus : ghCommit.listStatuses().toList()) {
-                String context = ghStatus.getContext();
-                String state = ghStatus.getState().toString();
-                String description = ghStatus.getDescription();
-                String targetUrl = ghStatus.getTargetUrl();
-                PRModelDate createDate = new PRModelDate(ghStatus.getCreatedAt());
-                PRModelDate updateDate = new PRModelDate(ghStatus.getUpdatedAt());
+            try {
+                GHCommit ghCommit = ghPullRequest.getRepository().getCommit(ghCommitDetail.getSha());
                 
-                CIStatus ciStatus = new CIStatus(pullRequest, context, state, description, targetUrl,
-                        createDate, updateDate);
-                ciStatus.setCommit(commit);
+                String sha = ghCommitDetail.getSha();
+                String shortSha = ghCommitDetail.getSha().substring(0, 6);
+                PRModelDate date = new PRModelDate(ghCommit.getCommitDate());
+                String message = ghCommit.getCommitShortInfo().getMessage();
+                String type = getCommitType(ghCommit, message);
                 
-                statusList.add(ciStatus);
+                Commit commit = new Commit(pullRequest, sha, shortSha, date, message, type);
+                commits.add(commit);
+                
+                ParticipantBuilder participantBuilder = new ParticipantBuilder(pullRequest, null);
+                try {
+                    Participant commiter = participantBuilder.existsParticipant(ghCommit.getAuthor().getId());
+                    if (commiter == null) {
+                        commiter = participantBuilder.createParticipant(ghCommit.getAuthor(), "Commiter");
+                    }
+                    commit.setCommiter(commiter);
+                } catch (IOException e) {
+                    Participant commiter = participantBuilder.existsParticipant(PRModelBuilder.UNKNOWN_SYMBOL);
+                    if (commiter == null) {
+                        commiter = participantBuilder.createUnknownParticipant("Commiter");
+                    }
+                    commit.setCommiter(commiter);
+                    pullRequest.setCommentRetrievable(false);
+                    exceptions.add(e);
+                }
+                
+                List<CIStatus> statusList = new ArrayList<>();
+                try {
+                    for (GHCommitStatus ghStatus : ghCommit.listStatuses().toList()) {
+                        String context = ghStatus.getContext();
+                        String state = ghStatus.getState().toString();
+                        String description = ghStatus.getDescription();
+                        String targetUrl = ghStatus.getTargetUrl();
+                        PRModelDate createDate = new PRModelDate(ghStatus.getCreatedAt());
+                        PRModelDate updateDate = new PRModelDate(ghStatus.getUpdatedAt());
+                        
+                        CIStatus ciStatus = new CIStatus(pullRequest, context, state, description, targetUrl,
+                                createDate, updateDate);
+                        ciStatus.setCommit(commit);
+                        
+                        statusList.add(ciStatus);
+                    }
+                } catch (IOException e) {
+                    pullRequest.setCommentRetrievable(false);
+                    exceptions.add(e);
+                }
+                
+                List<CIStatus> sortedStatusList = statusList.stream()
+                        .sorted((s1, s2) -> s1.getUpdateDate().compareTo(s2.getUpdateDate())).collect(Collectors.toList());
+                commit.getCIStatus().addAll(sortedStatusList);
+            } catch (IOException e) {
+                pullRequest.setCommitRetrievable(false);
+                exceptions.add(e);
             }
-            
-            List<CIStatus> sortedStatusList = statusList.stream()
-                    .sorted((s1, s2) -> s1.getUpdateDate().compareTo(s2.getUpdateDate())).collect(Collectors.toList());
-            commit.getCIStatus().addAll(sortedStatusList);
         }
         List<Commit> sortedCimmits = commits.stream()
                 .sorted((c1, c2) -> c1.getDate().compareTo(c2.getDate())).collect(Collectors.toList());
@@ -92,5 +115,9 @@ public class CommitBuilder {
         } else {
             return "regular";
         }
+    }
+    
+    List<Exception> getExceptions() {
+        return exceptions;
     }
 }
