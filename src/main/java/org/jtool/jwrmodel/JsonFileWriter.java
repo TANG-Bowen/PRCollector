@@ -19,12 +19,10 @@ import org.jtool.prmodel.PRElement;
 
 public class JsonFileWriter {
     
-    private  PullRequest pullRequest;
-    private  Str_PullRequest strPullRequest;
-    
+    private PullRequest pullRequest;
+    private Str_PullRequest strPullRequest;
     private DeficientPullRequest deficientPullRequest;
     private Str_DeficientPullRequest strDeficientPullRequest;
-    
     private  StringConverter strBuilder;
     
     private  File outputFile;
@@ -45,7 +43,7 @@ public class JsonFileWriter {
         this.strDeficientPullRequest = strBuilder.buildDeficientPullRequest(deficientPullRequest);
     }
     
-    public void write() {
+    public void writePRModel() {
         Gson gson = new Gson();
         String jsonStr = gson.toJson(strPullRequest);
         
@@ -57,11 +55,11 @@ public class JsonFileWriter {
         }
     }
     
-    public void writeDataLoss() {
+    public void writePRModelWithDataLoss() {
         Gson gson = new Gson();
         String jsonStr = gson.toJson(strDeficientPullRequest);
         
-        try(FileWriter writer = new FileWriter(outputFile,false)){
+        try(FileWriter writer = new FileWriter(outputFile, false)){
             writer.write(jsonStr);
             System.out.println("Succeeded to write Deficient PR "+ deficientPullRequest.getId() + " into a json file !");
         }catch(IOException e) {
@@ -75,12 +73,6 @@ public class JsonFileWriter {
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore; 
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
-            
-//            File dirBefore = PRModelBundle.getDir(pathBefore);
-//            File dirAfter = PRModelBundle.getDir(pathAfter);
-//            
-//            deleteFiles(dirBefore);
-//            deleteFiles(dirAfter);
             deleteFiles(pathBefore, true);
             deleteFiles(pathAfter, true);
         }

@@ -19,6 +19,8 @@ import org.jtool.prmodel.PRModelBundle;
 
 public class DiffBuilder {
     
+    private List<Exception> exceptions = new ArrayList<>();
+    
     private final PullRequest pullRequest;
     private final File pullRequestDir;
     
@@ -27,7 +29,7 @@ public class DiffBuilder {
         this.pullRequestDir = pullRequestDir;
     }
     
-    void build() throws CommitMissingException, IOException {
+    void build() {
         for (Commit commit : pullRequest.getTragetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore;
@@ -41,10 +43,15 @@ public class DiffBuilder {
             codeChange.setCommit(commit);
             commit.setCodeChange(codeChange);
             
-            commandGit(commit, codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
-            
-            boolean hasJavaFile = codeChange.getDiffFiles().stream().anyMatch(f -> f.isJavaFile());
-            codeChange.hasJavaFile(hasJavaFile);
+            try {
+                commandGit(commit, codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
+                
+                boolean hasJavaFile = codeChange.getDiffFiles().stream().anyMatch(f -> f.isJavaFile());
+                codeChange.hasJavaFile(hasJavaFile);
+            } catch (CommitMissingException | IOException e) {
+                pullRequest.setCommentRetrievable(false);
+                exceptions.add(e);
+            }
         }
     }
     
@@ -331,5 +338,9 @@ public class DiffBuilder {
                 }
             }
         }
+    }
+    
+    List<Exception> getExceptions() {
+        return exceptions;
     }
 }

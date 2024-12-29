@@ -23,10 +23,17 @@ public class Str_PullRequest {
     
     boolean isMerged;
     boolean isStandardMerged;
-    boolean sourceCodeRetrievable;
     
     List<String> repositoryBranches;
     List<String> headRepositoryBranches;
+    
+    boolean participantRetrievable;
+    boolean commentRetrievable;
+    boolean reviewCommentRetrievable;
+    boolean eventRetrievable;
+    boolean reviewEventRetrievable;
+    boolean commitRetrievable;
+    boolean sourceCodeRetrievable;
     
     Set<Str_Participant> participants;
     

@@ -36,8 +36,13 @@ public class FilesChangedBuilder {
         this.repository = repository;
     }
     
-    void build() throws IOException {
-        List<GHFile> ghChangedFiles = collectGHChangedFiles();
+    void build() {
+        List<GHFile> ghChangedFiles;
+        try {
+            ghChangedFiles = collectGHChangedFiles();
+        } catch (IOException e) {
+            return;
+        }
         
         if (pullRequest.getCommits().size() > 1) {
             List<Commit> commits = pullRequest.getTragetCommits();
@@ -209,5 +214,4 @@ public class FilesChangedBuilder {
             this.content = content;
         }
     }
-
 }

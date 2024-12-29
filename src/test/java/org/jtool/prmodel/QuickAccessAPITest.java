@@ -17,6 +17,7 @@ public class QuickAccessAPITest {
         printDiscriptionRelevance();
         printConversationRelevance();
         printCommitRelevance();
+        printCodeChangeRelevance();
         printTimeRelevance();
     }
     
@@ -82,10 +83,13 @@ public class QuickAccessAPITest {
         System.out.println("test included : "                    + CommitRelevance.testIncluded(pullRequest));
         System.out.println("test included for commit : "         + CommitRelevance.testIncluded(pullRequest, testCommitSha1));
         System.out.println("CI_failures : "                      + CommitRelevance.numCIFailures(pullRequest));                
-        
-        System.out.println("Num of changed classes : "           + CommitRelevance.changedClasses(pullRequest).size());
-        System.out.println("Num of changed methods : "           + CommitRelevance.changedMethods(pullRequest).size());
-        System.out.println("Num of changed fields  : "           + CommitRelevance.changedFields(pullRequest).size());
+
+    }
+    
+    public void printCodeChangeRelevance() {
+        System.out.println("Num of changed classes : "           + CodeChangeRelevance.changedClasses(pullRequest).size());
+        System.out.println("Num of changed methods : "           + CodeChangeRelevance.changedMethods(pullRequest).size());
+        System.out.println("Num of changed fields  : "           + CodeChangeRelevance.changedFields(pullRequest).size());
     }
     
     public void printTimeRelevance() {

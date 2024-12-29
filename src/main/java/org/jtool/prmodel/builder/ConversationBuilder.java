@@ -28,17 +28,19 @@ import org.jtool.prmodel.ReviewComment;
 
 public class ConversationBuilder {
     
+    private List<Exception> exceptions = new ArrayList<>();
+    
     private final PullRequest pullRequest;
     private final GHPullRequest ghPullRequest;
     
-    Map<Long, IssueEvent> eventMap = null;
+    private Map<Long, IssueEvent> eventMap = null;
     
     ConversationBuilder(PullRequest pullRequest, GHPullRequest ghPullRequest) {
         this.pullRequest = pullRequest;
         this.ghPullRequest = ghPullRequest;
     }
     
-    void build() throws IOException {
+    void build() {
         Conversation conversation = new Conversation(pullRequest);
         pullRequest.setConversation(conversation);
         
@@ -51,7 +53,6 @@ public class ConversationBuilder {
         
         buildCodeReviewSnippet(conversation);
         addCodeReviewSnippet(conversation);
-        
     }
     
     private Participant getParticipant(String login) {
@@ -60,60 +61,89 @@ public class ConversationBuilder {
                 .findFirst().orElse(null);
     }
     
-    private void buildIssueEvent(Conversation conversation) throws IOException {
+    private void buildIssueEvent(Conversation conversation) {
         eventMap = new HashMap<>();
-        
-        for (GHIssueEvent ghEvent : ghPullRequest.listEvents()) {
-            PRModelDate date = new PRModelDate(ghEvent.getCreatedAt());
-            String body = ghEvent.getEvent();
-            
-            IssueEvent event = new IssueEvent(pullRequest, date, body);
-            conversation.getIssueEvents().add(event);
-            
-            event.setConversation(conversation);
-            event.setParticipant(getParticipant(ghEvent.getActor().getLogin()));
-            
-            long ghId = ghEvent.getId();
-            eventMap.put(ghId, event);
+        try {
+            for (GHIssueEvent ghEvent : ghPullRequest.listEvents()) {
+                PRModelDate date = new PRModelDate(ghEvent.getCreatedAt());
+                String body = ghEvent.getEvent();
+                
+                IssueEvent event = new IssueEvent(pullRequest, date, body);
+                conversation.getIssueEvents().add(event);
+                
+                event.setConversation(conversation);
+                event.setParticipant(getParticipant(ghEvent.getActor().getLogin()));
+                
+                long ghId = ghEvent.getId();
+                eventMap.put(ghId, event);
+            }
+        } catch (IOException e) {
+            pullRequest.setEventRetrievable(false);
+            exceptions.add(e);
         }
     }
     
-    private void buildIssueComment(Conversation conversation) throws IOException {
-        for (GHIssueComment ghComment : ghPullRequest.listComments()) {
-            PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
-            String body = ghComment.getBody();
-            
-            IssueComment comment = new IssueComment(pullRequest, date, body);
-            conversation.getIssueComments().add(comment);
-            
-            comment.setConversation(conversation);
-            comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
+    private void buildIssueComment(Conversation conversation) {
+        try {
+            for (GHIssueComment ghComment : ghPullRequest.listComments()) {
+                try {
+                    PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
+                    String body = ghComment.getBody();
+                    
+                    IssueComment comment = new IssueComment(pullRequest, date, body);
+                    conversation.getIssueComments().add(comment);
+                    
+                    comment.setConversation(conversation);
+                    comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
+                } catch (IOException e) {
+                    pullRequest.setCommentRetrievable(false);
+                    exceptions.add(e);
+                }
+            }
+        } catch (IOException e) {
+            pullRequest.setCommentRetrievable(false);
+            exceptions.add(e);
         }
     }
     
-    private void buildReviewEvent(Conversation conversation) throws IOException {
+    private void buildReviewEvent(Conversation conversation) {
         for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
-            PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
-            String body = ghReview.getBody();
-            
-            ReviewEvent review = new ReviewEvent(pullRequest, date, body);
-            conversation.getReviewEvents().add(review);
-            
-            review.setConversation(conversation);
-            review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
+            try {
+                PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
+                String body = ghReview.getBody();
+                
+                ReviewEvent review = new ReviewEvent(pullRequest, date, body);
+                conversation.getReviewEvents().add(review);
+                
+                review.setConversation(conversation);
+                review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
+            } catch (IOException e) {
+                pullRequest.setReviewEventRetrievable(false);
+                exceptions.add(e);
+            }
         }
     }
     
-    private void buildReviewComment(Conversation conversation) throws IOException {
-        for (GHPullRequestReviewComment ghComment : ghPullRequest.listReviewComments()) {
-            PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
-            String body = ghComment.getBody();
-            
-            ReviewComment comment = new ReviewComment(pullRequest, date, body);
-            conversation.getReviewComments().add(comment);
-            
-            comment.setConversation(conversation);
-            comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
+    private void buildReviewComment(Conversation conversation) {
+        try {
+            for (GHPullRequestReviewComment ghComment : ghPullRequest.listReviewComments()) {
+                try {
+                    PRModelDate date = new PRModelDate(ghComment.getCreatedAt());
+                    String body = ghComment.getBody();
+                    
+                    ReviewComment comment = new ReviewComment(pullRequest, date, body);
+                    conversation.getReviewComments().add(comment);
+                    
+                    comment.setConversation(conversation);
+                    comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
+                } catch (IOException e) {
+                    pullRequest.setReviewCommentRetrievable(false);
+                    exceptions.add(e);
+                }
+            }
+        } catch (IOException e) {
+            pullRequest.setReviewCommentRetrievable(false);
+            exceptions.add(e);
         }
     }
     
@@ -130,47 +160,51 @@ public class ConversationBuilder {
         conversation.getTimeLine().addAll(sortedActions);
     }
     
-    private void buildCodeReviewSnippet(Conversation conversation) throws IOException {
-        for (GHPullRequestReviewComment ghComment : ghPullRequest.listReviewComments()) {
-            String diffHunk = ghComment.getDiffHunk();
-            
-            if (conversation.getCodeReviews().stream().anyMatch(s -> s.getDiffHunk().equals(diffHunk))) {
-                continue;
-            }
-            
-            CodeReviewSnippet snippet = new CodeReviewSnippet(pullRequest, diffHunk);
-            conversation.getCodeReviews().add(snippet);
-            
-            snippet.setConversation(conversation);
-            
-            List<GHPullRequestReviewComment> ghComments = new ArrayList<>();
-            for (GHPullRequestReviewComment ghComment2 : ghPullRequest.listReviewComments()) {
-                if (ghComment.getDiffHunk().equals(ghComment2.getDiffHunk())) {
-                    if (!ghComments.stream().anyMatch(c -> c.getBody().equals(ghComment2.getBody()))) {
-                        ghComments.add(ghComment2);
+    private void buildCodeReviewSnippet(Conversation conversation) {
+        try {
+            for (GHPullRequestReviewComment ghComment : ghPullRequest.listReviewComments()) {
+                String diffHunk = ghComment.getDiffHunk();
+                
+                if (conversation.getCodeReviews().stream().anyMatch(s -> s.getDiffHunk().equals(diffHunk))) {
+                    continue;
+                }
+                
+                CodeReviewSnippet snippet = new CodeReviewSnippet(pullRequest, diffHunk);
+                conversation.getCodeReviews().add(snippet);
+                
+                snippet.setConversation(conversation);
+                
+                List<GHPullRequestReviewComment> ghComments = new ArrayList<>();
+                for (GHPullRequestReviewComment ghComment2 : ghPullRequest.listReviewComments()) {
+                    if (ghComment.getDiffHunk().equals(ghComment2.getDiffHunk())) {
+                        if (!ghComments.stream().anyMatch(c -> c.getBody().equals(ghComment2.getBody()))) {
+                            ghComments.add(ghComment2);
+                        }
+                    }
+                }
+                
+                Collections.sort(ghComments, new Comparator<GHPullRequestReviewComment>() {
+                    @Override
+                    public int compare(GHPullRequestReviewComment c1 , GHPullRequestReviewComment c2) {
+                        try {
+                            return c1.getCreatedAt().compareTo(c2.getCreatedAt());
+                        } catch (IOException e) {
+                            return -33;
+                        }
+                    }
+                });
+                
+                for (GHPullRequestReviewComment ghc : ghComments) {
+                    ReviewComment comment = conversation.getReviewComments().stream()
+                            .filter(c -> c.getBody().equals(ghc.getBody())).findFirst().orElse(null);
+                    if (comment != null) {
+                        snippet.getReviewComments().add(comment);
+                        comment.setCodeReviewSnippet(snippet);
                     }
                 }
             }
-            
-            Collections.sort(ghComments, new Comparator<GHPullRequestReviewComment>() {
-                @Override
-                public int compare(GHPullRequestReviewComment c1 , GHPullRequestReviewComment c2) {
-                    try {
-                        return c1.getCreatedAt().compareTo(c2.getCreatedAt());
-                    } catch (IOException e) {
-                        return -33;
-                    }
-                }
-            });
-            
-            for (GHPullRequestReviewComment ghc : ghComments) {
-                ReviewComment comment = conversation.getReviewComments().stream()
-                        .filter(c -> c.getBody().equals(ghc.getBody())).findFirst().orElse(null);
-                if (comment != null) {
-                    snippet.getReviewComments().add(comment);
-                    comment.setCodeReviewSnippet(snippet);
-                }
-            }
+        } catch (IOException e) {
+            /* empty */
         }
     }
     
@@ -185,15 +219,12 @@ public class ConversationBuilder {
             }
         }
     }
-
-	public Map<Long, IssueEvent> getEventMap() {
-		return eventMap;
-	}
-
-	public void setEventMap(Map<Long, IssueEvent> eventMap) {
-		this.eventMap = eventMap;
-	}
     
+    public Map<Long, IssueEvent> getEventMap() {
+        return eventMap;
+    }
     
-    
+    List<Exception> getExceptions() {
+        return exceptions;
+    }
 }

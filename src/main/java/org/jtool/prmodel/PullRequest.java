@@ -10,45 +10,52 @@ public class PullRequest extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private final String id;
-    private final String title;
-    private final String repositoryName;
-    private final String state;
+    protected final String id;
+    protected final String title;
+    protected final String repositoryName;
+    protected final String state;
     
-    private final PRModelDate createDate;
-    private final PRModelDate endDate;
+    protected final PRModelDate createDate;
+    protected final PRModelDate endDate;
     
-    private final String mergeBranch;
-    private final String headBranch;
-    private final String pageUrl;
-    private final String repositorySrcDLUrl;
-    private final String headRepositorySrcDLUrl;
+    protected final String mergeBranch;
+    protected final String headBranch;
+    protected final String pageUrl;
+    protected final String repositorySrcDLUrl;
+    protected final String headRepositorySrcDLUrl;
     
-    private final boolean isMerged;
-    private final boolean isStandardMerged;
-    private final boolean sourceCodeRetrievable;
+    protected final boolean isMerged;
+    protected final boolean isStandardMerged;
     
-    private final List<String> repositoryBranches;
-    private final List<String> headRepositoryBranches;
+    protected final List<String> repositoryBranches;
+    protected final List<String> headRepositoryBranches;
+    
+    protected boolean participantRetrievable = true;
+    protected boolean commentRetrievable = true;
+    protected boolean reviewCommentRetrievable = true;
+    protected boolean eventRetrievable = true;
+    protected boolean reviewEventRetrievable = true;
+    protected boolean commitRetrievable = true;
+    protected boolean sourceCodeRetrievable = true;
     
     /* -------- Attributes -------- */
     
-    private Set<Participant> participants = new HashSet<>();
-    private Conversation conversation;
-    private List<Commit> commits = new ArrayList<>();
-    private Description description;
-    private HTMLDescription htmlDescription;
-    private FilesChanged filesChanged;
+    protected Set<Participant> participants = new HashSet<>();
+    protected Conversation conversation;
+    protected List<Commit> commits = new ArrayList<>();
+    protected Description description;
+    protected HTMLDescription htmlDescription;
+    protected FilesChanged filesChanged;
     
-    private Set<Label> addedLabels = new HashSet<>();
-    private Set<Label> removedLabels = new HashSet<>();
-    private Set<Label> finalLabels = new HashSet<>();
+    protected Set<Label> addedLabels = new HashSet<>();
+    protected Set<Label> removedLabels = new HashSet<>();
+    protected Set<Label> finalLabels = new HashSet<>();
     
     public PullRequest(String id, String title, String repositoryName, String state,
             PRModelDate createDate, PRModelDate endDate,
-            String mergeBranch, String headBranch, String pageUrl, String repositorySrcDLUrl,
-            String headRepositorySrcDLUrl,
-            boolean isMerged, boolean isStandardMerged, boolean sourceCodeRetrievable,
+            String mergeBranch, String headBranch, String pageUrl,
+            String repositorySrcDLUrl, String headRepositorySrcDLUrl,
+            boolean isMerged, boolean isStandardMerged,
             List<String> repositoryBranches, List<String> headRepositoryBranches) {
         super(null);
         
@@ -68,7 +75,6 @@ public class PullRequest extends PRElement {
         
         this.isMerged = isMerged;
         this.isStandardMerged = isStandardMerged;
-        this.sourceCodeRetrievable = sourceCodeRetrievable;
         
         this.repositoryBranches = repositoryBranches;
         this.headRepositoryBranches = headRepositoryBranches;
@@ -76,6 +82,34 @@ public class PullRequest extends PRElement {
     
     public void addParticipant(Participant participant) {
         participants.add(participant);
+    }
+    
+    public void setParticipantRetrievable(boolean bool) {
+        participantRetrievable = bool;
+    }
+    
+    public void setCommentRetrievable(boolean bool) {
+        commentRetrievable = bool;
+    }
+    
+    public void setReviewCommentRetrievable(boolean bool) {
+        reviewCommentRetrievable = bool;
+    }
+    
+    public void setEventRetrievable(boolean bool) {
+        eventRetrievable = bool;
+    }
+    
+    public void setReviewEventRetrievable(boolean bool) {
+        reviewEventRetrievable = bool;
+    }
+    
+    public void setCommitRetrievable(boolean bool) {
+        commitRetrievable = bool;
+    }
+    
+    public void setSourceCodeRetrievable(boolean bool) {
+        sourceCodeRetrievable = bool;
     }
     
     public void setConversation(Conversation conversation) {
@@ -190,10 +224,6 @@ public class PullRequest extends PRElement {
         return isStandardMerged;
     }
     
-    public boolean isSourceCodeRetrievable() {
-        return sourceCodeRetrievable;
-    }
-    
     public String getMergeBranch() {
         return mergeBranch;
     }
@@ -220,6 +250,38 @@ public class PullRequest extends PRElement {
     
     public List<String> getHeadRepositoryBranches() {
         return headRepositoryBranches;
+    }
+    
+    public boolean isParticipantRetrievable() {
+        return participantRetrievable;
+    }
+    
+    public boolean isCommentRetrievable() {
+        return commentRetrievable;
+    }
+    
+    public boolean isReviewCommentRetrievable() {
+        return reviewCommentRetrievable;
+    }
+    
+    public boolean isEventRetrievable() {
+        return eventRetrievable;
+    }
+    
+    public boolean isReviewEventRetrievable() {
+        return reviewEventRetrievable;
+    }
+    
+    public boolean isCommitRetrievable() {
+        return commitRetrievable;
+    }
+    
+    public boolean isSourceCodeRetrievable() {
+        return sourceCodeRetrievable;
+    }
+    
+    public boolean isDeficient() {
+        return false;
     }
     
     public Set<Participant> getParticipants() {
