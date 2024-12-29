@@ -25,16 +25,14 @@ public class PRModel {
         pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
     }
     
-    public void addDeficientPullRequest(DeficientPullRequest pullRequest) {
-        deficientPullRequests.add(pullRequest);
+    public void addDeficientPullRequest(DeficientPullRequest pullRequests) {
+        deficientPullRequests.add(pullRequests);
         repositoryNames.add(pullRequests.getRepositoryName());
     }
     
     public void addAllDeficientPullRequests(Set<DeficientPullRequest> pullRequests) {
         deficientPullRequests.addAll(pullRequests);
         pullRequests.forEach(dl -> repositoryNames.add(dl.getRepositoryName()));
-        this.pullRequests.addAll(pullRequests);
-        pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
     }
     
     /* ------------------------------------

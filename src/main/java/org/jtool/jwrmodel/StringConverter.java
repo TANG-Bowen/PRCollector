@@ -114,7 +114,7 @@ public class StringConverter {
         str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
         str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
         str_pr.eventRetrievable = pullRequest.isEventRetrievable();
-        str_pr.reviewEventRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.reviewEventRetrievable = pullRequest.isReviewEventRetrievable();
         str_pr.commitRetrievable = pullRequest.isCommitRetrievable();
         str_pr.sourceCodeRetrievable = pullRequest.isSourceCodeRetrievable();
         
@@ -406,7 +406,7 @@ public class StringConverter {
             str_fl.path = fchange.getPath();
             str_fl.sourceCodeBefore = fchange.getSourceCodeBefore();
             str_fl.sourceCodeAfter = fchange.getSourceCodeAfter();
-            str_fl.isTest = fchange.isTest();
+            
             str_fl.classChanges = buildClassChange(fchange.getClassChanges());
         }
         return str_fls;
@@ -593,5 +593,4 @@ public class StringConverter {
         }
         return str_labels;
      }
-
 }

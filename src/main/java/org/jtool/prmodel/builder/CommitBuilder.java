@@ -57,7 +57,7 @@ public class CommitBuilder {
                         commiter = participantBuilder.createUnknownParticipant("Commiter");
                     }
                     commit.setCommiter(commiter);
-                    pullRequest.setCommentRetrievable(false);
+                    pullRequest.setCommitRetrievable(false);
                     exceptions.add(e);
                 }
                 
@@ -78,7 +78,7 @@ public class CommitBuilder {
                         statusList.add(ciStatus);
                     }
                 } catch (IOException e) {
-                    pullRequest.setCommentRetrievable(false);
+                    pullRequest.setCommitRetrievable(false);
                     exceptions.add(e);
                 }
                 

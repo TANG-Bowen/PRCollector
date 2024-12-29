@@ -78,6 +78,7 @@ public class PullRequest extends PRElement {
         
         this.repositoryBranches = repositoryBranches;
         this.headRepositoryBranches = headRepositoryBranches;
+        
     }
     
     public void addParticipant(Participant participant) {
@@ -163,9 +164,16 @@ public class PullRequest extends PRElement {
         System.out.println(prefix + "isMerged : " + isMerged);
         System.out.println(prefix + "isStandardMerged : " + isStandardMerged);
         System.out.println(prefix + "sourceCodeRetrievable : " + sourceCodeRetrievable);
-        
+        System.out.println(prefix + "participantRetrievable : " + participantRetrievable);
+        System.out.println(prefix + "commentRetrievable : " + commentRetrievable);
+        System.out.println(prefix + "reviewCommentRetrievable : " + reviewCommentRetrievable);
+        System.out.println(prefix + "eventRetrievable : " + eventRetrievable);
+        System.out.println(prefix + "reviewEventRetrievable : " + reviewEventRetrievable);
+        System.out.println(prefix + "commitRetrievable : " + commitRetrievable);
         
         System.out.println(prefix + "headRepositorySrcDLUrl : " + headRepositorySrcDLUrl);
+        
+        
     }
     
     public List<Commit> getTragetCommits() {

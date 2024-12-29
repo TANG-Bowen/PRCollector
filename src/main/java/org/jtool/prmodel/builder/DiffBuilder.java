@@ -49,7 +49,7 @@ public class DiffBuilder {
                 boolean hasJavaFile = codeChange.getDiffFiles().stream().anyMatch(f -> f.isJavaFile());
                 codeChange.hasJavaFile(hasJavaFile);
             } catch (CommitMissingException | IOException e) {
-                pullRequest.setCommentRetrievable(false);
+                pullRequest.setCommitRetrievable(false);
                 exceptions.add(e);
             }
         }

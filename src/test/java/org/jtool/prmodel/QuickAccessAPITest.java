@@ -83,7 +83,6 @@ public class QuickAccessAPITest {
         System.out.println("test included : "                    + CommitRelevance.testIncluded(pullRequest));
         System.out.println("test included for commit : "         + CommitRelevance.testIncluded(pullRequest, testCommitSha1));
         System.out.println("CI_failures : "                      + CommitRelevance.numCIFailures(pullRequest));                
-
     }
     
     public void printCodeChangeRelevance() {

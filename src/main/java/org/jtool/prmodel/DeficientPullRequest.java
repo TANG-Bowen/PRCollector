@@ -1,6 +1,7 @@
 package org.jtool.prmodel;
 
 import java.util.List;
+
 public class DeficientPullRequest extends PullRequest {
     
     /* -------- Attributes -------- */

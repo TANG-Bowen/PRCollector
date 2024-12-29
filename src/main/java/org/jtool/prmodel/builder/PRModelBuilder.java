@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ArrayList;
+
 import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
@@ -34,7 +35,7 @@ public class PRModelBuilder {
     private final List<String> bannedLabels;
     
     private final boolean writeErrorLog;
-
+    
     private PullRequest pullRequest = null;
     private DeficientPullRequest deficientPullRequest = null;
     
@@ -78,13 +79,11 @@ public class PRModelBuilder {
         try {
             boolean downloadingChangedFilesOk = checkDownloadingChangedFiles(ghPullRequest);
             if (!downloadingChangedFilesOk) {
-            	System.out.println("Out of changedFiles range");
                 return false;
             }
             
             boolean downloadinCommitOk = checkDownloadingCommits(ghPullRequest);
             if (!downloadinCommitOk) {
-            	System.out.println("Out of commits range");
                 return false;
             }
         } catch (IOException e) {
@@ -210,7 +209,8 @@ public class PRModelBuilder {
                 ex.printStackTrace();
             }
         }
-    }    
+    }
+    
     private String getExceptionString(List<Exception> exceptions) {
         StringBuilder buf = new StringBuilder();
         for (Exception ex : exceptions) {

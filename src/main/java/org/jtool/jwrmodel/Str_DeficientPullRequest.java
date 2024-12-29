@@ -5,7 +5,8 @@ import java.util.Set;
 
 public class Str_DeficientPullRequest {
     
-    String prmodelId;   
+    String prmodelId;
+    
     String id;
     String title;
     String repositoryName;
@@ -46,5 +47,4 @@ public class Str_DeficientPullRequest {
     Set<Str_Label> finalLabels;
     
     String exceptionOutput;
-
 }

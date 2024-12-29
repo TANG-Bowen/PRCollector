@@ -56,7 +56,9 @@ public class Commit extends PRElement {
         System.out.println(prefix + "type : " + type);
         System.out.println(prefix + "message : " + message);
         System.out.println(prefix + "ciStatus : " + toPRElemList(ciStatus));
+        if(this.codeChange!=null) {
         codeChange.print();
+        }
     }
     
     /* ------------------------------------
