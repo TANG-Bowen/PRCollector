@@ -137,7 +137,7 @@ public class PRModelBundle {
             } else {
                 JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
                 System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
-                
+        
                 DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
                 prmodel.addDeficientPullRequest(pullRequest);
                 deficientPullRequests.add(pullRequest);

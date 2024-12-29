@@ -773,4 +773,16 @@ public class JsonFileReader {
         }
         return labels;
     }
+    private DeficientPullRequest loadDeficientPullRequest(Str_DeficientPullRequest str_pr) {
+        PRModelDate createDate = new PRModelDate(str_pr.createDate);
+        PRModelDate endDate = new PRModelDate(str_pr.endDate);
+        
+        DeficientPullRequest pullRequest = new DeficientPullRequest(str_pr.lossType, str_pr.exceptionOutput,
+                str_pr.id, str_pr.title, str_pr.repositoryName, str_pr.state, 
+                createDate, endDate,
+                str_pr.mergeBranch, str_pr.headBranch, str_pr.pageUrl, str_pr.repositorySrcDLUrl,
+                str_pr.headRepositorySrcDLUrl,
+                str_pr.isMerged, str_pr.isStandardMerged, str_pr.sourceCodeRetrievable);
+        return pullRequest;
+    }
 }

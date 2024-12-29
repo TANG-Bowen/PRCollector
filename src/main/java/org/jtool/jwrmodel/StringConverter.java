@@ -406,7 +406,7 @@ public class StringConverter {
             str_fl.path = fchange.getPath();
             str_fl.sourceCodeBefore = fchange.getSourceCodeBefore();
             str_fl.sourceCodeAfter = fchange.getSourceCodeAfter();
-            
+            str_fl.isTest = fchange.isTest();
             str_fl.classChanges = buildClassChange(fchange.getClassChanges());
         }
         return str_fls;
@@ -593,4 +593,5 @@ public class StringConverter {
         }
         return str_labels;
      }
+
 }

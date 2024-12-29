@@ -21,10 +21,8 @@ public class JsonFileWriter {
     
     private PullRequest pullRequest;
     private Str_PullRequest strPullRequest;
-    
     private DeficientPullRequest deficientPullRequest;
     private Str_DeficientPullRequest strDeficientPullRequest;
-    
     private  StringConverter strBuilder;
     
     private  File outputFile;
@@ -75,12 +73,6 @@ public class JsonFileWriter {
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore; 
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
-            
-//            File dirBefore = PRModelBundle.getDir(pathBefore);
-//            File dirAfter = PRModelBundle.getDir(pathAfter);
-//            
-//            deleteFiles(dirBefore);
-//            deleteFiles(dirAfter);
             deleteFiles(pathBefore, true);
             deleteFiles(pathAfter, true);
         }
