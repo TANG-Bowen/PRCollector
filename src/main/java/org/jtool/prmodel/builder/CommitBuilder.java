@@ -44,21 +44,15 @@ public class CommitBuilder {
                 Commit commit = new Commit(pullRequest, sha, shortSha, date, message, type);
                 commits.add(commit);
                 
-                ParticipantBuilder participantBuilder = new ParticipantBuilder(pullRequest, null);
+                ParticipantBuilder pBuilder = new ParticipantBuilder(pullRequest, null);
                 try {
-                    Participant commiter = participantBuilder.existsParticipant(ghCommit.getAuthor().getId());
-                    if (commiter == null) {
-                        commiter = participantBuilder.createParticipant(ghCommit.getAuthor(), "Commiter");
-                    }
+                    Participant commiter = pBuilder.checkAndCreateParticipant(ghCommit.getAuthor(), "Commiter");
                     commit.setCommiter(commiter);
                 } catch (IOException e) {
                     pullRequest.setCommentRetrievable(false);
                     exceptions.add(e);
                     
-                    Participant commiter = participantBuilder.existsParticipant(PRModelBuilder.UNKNOWN_SYMBOL);
-                    if (commiter == null) {
-                        commiter = participantBuilder.createUnknownParticipant("Commiter");
-                    }
+                    Participant commiter = pBuilder.createUnknownParticipant("Commiter");
                     commit.setCommiter(commiter);
                 }
                 
