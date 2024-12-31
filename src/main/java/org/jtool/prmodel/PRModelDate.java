@@ -37,7 +37,7 @@ public class PRModelDate {
     }
     
     public int compareTo(PRModelDate date) {
-        return this.localTime.compareTo(date.getLocalTime());
+        return localTime.compareTo(date.getLocalTime());
     }
     
     public long until(PRModelDate date) {
