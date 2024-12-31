@@ -206,7 +206,7 @@ public class PRModelBuilder {
         } else {
             for (Exception ex : exceptions) {
                 System.err.println(ex.getMessage());
-                ex.printStackTrace();
+                //ex.printStackTrace();
             }
         }
     }
