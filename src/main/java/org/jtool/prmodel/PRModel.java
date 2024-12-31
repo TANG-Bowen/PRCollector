@@ -16,23 +16,24 @@ public class PRModel {
     }
     
     public void addPullRequest(PullRequest pullRequest) {
-        pullRequests.add(pullRequest);
-        repositoryNames.add(pullRequest.getRepositoryName());
+        this.pullRequests.add(pullRequest);
+        this.repositoryNames.add(pullRequest.getRepositoryName());
     }
     
     public void addAllPullRequests(Set<PullRequest> pullRequests) {
-        pullRequests.addAll(pullRequests);
-        pullRequests.forEach(pr -> repositoryNames.add(pr.getRepositoryName()));
+        this.pullRequests.addAll(pullRequests);
+        pullRequests.forEach(pr -> this.repositoryNames.add(pr.getRepositoryName()));
+        System.out.println(this.pullRequests.size());
     }
     
     public void addDeficientPullRequest(DeficientPullRequest pullRequests) {
-        deficientPullRequests.add(pullRequests);
-        repositoryNames.add(pullRequests.getRepositoryName());
+        this.deficientPullRequests.add(pullRequests);
+        this.repositoryNames.add(pullRequests.getRepositoryName());
     }
     
     public void addAllDeficientPullRequests(Set<DeficientPullRequest> pullRequests) {
-        deficientPullRequests.addAll(pullRequests);
-        pullRequests.forEach(dl -> repositoryNames.add(dl.getRepositoryName()));
+        this.deficientPullRequests.addAll(pullRequests);
+        pullRequests.forEach(dl -> this.repositoryNames.add(dl.getRepositoryName()));
     }
     
     /* ------------------------------------
