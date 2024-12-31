@@ -90,9 +90,9 @@ public class JsonFileReader {
         } else {
             List<File> files = new ArrayList<>();
             if (file.isFile()) {
-            	if(isPRJsonFromPRCollector(file) || isDataLossJsonFromPRCollector(file)) {
-                files.add(file);
-            	}
+                if (isPRJsonFromPRCollector(file) || isDataLossJsonFromPRCollector(file)) {
+                    files.add(file);
+                }
             } else if (file.isDirectory()) {
                 File directory = new File(filePath);
                 files.addAll(listAllFiles(directory));
@@ -101,16 +101,14 @@ public class JsonFileReader {
         }
     }
     
-    private boolean isPRJsonFromPRCollector(File file)
-    {
+    private boolean isPRJsonFromPRCollector(File file) {
     	String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_str\\.json$";
     	return Pattern.matches(pattern, file.getName());
     }
     
-    private boolean isDataLossJsonFromPRCollector(File file)
-    {
-    	String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_dl\\.json$";
-    	return Pattern.matches(pattern, file.getName());
+    private boolean isDataLossJsonFromPRCollector(File file) {
+        String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_loss\\.json$";
+        return Pattern.matches(pattern, file.getName());
     }
     
     @SuppressWarnings("unused")
@@ -546,11 +544,11 @@ public class JsonFileReader {
             for (Str_ProjectChange str_pj : str_pjs) {
                 ProjectChange projectChange = new ProjectChange(pullRequest, str_pj.name, str_pj.path);
                 projectChange.setPrmodelId(str_pj.prmodelId);
-
+                
                 projectChange.setCodeChange(codeChange);
                 projectChange.getFileChanges()
                         .addAll(loadFileChange(pullRequest, codeChange, projectChange, str_pj.fileChanges));
-
+                
                 projectChanges.add(projectChange);
             }
         }
@@ -684,18 +682,18 @@ public class JsonFileReader {
         fieldChange.getCalledMethodsAfter().addAll(loadFieldElements(pullRequest,str_fd.calledMethodsAfter));
     }
     
-	private Set<CodeElement> loadFieldElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
-		Set<CodeElement> fieldElements = new HashSet<>();
-		if (str_codeElements != null) {
-			for (Str_CodeElement str_ce : str_codeElements) {
-				CodeElement fieldElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
-						str_ce.sourceCode);
-				fieldElement.setPrmodelId(str_ce.prmodelId);
-				fieldElements.add(fieldElement);
-			}
-		}
-		return fieldElements;
-	}
+    private Set<CodeElement> loadFieldElements(PullRequest pullRequest, Set<Str_CodeElement> str_codeElements) {
+        Set<CodeElement> fieldElements = new HashSet<>();
+        if (str_codeElements != null) {
+            for (Str_CodeElement str_ce : str_codeElements) {
+                CodeElement fieldElement = new CodeElement(pullRequest, str_ce.stage, str_ce.qulifiedName,
+                        str_ce.sourceCode);
+                fieldElement.setPrmodelId(str_ce.prmodelId);
+                fieldElements.add(fieldElement);
+            }
+        }
+        return fieldElements;
+    }
     
     private void setReferenceRelation(PullRequest pullRequest , MethodChange methodChange) {
         Str_MethodChange str_md = methodMap.get(methodChange);
