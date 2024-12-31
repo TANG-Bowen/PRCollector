@@ -52,13 +52,14 @@ public class CommitBuilder {
                     }
                     commit.setCommiter(commiter);
                 } catch (IOException e) {
+                    pullRequest.setCommentRetrievable(false);
+                    exceptions.add(e);
+                    
                     Participant commiter = participantBuilder.existsParticipant(PRModelBuilder.UNKNOWN_SYMBOL);
                     if (commiter == null) {
                         commiter = participantBuilder.createUnknownParticipant("Commiter");
                     }
                     commit.setCommiter(commiter);
-                    pullRequest.setCommentRetrievable(false);
-                    exceptions.add(e);
                 }
                 
                 List<CIStatus> statusList = new ArrayList<>();

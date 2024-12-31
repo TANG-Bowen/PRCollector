@@ -106,11 +106,11 @@ public class JsonFileWriter {
             //File[] files = currentDir.listFiles();
             deleteSubdirectories(currentDir);
             
-            if(deleteCurrentDir) {
+            if (deleteCurrentDir) {
                 currentDir.delete();
             }
         } else {
-            System.out.println("Not valid directory to delete! ");
+            System.out.println("Not valid directory to delete! " + pathStr);
         }
     }
     
