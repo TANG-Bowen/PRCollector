@@ -15,9 +15,9 @@ public class PRModel {
     public PRModel() {
     }
     
-    public void addPullRequest(PullRequest pullRequest) {
-        this.pullRequests.add(pullRequest);
-        this.repositoryNames.add(pullRequest.getRepositoryName());
+    public void addPullRequest(PullRequest pullRequests) {
+        this.pullRequests.add(pullRequests);
+        this.repositoryNames.add(pullRequests.getRepositoryName());
     }
     
     public void addAllPullRequests(Set<PullRequest> pullRequests) {
