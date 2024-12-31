@@ -23,7 +23,6 @@ public class PRModel {
     public void addAllPullRequests(Set<PullRequest> pullRequests) {
         this.pullRequests.addAll(pullRequests);
         pullRequests.forEach(pr -> this.repositoryNames.add(pr.getRepositoryName()));
-        System.out.println(this.pullRequests.size());
     }
     
     public void addDeficientPullRequest(DeficientPullRequest pullRequests) {
