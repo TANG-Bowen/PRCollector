@@ -28,10 +28,10 @@ public class Str_DeficientPullRequest {
     List<String> headRepositoryBranches;
     
     boolean participantRetrievable;
+    boolean issueEventRetrievable;
     boolean issueCommentRetrievable;
-    boolean reviewCommentRetrievable;
-    boolean eventRetrievable;
     boolean reviewEventRetrievable;
+    boolean reviewCommentRetrievable;
     boolean commitRetrievable;
     boolean sourceCodeRetrievable;
     

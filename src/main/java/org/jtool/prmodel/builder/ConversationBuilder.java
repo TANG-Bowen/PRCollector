@@ -78,7 +78,7 @@ public class ConversationBuilder {
                 eventMap.put(ghId, event);
             }
         } catch (IOException e) {
-            pullRequest.setEventRetrievable(false);
+            pullRequest.setIssueEventRetrievable(false);
             exceptions.add(e);
         }
     }
