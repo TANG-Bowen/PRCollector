@@ -76,11 +76,6 @@ public class JsonFileWriter {
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
             String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
             
-//            File dirBefore = PRModelBundle.getDir(pathBefore);
-//            File dirAfter = PRModelBundle.getDir(pathAfter);
-//            
-//            deleteFiles(dirBefore);
-//            deleteFiles(dirAfter);
             deleteFiles(pathBefore, true);
             deleteFiles(pathAfter, true);
         }

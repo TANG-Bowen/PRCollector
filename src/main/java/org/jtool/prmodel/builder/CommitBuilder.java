@@ -73,7 +73,7 @@ public class CommitBuilder {
                         statusList.add(ciStatus);
                     }
                 } catch (IOException e) {
-                    pullRequest.setCommentRetrievable(false);
+                    pullRequest.setCommitRetrievable(false);
                     exceptions.add(e);
                 }
                 

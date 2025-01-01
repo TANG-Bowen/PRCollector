@@ -114,7 +114,7 @@ public class StringConverter {
         str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
         str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
         str_pr.eventRetrievable = pullRequest.isEventRetrievable();
-        str_pr.reviewEventRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.reviewEventRetrievable = pullRequest.isReviewEventRetrievable();
         str_pr.commitRetrievable = pullRequest.isCommitRetrievable();
         str_pr.sourceCodeRetrievable = pullRequest.isSourceCodeRetrievable();
         

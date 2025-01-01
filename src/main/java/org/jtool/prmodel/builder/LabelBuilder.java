@@ -70,7 +70,7 @@ public class LabelBuilder {
                     pullRequest.getFinalLabels().add(label);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             exceptions.add(e);
         }
     }
