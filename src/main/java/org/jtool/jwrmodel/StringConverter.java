@@ -65,7 +65,7 @@ public class StringConverter {
         str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
         
         str_pr.participantRetrievable = pullRequest.isParticipantRetrievable();
-        str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
+        str_pr.issueCommentRetrievable = pullRequest.isIssueCommentRetrievable();
         str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
         str_pr.eventRetrievable = pullRequest.isEventRetrievable();
         str_pr.reviewEventRetrievable = pullRequest.isReviewCommentRetrievable();
@@ -111,7 +111,7 @@ public class StringConverter {
         str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
         
         str_pr.participantRetrievable = pullRequest.isParticipantRetrievable();
-        str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
+        str_pr.issueCommentRetrievable = pullRequest.isIssueCommentRetrievable();
         str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
         str_pr.eventRetrievable = pullRequest.isEventRetrievable();
         str_pr.reviewEventRetrievable = pullRequest.isReviewEventRetrievable();

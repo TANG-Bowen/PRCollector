@@ -31,7 +31,7 @@ public class PullRequest extends PRElement {
     protected final List<String> headRepositoryBranches;
     
     protected boolean participantRetrievable = true;
-    protected boolean commentRetrievable = true;
+    protected boolean issueCommentRetrievable = true;
     protected boolean reviewCommentRetrievable = true;
     protected boolean eventRetrievable = true;
     protected boolean reviewEventRetrievable = true;
@@ -89,8 +89,8 @@ public class PullRequest extends PRElement {
         participantRetrievable = bool;
     }
     
-    public void setCommentRetrievable(boolean bool) {
-        commentRetrievable = bool;
+    public void setIssueCommentRetrievable(boolean bool) {
+        issueCommentRetrievable = bool;
     }
     
     public void setReviewCommentRetrievable(boolean bool) {
@@ -165,7 +165,7 @@ public class PullRequest extends PRElement {
         System.out.println(prefix + "isStandardMerged : " + isStandardMerged);
         System.out.println(prefix + "sourceCodeRetrievable : " + sourceCodeRetrievable);
         System.out.println(prefix + "participantRetrievable : " + participantRetrievable);
-        System.out.println(prefix + "commentRetrievable : " + commentRetrievable);
+        System.out.println(prefix + "issueCommentRetrievable : " + issueCommentRetrievable);
         System.out.println(prefix + "reviewCommentRetrievable : " + reviewCommentRetrievable);
         System.out.println(prefix + "eventRetrievable : " + eventRetrievable);
         System.out.println(prefix + "reviewEventRetrievable : " + reviewEventRetrievable);
@@ -264,8 +264,8 @@ public class PullRequest extends PRElement {
         return participantRetrievable;
     }
     
-    public boolean isCommentRetrievable() {
-        return commentRetrievable;
+    public boolean isIssueCommentRetrievable() {
+        return issueCommentRetrievable;
     }
     
     public boolean isReviewCommentRetrievable() {

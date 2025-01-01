@@ -96,12 +96,12 @@ public class ConversationBuilder {
                     comment.setConversation(conversation);
                     comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
                 } catch (IOException e) {
-                    pullRequest.setCommentRetrievable(false);
+                    pullRequest.setIssueCommentRetrievable(false);
                     exceptions.add(e);
                 }
             }
         } catch (IOException e) {
-            pullRequest.setCommentRetrievable(false);
+            pullRequest.setIssueCommentRetrievable(false);
             exceptions.add(e);
         }
     }

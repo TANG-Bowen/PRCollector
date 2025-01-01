@@ -177,7 +177,7 @@ public class JsonFileReader {
         pullRequest.setPrmodelId(str_pr.prmodelId);
         
         pullRequest.setParticipantRetrievable(str_pr.participantRetrievable);
-        pullRequest.setCommentRetrievable(str_pr.commentRetrievable);
+        pullRequest.setIssueCommentRetrievable(str_pr.issueCommentRetrievable);
         pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
         pullRequest.setEventRetrievable(str_pr.eventRetrievable);
         pullRequest.setReviewEventRetrievable(str_pr.reviewEventRetrievable);
@@ -227,7 +227,7 @@ public class JsonFileReader {
         pullRequest.setPrmodelId(str_pr.prmodelId);
         
         pullRequest.setParticipantRetrievable(str_pr.participantRetrievable);
-        pullRequest.setCommentRetrievable(str_pr.commentRetrievable);
+        pullRequest.setIssueCommentRetrievable(str_pr.issueCommentRetrievable);
         pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
         pullRequest.setEventRetrievable(str_pr.eventRetrievable);
         pullRequest.setReviewEventRetrievable(str_pr.reviewEventRetrievable);

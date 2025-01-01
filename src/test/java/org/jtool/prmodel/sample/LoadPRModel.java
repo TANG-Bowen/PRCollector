@@ -41,7 +41,7 @@ public class LoadPRModel {
     public Set<PullRequest> getCommentLossPRs(PRModel prmodel) {
         Set<PullRequest> pullRequests = new HashSet<>();
         for (DeficientPullRequest pr : prmodel.getDeficientPullRequests()) {
-            if (!pr.isCommentRetrievable()) {
+            if (!pr.isIssueCommentRetrievable()) {
                 pullRequests.add(pr);
             }
         }

@@ -70,7 +70,7 @@ public class DeficientPullRequest extends PullRequest {
     }
     
     public boolean nonCategorized() {
-        return commentRetrievable &&
+        return issueCommentRetrievable &&
                reviewCommentRetrievable &&
                eventRetrievable &&
                reviewEventRetrievable &&
