@@ -24,16 +24,10 @@ public class BuildSingleTest {
         bundle.downloadCommitNum(0, 20);
         bundle.setWriteErrorLog(true);
         
-        bundle.build();
+        PRModel prmodel = bundle.build();
         
         System.out.println("Collection was over");
-        
-        for (PullRequest pr : bundle.getPullRequests()) {
-            pr.print();
-        }
-        
-        for (DeficientPullRequest pr : bundle.getDeficientPullRequests()) {
-            pr.print();
-        }
+        prmodel.getPullRequests().forEach(pr -> pr.print());
+        prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
     }
 }
