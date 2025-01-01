@@ -95,7 +95,7 @@ public class PRModelBuilder {
         PullRequestBuilder pullRequestBuilder = new PullRequestBuilder(ghPullRequest);
         pullRequest = pullRequestBuilder.build();
         exceptions.addAll(pullRequestBuilder.getExceptions());
-        System.out.println("Built PullRequest element");
+        System.out.println("Built PullRequest element " + pullRequest.getId());
         
         ParticipantBuilder participantBuilder = new ParticipantBuilder(pullRequest, ghPullRequest);
         participantBuilder.build();
@@ -206,7 +206,7 @@ public class PRModelBuilder {
         } else {
             for (Exception ex : exceptions) {
                 System.err.println(ex.getMessage());
-                ex.printStackTrace();
+                //ex.printStackTrace();
             }
         }
     }

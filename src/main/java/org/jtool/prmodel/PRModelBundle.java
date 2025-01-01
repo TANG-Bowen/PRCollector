@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHPullRequest;
@@ -44,9 +42,6 @@ public class PRModelBundle {
     
     private boolean writeFile = false;
     private boolean deleteSourceFile = false;
-    
-    private Set<PullRequest> pullRequests = new HashSet<>();
-    private Set<DeficientPullRequest> deficientPullRequests = new HashSet<>();
     
     public PRModelBundle(String ghToken, String repositoryName, String rootSrcPath, int pullRequestNumber) {
         this.ghToken = ghToken;
@@ -103,21 +98,23 @@ public class PRModelBundle {
                 boolean result = builder.build();
                 if (result) {
                     PullRequest pullRequest = builder.getPullRequest();
-                    prmodel.addPullRequest(pullRequest);
-                    pullRequests.add(pullRequest);
-                    writePRModelToFile(pullRequest, pullRequestDir);
+                    if (pullRequest != null) {
+                        prmodel.addPullRequest(pullRequest);
+                        writePRModelToFile(pullRequest, pullRequestDir);
+                    }
                 } else {
                     JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(), false);
                     System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
                     
-                    DeficientPullRequest deficientPullRequest = builder.getDeficientPullRequest();
-                    prmodel.addDeficientPullRequest(deficientPullRequest);
-                    deficientPullRequests.add(deficientPullRequest);
-                    writeDataLossToFile(deficientPullRequest, pullRequestDir);
+                    DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
+                    if (pullRequest != null) {
+                        prmodel.addDeficientPullRequest(pullRequest);
+                        writeDataLossToFile(pullRequest, pullRequestDir);
+                    }
                 }
                 builder = null;
             } else {
-                System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
+                System.out.println("Already built : " + repository.getName() + "  ---  " + ghPullRequest.getNumber());
             }
         }
     }
@@ -131,17 +128,19 @@ public class PRModelBundle {
             boolean result = builder.build();
             if (result) {
                 PullRequest pullRequest = builder.getPullRequest();
-                prmodel.addPullRequest(pullRequest);
-                pullRequests.add(pullRequest);
-                writePRModelToFile(pullRequest, pullRequestDir);
+                if (pullRequest != null) {
+                    prmodel.addPullRequest(pullRequest);
+                    writePRModelToFile(pullRequest, pullRequestDir);
+                }
             } else {
                 JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
                 System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
                 
                 DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
-                prmodel.addDeficientPullRequest(pullRequest);
-                deficientPullRequests.add(pullRequest);
-                writeDataLossToFile(pullRequest, pullRequestDir);
+                if (pullRequest != null) {
+                    prmodel.addDeficientPullRequest(pullRequest);
+                    writeDataLossToFile(pullRequest, pullRequestDir);
+                }
             }
             builder = null;
         } else {
@@ -417,21 +416,5 @@ public class PRModelBundle {
     public void searchByUpdateBefore(String updated, boolean inclusive) {
         LocalDate updateDate = LocalDate.parse(updated);
         prSearch.updatedBefore(updateDate, inclusive);
-    }
-    
-    public Set<PullRequest> getPullRequests() {
-        return pullRequests;
-    }
-    
-    public void setPullRequests(Set<PullRequest> pullRequests) {
-        this.pullRequests = pullRequests;
-    }
-    
-    public Set<DeficientPullRequest> getDeficientPullRequests() {
-        return deficientPullRequests;
-    }
-    
-    public void setDataLosses(Set<DeficientPullRequest> deficientPullRequests) {
-        this.deficientPullRequests = deficientPullRequests;
     }
 }

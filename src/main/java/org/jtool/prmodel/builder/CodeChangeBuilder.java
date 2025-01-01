@@ -66,7 +66,7 @@ public class CodeChangeBuilder {
             File dirAfter = new File(pathAfter);
             
             CodeChange codeChange = commit.getCodeChange();
-            if (codeChange != null) {           	
+            if (codeChange != null) {
                 buildProjectChanges(codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
                 codeChange.setFileChanges();
                 

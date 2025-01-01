@@ -99,21 +99,23 @@ public class FilesChangedBuilder {
                     while ((line = reader.readLine()) != null) {
                         text.append(line);
                     }
+                    
                     GHFile ghFile = new GHFile(content.getPath(), text.toString());
                     ghChangedFiles.add(ghFile);
                 } catch (IOException e) {
                     /* empty */
                 }
             } else if (gfFileDetail.getStatus().equals("removed")) {
-                String removedPath="";
-                String removedContent="";
-                
                 for (GHPullRequestCommitDetail ghCommitDetail : ghPullRequest.listCommits()) {
                     GHCommit ghcmti = repository.getCommit(ghCommitDetail.getSha());
                     for (GHCommit.File file : ghcmti.listFiles()) {
                         if (file.getFileName().equals(gfFileDetail.getFilename()) && file.getStatus().equals("removed")) {
-                            removedPath = file.getFileName();
-                            removedContent = file.getPatch();
+                            String removedPath = file.getFileName();
+                            String removedContent = file.getPatch();
+                            if (removedContent == null) {
+                                removedContent = "";
+                            }
+                            
                             GHFile ghFile = new GHFile(removedPath, removedContent);
                             ghChangedFiles.add(ghFile);
                         }

@@ -37,68 +37,82 @@ public class ParticipantBuilder {
             Participant participant = createParticipant(author, "Author");
             participant.getActionRecord().add("Creation");
         } catch (IOException e) {
+            pullRequest.setParticipantRetrievable(false);
+            exceptions.add(e);
+            
             Participant participant = createUnknownParticipant("Author");
             participant.getActionRecord().add("Creation");
-            exceptions.add(e);
         }
         
         try {
             for (GHIssueComment comment : ghPullRequest.getComments()) {
                 try {
                     GHUser reviewer = comment.getUser();
-                    Participant participant = checkAndCreateReviewer(reviewer, "Reviewer");
+                    Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                     participant.getActionRecord().add("Comment");
                 } catch (IOException e) {
-                    Participant participant = checkAndCreateUnknownReviewer("Reviewer");
-                    participant.getActionRecord().add("Comment");
+                    pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
+                    
+                    Participant participant = checkAndCreateUnknownParticipant("Reviewer");
+                    participant.getActionRecord().add("Comment");
                 }
             }
         } catch (IOException e) {
-            Participant participant = checkAndCreateUnknownReviewer("Reviewer");
-            participant.getActionRecord().add("Comment");
+            pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
+            
+            Participant participant = checkAndCreateUnknownParticipant("Reviewer");
+            participant.getActionRecord().add("Comment");
         }
         
         try {
             for (GHPullRequestReviewComment comment : ghPullRequest.listReviewComments()) {
                 try {
                     GHUser reviewer = comment.getUser();
-                    Participant participant = checkAndCreateReviewer(reviewer, "Reviewer");
+                    Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                     participant.getActionRecord().add("ReviewComment");
                 } catch (IOException e) {
-                    Participant participant = checkAndCreateUnknownReviewer("Reviewer");
-                    participant.getActionRecord().add("Comment");
+                    pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
+                    
+                    Participant participant = checkAndCreateUnknownParticipant("Reviewer");
+                    participant.getActionRecord().add("Comment");
                 }
             }
         } catch (IOException e) {
-            Participant participant = checkAndCreateUnknownReviewer("Reviewer");
-            participant.getActionRecord().add("Comment");
+            pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
+            
+            Participant participant = checkAndCreateUnknownParticipant("Reviewer");
+            participant.getActionRecord().add("Comment");
         }
         
         try {
             for (GHIssueEvent event : ghPullRequest.listEvents()) {
                 GHUser reviewer = event.getActor();
-                Participant participant = checkAndCreateReviewer(reviewer, "Reviewer");
+                Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                 participant.getActionRecord().add("Event");
             }
         } catch (IOException e) {
-            Participant participant = checkAndCreateUnknownReviewer("Reviewer");
-            participant.getActionRecord().add("Comment");
+            pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
+            
+            Participant participant = checkAndCreateUnknownParticipant("Reviewer");
+            participant.getActionRecord().add("Comment");
         }
         
         for (GHPullRequestReview review : ghPullRequest.listReviews()) {
             try {
                 GHUser reviewer = review.getUser();
-                Participant participant = checkAndCreateReviewer(reviewer, "Reviewer");
+                Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                 participant.getActionRecord().add("Review");
             } catch (IOException e) {
+                pullRequest.setParticipantRetrievable(false);
+                exceptions.add(e);
+                
                 Participant participant = createUnknownParticipant("Reviewer");
                 participant.getActionRecord().add("Comment");
-                exceptions.add(e);
             }
         }
         
@@ -109,56 +123,36 @@ public class ParticipantBuilder {
                 
                 try {
                     GHUser commiter = ghCommit.getAuthor();
-                    Participant participant = checkAndCreateReviewer(commiter, "Author");
+                    Participant participant = checkAndCreateParticipant(commiter, "Author");
                     participant.getActionRecord().add("Commit");
                 } catch (IOException e) {
-                    Participant participant = checkAndCreateUnknownReviewer("Author");
-                    participant.getActionRecord().add("Comment");
+                    pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
+                    
+                    Participant participant = checkAndCreateUnknownParticipant("Author");
+                    participant.getActionRecord().add("Comment");
                 }
             } catch (IOException e) {
-                Participant participant = checkAndCreateUnknownReviewer("Author");
-                participant.getActionRecord().add("Comment");
+                pullRequest.setParticipantRetrievable(false);
                 exceptions.add(e);
+                
+                Participant participant = checkAndCreateUnknownParticipant("Author");
+                participant.getActionRecord().add("Comment");
             }
         }
     }
     
-    Participant createParticipant(GHUser ghUser, String role) {
+    Participant createParticipant(GHUser ghUser, String role) throws IOException {
+        if (ghUser == null) {
+            throw new IOException("GHUser is null");
+        }
+        
         long userId = ghUser.getId();
         String login = ghUser.getLogin();
-        String name;
-        String location;
-        List<String> followers;
-        List<String> follows;
-        try {
-            name = ghUser.getName();
-        } catch (IOException e) {
-            name = PRModelBuilder.UNKNOWN_SYMBOL;
-            pullRequest.setParticipantRetrievable(false);
-            exceptions.add(e);
-        }
-        try {
-            location = ghUser.getLocation();
-        } catch (IOException e) {
-            location = PRModelBuilder.UNKNOWN_SYMBOL;
-            pullRequest.setParticipantRetrievable(false);
-            exceptions.add(e);
-        }
-        try {
-            followers = ghUser.getFollowers().stream().map(u -> u.getLogin()).collect(Collectors.toList());
-        } catch (IOException e) {
-            followers = new ArrayList<>(Arrays.asList(PRModelBuilder.UNKNOWN_SYMBOL));
-            pullRequest.setParticipantRetrievable(false);
-            exceptions.add(e);
-        }
-        try {
-            follows = ghUser.getFollows().stream().map(u -> u.getLogin()).collect(Collectors.toList());
-        } catch (IOException e) {
-            follows = new ArrayList<>(Arrays.asList(PRModelBuilder.UNKNOWN_SYMBOL));
-            pullRequest.setParticipantRetrievable(false);
-            exceptions.add(e);
-        }
+        String name = ghUser.getName();
+        String location = ghUser.getLocation();
+        List<String> followers = ghUser.getFollowers().stream().map(u -> u.getLogin()).collect(Collectors.toList());
+        List<String> follows = ghUser.getFollows().stream().map(u -> u.getLogin()).collect(Collectors.toList());
         
         Participant participant = new Participant(pullRequest,
                 userId, login, name, location, role, followers, follows);
@@ -181,7 +175,11 @@ public class ParticipantBuilder {
         return participant;
     }
     
-    Participant checkAndCreateReviewer(GHUser ghUser, String role) {
+    Participant checkAndCreateParticipant(GHUser ghUser, String role) throws IOException {
+        if (ghUser == null) {
+            throw new IOException("GHUser is null");
+        }
+        
         Participant participant = existsParticipant(ghUser);
         if (participant == null) {
             participant = createParticipant(ghUser, role);
@@ -189,7 +187,7 @@ public class ParticipantBuilder {
         return participant;
     }
     
-    Participant checkAndCreateUnknownReviewer(String role) {
+    Participant checkAndCreateUnknownParticipant(String role) {
         Participant participant = existsParticipant(PRModelBuilder.UNKNOWN_SYMBOL);
         if (participant == null) {
             participant = createUnknownParticipant(role);

@@ -39,32 +39,28 @@ public class LabelBuilder {
             Set<GHLabel> repoLabels = new HashSet<>(repository.listLabels().toSet());
             
             for (GHIssueEvent ghEvent : ghPullRequest.listEvents().toList()) {
-                String eventType = ghEvent.getEvent();
+                GHLabel ghLabel = ghEvent.getLabel();
+                if (ghLabel == null) {
+                    continue;
+                }
                 
+                String name = ghLabel.getName();
+                String color = ghLabel.getColor();
+                GHLabel repoLabel = getGHLabel(repoLabels, name, color);
+                if (repoLabel == null) {
+                    continue;
+                }
+                
+                String description = repoLabel.getDescription();
+                Label label = new Label(pullRequest, name, color, description);
+                long ghId = ghEvent.getId();
+                IssueEvent issueEvent = eventMap.get(ghId);
+                label.setIssueEvent(issueEvent);
+                
+                String eventType = ghEvent.getEvent();
                 if (eventType.equals("labeled")) {
-                    GHLabel ghLabel = ghEvent.getLabel();
-                    String name = ghLabel.getName();
-                    String color = ghLabel.getColor();
-                    GHLabel repoLabel = getGHLabel(repoLabels, name, color);
-                    String description = repoLabel.getDescription();
-                    
-                    Label label = new Label(pullRequest, name, color, description);
-                    long ghId = ghEvent.getId();
-                    IssueEvent issueEvent = eventMap.get(ghId);
-                    label.setIssueEvent(issueEvent);
                     pullRequest.getAddedLabels().add(label);
-                    
                 } else if (eventType.equals("unlabeled")) {
-                    GHLabel ghLabel = ghEvent.getLabel();
-                    String name = ghLabel.getName();
-                    String color = ghLabel.getColor();
-                    GHLabel repoLabel = getGHLabel(repoLabels, name, color);
-                    String description = repoLabel.getDescription();
-                    
-                    Label label = new Label(pullRequest, name, color, description);
-                    long ghId = ghEvent.getId();
-                    IssueEvent issueEvent = eventMap.get(ghId);
-                    label.setIssueEvent(issueEvent);
                     pullRequest.getRemovedLabels().add(label);
                 }
             }
