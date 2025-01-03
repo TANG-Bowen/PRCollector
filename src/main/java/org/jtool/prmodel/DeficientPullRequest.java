@@ -34,9 +34,10 @@ public class DeficientPullRequest extends PullRequest {
                 pr.repositoryBranches, pr.headRepositoryBranches, exceptionOutput);
         
         this.participantRetrievable = pr.participantRetrievable;
-        this.reviewCommentRetrievable = pr.reviewCommentRetrievable;
-        this.eventRetrievable = pr.eventRetrievable;
+        this.issueEventRetrievable = pr.issueEventRetrievable;
+        this.issueCommentRetrievable = pr.issueCommentRetrievable;
         this.reviewEventRetrievable = pr.reviewEventRetrievable;
+        this.reviewCommentRetrievable = pr.reviewCommentRetrievable;
         this.commitRetrievable = pr.commitRetrievable;
         this.sourceCodeRetrievable = pr.sourceCodeRetrievable;
         
@@ -70,10 +71,11 @@ public class DeficientPullRequest extends PullRequest {
     }
     
     public boolean nonCategorized() {
-        return commentRetrievable &&
-               reviewCommentRetrievable &&
-               eventRetrievable &&
+        return participantRetrievable &&
+               issueEventRetrievable &&
+               issueCommentRetrievable &&
                reviewEventRetrievable &&
+               reviewCommentRetrievable &&
                commitRetrievable &&
                sourceCodeRetrievable;
     }

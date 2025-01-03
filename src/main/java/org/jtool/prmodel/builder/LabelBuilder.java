@@ -1,6 +1,5 @@
 package org.jtool.prmodel.builder;
 
-import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;

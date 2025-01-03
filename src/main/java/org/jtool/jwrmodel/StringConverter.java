@@ -65,10 +65,10 @@ public class StringConverter {
         str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
         
         str_pr.participantRetrievable = pullRequest.isParticipantRetrievable();
-        str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
-        str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
-        str_pr.eventRetrievable = pullRequest.isEventRetrievable();
+        str_pr.issueEventRetrievable = pullRequest.isIssueEventRetrievable();
+        str_pr.issueCommentRetrievable = pullRequest.isIssueCommentRetrievable();
         str_pr.reviewEventRetrievable = pullRequest.isReviewCommentRetrievable();
+        str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
         str_pr.commitRetrievable = pullRequest.isCommitRetrievable();
         str_pr.sourceCodeRetrievable = pullRequest.isSourceCodeRetrievable();
         
@@ -111,10 +111,10 @@ public class StringConverter {
         str_pr.headRepositoryBranches = pullRequest.getHeadRepositoryBranches();
         
         str_pr.participantRetrievable = pullRequest.isParticipantRetrievable();
-        str_pr.commentRetrievable = pullRequest.isCommentRetrievable();
-        str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
-        str_pr.eventRetrievable = pullRequest.isEventRetrievable();
+        str_pr.issueEventRetrievable = pullRequest.isIssueEventRetrievable();
+        str_pr.issueCommentRetrievable = pullRequest.isIssueCommentRetrievable();
         str_pr.reviewEventRetrievable = pullRequest.isReviewEventRetrievable();
+        str_pr.reviewCommentRetrievable = pullRequest.isReviewCommentRetrievable();
         str_pr.commitRetrievable = pullRequest.isCommitRetrievable();
         str_pr.sourceCodeRetrievable = pullRequest.isSourceCodeRetrievable();
         

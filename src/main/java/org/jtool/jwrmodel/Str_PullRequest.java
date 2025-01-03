@@ -28,10 +28,10 @@ public class Str_PullRequest {
     List<String> headRepositoryBranches;
     
     boolean participantRetrievable;
-    boolean commentRetrievable;
-    boolean reviewCommentRetrievable;
-    boolean eventRetrievable;
+    boolean issueEventRetrievable;
+    boolean issueCommentRetrievable;
     boolean reviewEventRetrievable;
+    boolean reviewCommentRetrievable;
     boolean commitRetrievable;
     boolean sourceCodeRetrievable;
     

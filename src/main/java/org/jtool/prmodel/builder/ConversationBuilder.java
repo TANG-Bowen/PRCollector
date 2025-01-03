@@ -78,7 +78,7 @@ public class ConversationBuilder {
                 eventMap.put(ghId, event);
             }
         } catch (IOException e) {
-            pullRequest.setEventRetrievable(false);
+            pullRequest.setIssueEventRetrievable(false);
             exceptions.add(e);
         }
     }
@@ -96,12 +96,12 @@ public class ConversationBuilder {
                     comment.setConversation(conversation);
                     comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
                 } catch (IOException e) {
-                    pullRequest.setCommentRetrievable(false);
+                    pullRequest.setIssueCommentRetrievable(false);
                     exceptions.add(e);
                 }
             }
         } catch (IOException e) {
-            pullRequest.setCommentRetrievable(false);
+            pullRequest.setIssueCommentRetrievable(false);
             exceptions.add(e);
         }
     }

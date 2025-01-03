@@ -38,30 +38,20 @@ public class LoadPRModel {
         return pullRequests;
     }
     
-    public Set<PullRequest> getCommentLossPRs(PRModel prmodel) {
+    public Set<PullRequest> getIssueEventLossPRs(PRModel prmodel) {
         Set<PullRequest> pullRequests = new HashSet<>();
         for (DeficientPullRequest pr : prmodel.getDeficientPullRequests()) {
-            if (!pr.isCommentRetrievable()) {
+            if (!pr.isIssueEventRetrievable()) {
                 pullRequests.add(pr);
             }
         }
         return pullRequests;
     }
     
-    public Set<PullRequest> getReviewCommentLossPRs(PRModel prmodel) {
+    public Set<PullRequest> getIssueCommentLossPRs(PRModel prmodel) {
         Set<PullRequest> pullRequests = new HashSet<>();
         for (DeficientPullRequest pr : prmodel.getDeficientPullRequests()) {
-            if (!pr.isReviewCommentRetrievable()) {
-                pullRequests.add(pr);
-            }
-        }
-        return pullRequests;
-    }
-    
-    public Set<PullRequest> getEventLossPRs(PRModel prmodel) {
-        Set<PullRequest> pullRequests = new HashSet<>();
-        for (DeficientPullRequest pr : prmodel.getDeficientPullRequests()) {
-            if (!pr.isEventRetrievable()) {
+            if (!pr.isIssueCommentRetrievable()) {
                 pullRequests.add(pr);
             }
         }
@@ -72,6 +62,16 @@ public class LoadPRModel {
         Set<PullRequest> pullRequests = new HashSet<>();
         for (DeficientPullRequest pr : prmodel.getDeficientPullRequests()) {
             if (!pr.isReviewEventRetrievable()) {
+                pullRequests.add(pr);
+            }
+        }
+        return pullRequests;
+    }
+    
+    public Set<PullRequest> getReviewCommentLossPRs(PRModel prmodel) {
+        Set<PullRequest> pullRequests = new HashSet<>();
+        for (DeficientPullRequest pr : prmodel.getDeficientPullRequests()) {
+            if (!pr.isReviewCommentRetrievable()) {
                 pullRequests.add(pr);
             }
         }

@@ -177,10 +177,10 @@ public class JsonFileReader {
         pullRequest.setPrmodelId(str_pr.prmodelId);
         
         pullRequest.setParticipantRetrievable(str_pr.participantRetrievable);
-        pullRequest.setCommentRetrievable(str_pr.commentRetrievable);
-        pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
-        pullRequest.setEventRetrievable(str_pr.eventRetrievable);
+        pullRequest.setIssueEventRetrievable(str_pr.issueEventRetrievable);
+        pullRequest.setIssueCommentRetrievable(str_pr.issueCommentRetrievable);
         pullRequest.setReviewEventRetrievable(str_pr.reviewEventRetrievable);
+        pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
         pullRequest.setCommitRetrievable(str_pr.commitRetrievable);
         pullRequest.setSourceCodeRetrievable(str_pr.sourceCodeRetrievable);
         
@@ -227,10 +227,10 @@ public class JsonFileReader {
         pullRequest.setPrmodelId(str_pr.prmodelId);
         
         pullRequest.setParticipantRetrievable(str_pr.participantRetrievable);
-        pullRequest.setCommentRetrievable(str_pr.commentRetrievable);
-        pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
-        pullRequest.setEventRetrievable(str_pr.eventRetrievable);
+        pullRequest.setIssueEventRetrievable(str_pr.issueEventRetrievable);
+        pullRequest.setIssueCommentRetrievable(str_pr.issueCommentRetrievable);
         pullRequest.setReviewEventRetrievable(str_pr.reviewEventRetrievable);
+        pullRequest.setReviewCommentRetrievable(str_pr.reviewCommentRetrievable);
         pullRequest.setCommitRetrievable(str_pr.commitRetrievable);
         pullRequest.setSourceCodeRetrievable(str_pr.sourceCodeRetrievable);
         
