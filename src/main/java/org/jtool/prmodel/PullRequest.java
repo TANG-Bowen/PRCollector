@@ -204,6 +204,11 @@ public class PullRequest extends PRElement {
         return id;
     }
     
+    public int getNumber() {
+        String number = id.split("#")[1];
+        return Integer.parseInt(number);
+    }
+    
     public String getTitle() {
         return title;
     }
