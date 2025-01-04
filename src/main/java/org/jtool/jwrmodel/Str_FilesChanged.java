@@ -1,13 +1,11 @@
 package org.jtool.jwrmodel;
 
-import java.util.Set;
+import java.util.List;
 
 public class Str_FilesChanged {
     
     String prmodelId;
     
     boolean hasJavaFile;
-    
-    Set<String> diffFileIds;
-    Set<String> fileChangeIds;
+    List<Str_DiffFile> diffFiles;
 }

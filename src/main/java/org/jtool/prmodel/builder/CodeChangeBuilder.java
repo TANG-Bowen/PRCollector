@@ -13,6 +13,7 @@ import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.IExtendedModifier;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
+
 import org.jtool.jxp3model.ClassChange;
 import org.jtool.jxp3model.FieldChange;
 import org.jtool.jxp3model.FileChange;
@@ -71,7 +72,7 @@ public class CodeChangeBuilder {
                 codeChange.setFileChanges();
                 
                 setReferenceRelation(codeChange);
-                setTest(codeChange);
+                setTestForClasses(codeChange);
             }
             existingProjects.clear();
         }
@@ -168,33 +169,44 @@ public class CodeChangeBuilder {
             for (JavaFile jfile : projectBefore.getFiles()) {
                 FileChange fileChange = createFileDeleted(codeChange, jfile);
                 projectChange.getFileChanges().add(fileChange);
+                
+                fileChange.setTest(containsTestMethod(jfile));
             }
             
         } else if (changeType == PRElement.ADD) {
             for (JavaFile jfile : projectAfter.getFiles()) {
                 FileChange fileChange = createFileAdded(codeChange, jfile);
                 projectChange.getFileChanges().add(fileChange);
+                
+                fileChange.setTest(containsTestMethod(jfile));
             }
             
         } else if (changeType == PRElement.REVISE) {
             Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
             Set<JavaFile> jfilesAfter = new HashSet<>(projectAfter.getFiles());
-                       
+            
             for (DiffFile diffFile : codeChange.getDiffFiles()) {
                 if (diffFile.getChangeType() == PRElement.DELETE && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesBefore);
                     if (jfile != null && !this.inBuiltFiles(jfile, projectChange)) {
                         FileChange fileChange = createFileDeleted(codeChange, jfile);
                         projectChange.getFileChanges().add(fileChange);
+                        
+                        fileChange.setTest(containsTestMethod(jfile));
+                    } else {
+                        System.out.println("JavaFile Before : " + jfile.getPath());
+                        System.out.println("JavaFile After : null");
                     }
                 } else if (diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesAfter);
                     if (jfile != null && !this.inBuiltFiles(jfile, projectChange)) {
                         FileChange fileChange = createFileAdded(codeChange, jfile);
                         projectChange.getFileChanges().add(fileChange);
-                    }else {
-                    	System.out.println("getJavaFile is return null!");
-                    	System.out.println("diffFile path : "+diffFile.getPath());
+                        
+                        fileChange.setTest(containsTestMethod(jfile));
+                    } else {
+                        System.out.println("JavaFile Before : null");
+                        System.out.println("JavaFile After : " + jfile.getPath());
                     }
                 } else if (diffFile.getChangeType() == PRElement.REVISE && diffFile.isJavaFile()) {
                     JavaFile jfileBefore = getJavaFile(diffFile.getPath(), jfilesBefore);
@@ -204,16 +216,27 @@ public class CodeChangeBuilder {
                         FileChange fileChange = createFileChanged(codeChange, jfileBefore, jfileAfter);
                         projectChange.getFileChanges().add(fileChange);
                         
+                        fileChange.setTest(containsTestMethod(jfileBefore) || containsTestMethod(jfileAfter));
                     } else if (jfileBefore != null && jfileAfter == null) {
-                        System.out.println("JavaFile Before : "+ jfileBefore.getPath());
+                        System.out.println("JavaFile Before : " + jfileBefore.getPath());
                         System.out.println("JavaFile After : null");
                     } else if (jfileBefore == null && jfileAfter != null) {
                         System.out.println("JavaFile Before : null");
-                        System.out.println("JavaFile After : "+ jfileAfter.getPath());
+                        System.out.println("JavaFile After : " + jfileAfter.getPath());
                     }
                 }
             }
         }
+    }
+    
+    static boolean containsTestMethod(JavaFile jfile) {
+        for (JavaClass jclass : jfile.getClasses()) {
+            boolean containsTestMethod = jclass.getMethods().stream().anyMatch(m -> isTestMethod(m));
+            if (containsTestMethod) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private boolean inBuiltFiles(JavaFile jfile, ProjectChange projectChange) {
@@ -549,7 +572,7 @@ public class CodeChangeBuilder {
         return methodChange;
     }
     
-    private boolean isTestMethod(JavaMethod jmethod) {
+    static boolean isTestMethod(JavaMethod jmethod) {
         JavaClass jclass = jmethod.getDeclaringClass().getSuperClass();
         if (jclass != null) {
             if (jclass.getQualifiedName().fqn().equals("junit.framework.TestCase")) {
@@ -561,7 +584,7 @@ public class CodeChangeBuilder {
         return "Test".equals(anno);
     }
     
-    private String getAnnotation(JavaMethod jmethod) {
+    static String getAnnotation(JavaMethod jmethod) {
         ASTNode node = jmethod.getASTNode();
         if (node instanceof MethodDeclaration) {
             MethodDeclaration methodDecl = (MethodDeclaration)node;
@@ -700,15 +723,11 @@ public class CodeChangeBuilder {
         return elems;
     }
     
-    private void setTest(CodeChange codeChange) {
+    private void setTestForClasses(CodeChange codeChange) {
         for (FileChange fileChange : codeChange.getFileChanges()) {
-            fileChange.setTest(false);
             for (ClassChange classChange : fileChange.getClassChanges()) {
                 boolean isTest = classChange.getMethodChanges().stream().anyMatch(m -> m.isTest());
                 classChange.setTest(isTest);
-                if (isTest) {
-                    fileChange.setTest(true);
-                }
             }
         }
     }

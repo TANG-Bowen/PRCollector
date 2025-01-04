@@ -327,16 +327,15 @@ public class StringConverter {
     }
     
     private Str_CodeChange buildCodeChange(CodeChange codeChange) {
-    	
         Str_CodeChange str_ch = new Str_CodeChange();
-        if(codeChange!=null)
-    	{
-        str_ch.prmodelId = codeChange.getPRModelId();
-        str_ch.hasJavaFile = codeChange.hasJavaFile();
-        
-        str_ch.diffFiles = buildDiffFiles(codeChange.getDiffFiles());
-        str_ch.projectChanges = buildProjectChange(codeChange.getProjectChanges());
-    	}
+        if (codeChange != null) {
+            str_ch.prmodelId = codeChange.getPRModelId();
+            
+            str_ch.hasJavaFile = codeChange.hasJavaFile();
+            
+            str_ch.diffFiles = buildDiffFiles(codeChange.getDiffFiles());
+            str_ch.projectChanges = buildProjectChange(codeChange.getProjectChanges());
+        }
         return str_ch;
     }
     
@@ -376,7 +375,6 @@ public class StringConverter {
         }
         return str_dls;
     }
-    
     private Set<Str_ProjectChange> buildProjectChange(Set<ProjectChange> pchanges) {
         Set<Str_ProjectChange> str_pjs = new HashSet<>();
         for (ProjectChange pchange : pchanges) {
@@ -406,6 +404,7 @@ public class StringConverter {
             str_fl.path = fchange.getPath();
             str_fl.sourceCodeBefore = fchange.getSourceCodeBefore();
             str_fl.sourceCodeAfter = fchange.getSourceCodeAfter();
+            str_fl.isTest = fchange.isTest();
             
             str_fl.classChanges = buildClassChange(fchange.getClassChanges());
         }
@@ -561,18 +560,14 @@ public class StringConverter {
         return str_statuses;
     }
     
-    private Str_FilesChanged buildAllFilesChanged(FilesChanged fileChanged) {
+    private Str_FilesChanged buildAllFilesChanged(FilesChanged filesChanged) {
         Str_FilesChanged str_info = new Str_FilesChanged();
-        if(fileChanged!=null)
-        {
-        str_info.prmodelId = fileChanged.getPRModelId();
-        
-        str_info.hasJavaFile = fileChanged.hasJavaFile();
-        
-        str_info.diffFileIds = fileChanged.getDiffFiles().stream().map(f -> f.getPRModelId())
-                .collect(Collectors.toSet());
-        str_info.fileChangeIds = fileChanged.getFileChanges().stream().map(c -> c.getPRModelId())
-                .collect(Collectors.toSet());
+        if (filesChanged != null) {
+            str_info.prmodelId = filesChanged.getPRModelId();
+            
+            str_info.hasJavaFile = filesChanged.hasJavaFile();
+            
+            str_info.diffFiles = buildDiffFiles(filesChanged.getDiffFiles());
         }
         return str_info;
     }

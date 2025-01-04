@@ -85,9 +85,10 @@ public class CommitBuilder {
                 exceptions.add(e);
             }
         }
-        List<Commit> sortedCimmits = commits.stream()
+        
+        List<Commit> sortedCommits = commits.stream()
                 .sorted((c1, c2) -> c1.getDate().compareTo(c2.getDate())).collect(Collectors.toList());
-        pullRequest.getCommits().addAll(sortedCimmits);
+        pullRequest.getCommits().addAll(sortedCommits);
     }
     
     private String getCommitType(GHCommit ghCommit, String message) throws IOException {

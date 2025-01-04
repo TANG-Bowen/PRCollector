@@ -199,7 +199,7 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        FilesChanged fileChanged = loadFilesChangedInfo(pullRequest, str_pr.filesChanged);
+        FilesChanged fileChanged = loadFilesChanged(pullRequest, str_pr.filesChanged);
         pullRequest.setFilesChanged(fileChanged);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
@@ -249,7 +249,7 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        FilesChanged fileChanged = loadFilesChangedInfo(pullRequest, str_pr.filesChanged);
+        FilesChanged fileChanged = loadFilesChanged(pullRequest, str_pr.filesChanged);
         pullRequest.setFilesChanged(fileChanged);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
@@ -495,7 +495,7 @@ public class JsonFileReader {
         codeChange.setCommit(commit);
         codeChange.hasJavaFile(str_ch.hasJavaFile);
         
-        codeChange.getDiffFiles().addAll(loadDiffFiles(pullRequest, codeChange, str_ch.diffFiles));
+        codeChange.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_ch.diffFiles));
         
         codeChange.getProjectChanges().addAll(loadProjectChange(pullRequest, codeChange, str_ch.projectChanges));
         setReferenceRelation(pullRequest, codeChange);
@@ -504,7 +504,7 @@ public class JsonFileReader {
         return codeChange;
     }
     
-    private List<DiffFile> loadDiffFiles(PullRequest pullRequest, CodeChange codeChange, List<Str_DiffFile> str_dfs) {
+    private List<DiffFile> loadDiffFiles(PullRequest pullRequest, List<Str_DiffFile> str_dfs) {
         List<DiffFile> diffFiles = new ArrayList<>();
         if (str_dfs != null) {
             for (Str_DiffFile str_df : str_dfs) {
@@ -514,7 +514,6 @@ public class JsonFileReader {
                 diffFile.setPrmodelId(str_df.prmodelId);
                 
                 diffFile.setTest(str_df.isTest);
-                diffFile.setCodeChange(codeChange);
                 
                 diffFile.getDiffLines().addAll(loadDiffLines(pullRequest, diffFile, str_df.diffLines));
                 diffFiles.add(diffFile);
@@ -743,20 +742,12 @@ public class JsonFileReader {
         return ciStaruses;
     }
     
-    private FilesChanged loadFilesChangedInfo(PullRequest pullRequest, Str_FilesChanged str_info) {
-        FilesChanged info = new FilesChanged(pullRequest, str_info.hasJavaFile);
-        info.setPrmodelId(str_info.prmodelId);
-        if (str_info.diffFileIds != null) {
-            for (String id : str_info.diffFileIds) {
-                info.getDiffFiles().add(diffFileMap.get(id));
-            }
-        }
-        if (str_info.fileChangeIds != null) {
-            for (String id : str_info.fileChangeIds) {
-                info.getFileChanges().add(fileChangeMap.get(id));
-            }
-        }
-        return info;
+    private FilesChanged loadFilesChanged(PullRequest pullRequest, Str_FilesChanged str_changed) {
+        FilesChanged filesChanged = new FilesChanged(pullRequest, str_changed.hasJavaFile);
+        filesChanged.setPrmodelId(str_changed.prmodelId);
+        
+        filesChanged.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_changed.diffFiles));
+        return filesChanged;
     }
     
     private Set<Label> loadLabels(PullRequest pullRequest, Set<Str_Label> str_lbs) {

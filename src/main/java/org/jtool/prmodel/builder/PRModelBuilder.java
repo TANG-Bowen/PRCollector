@@ -138,14 +138,15 @@ public class PRModelBuilder {
                 exceptions.addAll(diffBuilder.getExceptions());
                 System.out.println("Built Diff element");
                 
-                CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
+                CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
+                        pullRequest, pullRequestDir);
                 codeChangetBuilder.build();
                 System.out.println("Built CodeChange elements");
                 
                 diffBuilder.setTestForDiffFiles();
                 
-                FilesChangedBuilder filesChangedBuilder =
-                        new FilesChangedBuilder(pullRequest, ghPullRequest, repository);
+                FilesChangedBuilder filesChangedBuilder = new FilesChangedBuilder(
+                        pullRequest, pullRequestDir, ghPullRequest, repository);
                 filesChangedBuilder.build();
                 System.out.println("Built FilesChanged element");
             }
