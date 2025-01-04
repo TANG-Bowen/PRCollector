@@ -32,15 +32,26 @@ public class DiffLine extends PRElement {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
+    /**
+     * Returns change type of this DiffLine add or delete.
+     * @return changeType String
+     */
     public String getChangeType() {
         return changeType;
     }
     
+    /**
+     * Returns line text of this DiffLine.
+     * @return the text String
+     */
     public String getText() {
         return text;
     }
     
+    /**
+     * Returns the DiffFile belongs.
+     * @return the DiffFile
+     */
     public DiffFile getDiffFile() {
         return diffFile;
     }

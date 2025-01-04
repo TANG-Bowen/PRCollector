@@ -101,10 +101,18 @@ public class PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns the pull request which this PRElement belongs.
+     * @return a PullRequest
+     */
     public PullRequest getPullRequest() {
         return pullRequest;
     }
     
+    /**
+     * Returns the unique id.
+     * @return prmodelId String
+     */
     public String getPRModelId() {
         return prmodelId;
     }

@@ -31,11 +31,18 @@ public class ReviewComment extends Action {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
+    /**
+     * Returns markdown document in this review comment.
+     * @return a MarkdownDoc.
+     */
     public MarkdownDoc getMarkdownDoc() {
         return markdownDoc;
     }
     
+    /**
+     * Returns code snippet which this review comment has written for.
+     * @return a CodeReviewSnippet.
+     */
     public CodeReviewSnippet getCodeReviewSnippet() {
         return snippet;
     }

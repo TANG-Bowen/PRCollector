@@ -87,6 +87,11 @@ public class CommitRelevance {
         return churns;
     }
     
+    /**
+     * Returns the number of added files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numFilesAdded(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
@@ -97,6 +102,12 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the number of added files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numFilesAdded(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = pullRequest.getCommit(commitSha);
@@ -112,6 +123,11 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the number of deleted files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numFilesDeleted(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
@@ -122,6 +138,12 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the number of deleted files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numFilesDeleted(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = pullRequest.getCommit(commitSha);
@@ -137,6 +159,11 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the number of revised files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numFilesRevised(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
@@ -147,6 +174,12 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the number of revised files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numFilesRevised(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = pullRequest.getCommit(commitSha);
@@ -162,10 +195,21 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the total number of modified files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numFilesModified(PullRequest pullRequest) {
         return pullRequest.getFilesChanged().getDiffFiles().size();
     }
     
+    /**
+     * Returns the total number of modified files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numFilesModified(PullRequest pullRequest, String commitSha) {
         Commit commit = pullRequest.getCommit(commitSha);
         if (commit == null) {
@@ -174,6 +218,11 @@ public class CommitRelevance {
         return commit.getCodeChange().getDiffFiles().size();
     }
     
+    /**
+     * Returns the total number of java source files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numSrcFiles(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
@@ -184,6 +233,12 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the total number of java source files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numSrcFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = pullRequest.getCommit(commitSha);
@@ -199,12 +254,18 @@ public class CommitRelevance {
         return files;
     }
     
+    
     private static boolean checkFilenameExtention(DiffFile dfile) {
         String[] names = dfile.getPath().split(File.separator);
         String ext = names[names.length - 1];
         return ext.contains(".md") || ext.contains(".html") || ext.contains(".adoc");
     }
     
+    /**
+     * Returns the total number of document files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numDocFiles(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
@@ -215,6 +276,12 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the total number of document files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numDocFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = pullRequest.getCommit(commitSha);
@@ -230,6 +297,11 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the total number of neither java source files nor document files in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the files
+     */
     public static int numOtherFiles(PullRequest pullRequest) {
         int files = 0;
         for (DiffFile dfile : pullRequest.getFilesChanged().getDiffFiles()) {
@@ -240,6 +312,12 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns the total number of neither java source files nor document files in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return the number of the files
+     */
     public static int numOtherFiles(PullRequest pullRequest, String commitSha) {
         int files = 0;
         Commit commit = pullRequest.getCommit(commitSha);
@@ -255,14 +333,30 @@ public class CommitRelevance {
         return files;
     }
     
+    /**
+     * Returns if at least one test churn included in this pull request.
+     * @param pullRequest a pull-request
+     * @return true if at least one test churn exists
+     */
     public static boolean testIncluded(PullRequest pullRequest) {
         return numTestChurns(pullRequest) > 0;
     }
     
+    /**
+     * Returns if at least one test churn included in a commit having the sha number.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return true if at least one test churn exists
+     */
     public static boolean testIncluded(PullRequest pullRequest, String commitSha) {
         return numTestChurns(pullRequest, commitSha) > 0;
     }
     
+    /**
+     * Returns the number of CI failures in a pull-request.
+     * @param pullRequest a pull-request
+     * @return the number of the CI failures
+     */
     public static int numCIFailures(PullRequest pullRequest) {
         int failures = 0;
         for (Commit commit : pullRequest.getCommits()) {

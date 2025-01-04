@@ -26,7 +26,10 @@ public class ReviewEvent extends Action {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
+    /**
+     * Returns markdown document in this review event.
+     * @return a MarkdownDoc.
+     */
     public MarkdownDoc getMarkdownDoc() {
         return markdownDoc;
     }

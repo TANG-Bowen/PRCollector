@@ -67,50 +67,98 @@ public abstract class CommonChange extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns change type of this CommonChange.
+     * @return a changType String
+     */
     public String getChangeType() {
         return changeType;
     }
     
+    /**
+     * Returns name of this CommonChange.
+     * @return a name String
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Returns qualified name of this CommonChange.
+     * @return a qualified name String
+     */
     public String getQualifiedName() {
         return qualifiedName;
     }
     
+    /**
+     * Returns return type of this CommonChange.
+     * @return a type String
+     */
     public String getType() {
         return type;
     }
     
+    /**
+     * Returns CodeElement of this CommonChange in pre files.
+     * @return a CodeElement
+     */
     public CodeElement getCodeElementBefore() {
         return before;
     }
     
+    /**
+     * Returns CodeElement of this CommonChange in post files.
+     * @return a CodeElement
+     */
     public CodeElement getCodeElementAfter() {
         return after;
     }
     
+    /**
+     * Returns the qualified name of CodeElement in this CommonChange in pre files.
+     * @return a qualified name String
+     */
     public String getQualifiedNameBefore() {
         return before.getQualifiedName();
     }
     
+    /**
+     * Returns the qualified name of CodeElement in this CommonChange in post files.
+     * @return a qualified name String
+     */
     public String getQualifiedNameAfter(){
         return after.getQualifiedName();
     }
     
+    /**
+     * Returns the source code of CodeElement in this CommonChange in pre files.
+     * @return a source code String
+     */
     public String getSourceCodeBefore() {
         return before.getSourceCode();
     }
     
+    /**
+     * Returns the source code of CodeElement in this CommonChange in post files.
+     * @return a source code String
+     */
     public String getSourceCodeAfter() {
         return after.getSourceCode();
     }
     
+    /**
+     * Returns if this CommonChange relates to tests.
+     * @return true if relation to test exists
+     */
     public boolean isTest() {
         return isTest;
     }
     
+    /**
+     * Returns the FileChange which contains this CommonChange.
+     * @return a FileChange
+     */
     public FileChange getFileChange() {
         return fileChange;
     }

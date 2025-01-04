@@ -65,38 +65,74 @@ public class Commit extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns full sha of this commit.
+     * @return sha String
+     */
     public String getSha() {
         return sha;
     }
     
+    /**
+     * Returns short sha of this commit.
+     * @return short sha String
+     */
     public String getShortSha() {
         return shortSha;
     }
     
+    /**
+     * Returns upload date of this commit.
+     * @return a PRModelDate
+     */
     public PRModelDate getDate() {
         return date;
     }
     
+    /**
+     * Returns type of this commit.
+     * @return type String
+     */
     public String getType() {
         return type;
     }
     
+    /**
+     * Returns message of this commit.
+     * @return message String
+     */
     public String getMessage() {
         return message;
     }
     
+    /**
+     * Returns the pull request contains this commit.
+     * @return a PullRequest
+     */
     public PullRequest getPullRequest() {
         return pullRequest;
     }
     
+    /**
+     * Returns the user who upload this commit.
+     * @return a Participant
+     */
     public Participant getCommitter() {
         return committer;
     }
     
+    /**
+     * Returns CodeChange in this commit.
+     * @return a CodeChange
+     */
     public CodeChange getCodeChange() {
         return codeChange;
     }
     
+    /**
+     * Returns CI results this commit.
+     * @return a List of CIStatuses
+     */
     public List<CIStatus> getCIStatus() {
         return ciStatus;
     }

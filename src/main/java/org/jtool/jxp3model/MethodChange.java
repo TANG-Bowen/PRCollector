@@ -46,22 +46,42 @@ public class MethodChange extends CommonChange {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns calling methods of this MethodChange in the pre files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getCallingMethodsBefore() {
         return callingMethodsBefore;
     }
     
+    /**
+     * Returns calling methods of this MethodChange in the post files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getCallingMethodsAfter() {
         return callingMethodsAfter;
     }
     
+    /**
+     * Returns called methods of this MethodChange in the pre files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getCalledMethodsBefore() {
         return calledMethodsBefore;
     }
     
+    /**
+     * Returns called methods of this MethodChange in the post files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getCalledMethodsAfter() {
         return calledMethodsAfter;
     }
     
+    /**
+     * Returns ClassChange contains this MethodChange.
+     * @return a ClassChange
+     */
     public ClassChange getClassChange() {
         return classChange;
     }

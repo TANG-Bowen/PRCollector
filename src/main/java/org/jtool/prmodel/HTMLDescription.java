@@ -29,10 +29,18 @@ public class HTMLDescription extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns HTML description body.
+     * @return body String
+     */
     public String getBody() {
         return body;
     }
     
+    /**
+     * Returns users who are mentioned by markdown element.
+     * @return a Set of login name Strings
+     */
     public Set<String> getMentionUsers() {
         return mentionUsers;
     }

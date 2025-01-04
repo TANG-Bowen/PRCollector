@@ -58,42 +58,82 @@ public class DiffFile extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns relative path of this DiffFile.
+     * @return String of relative path
+     */
     public String getPath() {
         return path;
     }
     
+    /**
+     * Returns change type of this DiffFile.
+     * @return String of change type
+     */
     public String getChangeType() {
         return changeType;
     }
     
+    /**
+     * Returns full body include addition and deletion.
+     * @return full body String
+     */
     public String getBodyAll() {
         return bodyAll;
     }
     
+    /**
+     * Returns addition body.
+     * @return addition body String only
+     */
     public String getBodyAdd() {
         return bodyAdd;
     }
     
+    /**
+     * Returns deletion body.
+     * @return deletion body String only
+     */
     public String getBodyDel() {
         return bodyDel;
     }
     
+    /**
+     * Returns source body in pre-file.
+     * @return source body String
+     */
     public String getSourceCodeBefore() {
         return sourceCodeBefore;
     }
     
+    /**
+     * Returns source body in post-file.
+     * @return source body String
+     */
     public String getSourceCodeAfter() {
         return sourceCodeAfter;
     }
     
+    /**
+     * If changed file is a java file.
+     * @return true if the file in this DiffFile a java file
+     */
     public boolean isJavaFile() {
         return isJavaFile;
     }
     
+    /**
+     * If changed file is for testing.
+     * @return true if the file in this DiffFile a java test file
+     */
     public boolean isTest() {
         return isTest;
     }
     
+    /**
+     * Returns diff line info in this DiffFile.
+     * @return a List of DiffLines include added lines and deleted lines
+     */
     public List<DiffLine> getDiffLines() {
         return diffLines;
     }

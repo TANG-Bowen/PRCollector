@@ -200,143 +200,285 @@ public class PullRequest extends PRElement {
      * APIs
      --------------------------------------*/
     
+    /**
+     * Returns pull request's number id.
+     * @return id String in format: repository name#id
+     */
     public String getId() {
         return id;
     }
     
+    /**
+     * Returns pull request's number.
+     * @return the number
     public int getNumber() {
         String number = id.split("#")[1];
         return Integer.parseInt(number);
     }
     
+
+    /**
+     * Returns pull request's title.
+     * @return title String
+     */
     public String getTitle() {
         return title;
     }
     
+    /**
+     * Returns pull request's repository name.
+     * @return repository name String
+     */
     public String getRepositoryName() {
         return repositoryName;
     }
     
+    /**
+     * Returns pull request's state (open or closed).
+     * @return state String
+     */
     public String getState() {
         return state.toString();
     }
     
+    /**
+     * Returns pull request's create date.
+     * @return a PRModelDate
+     */
     public PRModelDate getCreateDate() {
         return createDate;
     }
     
+    /**
+     * Returns pull request's the date when in closed state.
+     * @return a PRModelDate
+     */
     public PRModelDate getEndDate() {
         return endDate;
     }
     
+    /**
+     * Returns if the pull request is merged include common process and reviewer commit.
+     * @return true if is merged
+     */
     public boolean isMerged() {
         return isMerged;
     }
     
+    /**
+     * Returns if the pull request is directly merged in a common way.
+     * @return true if is merged
+     */
     public boolean isStandardMerged() {
         return isStandardMerged;
     }
     
+    /**
+     * Returns the aim branch in the remote repository which the pull request is merged to.
+     * @return branch name String
+     */
     public String getMergeBranch() {
         return mergeBranch;
     }
     
+    /**
+     * Returns the aim branch in the author local repository which the pull request's commits belongs to.
+     * @return branch name String
+     */
     public String getHeadBranch() {
         return headBranch;
     }
     
+    /**
+     * Returns the page url of this pull request .
+     * @return url String
+     */
     public String getPageUrl() {
         return pageUrl;
     }
     
+    /**
+     * Returns the source file download url of remote repository.
+     * @return url String
+     */
     public String getRepositorySrcDLUrl() {
         return repositorySrcDLUrl;
     }
     
+    /**
+     * Returns the source file download url of pull request local repository.
+     * @return url String
+     */
     public String getHeadRepositorySrcDLUrl() {
         return headRepositorySrcDLUrl;
     }
     
+    /**
+     * Returns all branches'name in the remote repository.
+     * @return a List of branch name String
+     */
     public List<String> getRepositoryBranches() {
         return repositoryBranches;
     }
     
+    /**
+     * Returns all branches' name in the pull request local repository.
+     * @return a List of branch name String
+     */
     public List<String> getHeadRepositoryBranches() {
         return headRepositoryBranches;
     }
     
+    /**
+     * Returns if complete participant information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isParticipantRetrievable() {
         return participantRetrievable;
     }
     
+    /**
+     * Returns if complete issue comment information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isIssueCommentRetrievable() {
         return issueCommentRetrievable;
     }
     
+    /**
+     * Returns if complete review comment information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isReviewCommentRetrievable() {
         return reviewCommentRetrievable;
     }
     
+    /**
+     * Returns if complete issue event information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isIssueEventRetrievable() {
         return issueEventRetrievable;
     }
     
+    /**
+     * Returns if complete review event information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isReviewEventRetrievable() {
         return reviewEventRetrievable;
     }
     
+    /**
+     * Returns if complete commit information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isCommitRetrievable() {
         return commitRetrievable;
     }
     
+    /**
+     * Returns if complete source code information can access.
+     * @return true if no data loss in information.
+     */
     public boolean isSourceCodeRetrievable() {
         return sourceCodeRetrievable;
     }
     
+    /**
+     * Returns if any data loss in pull request.
+     * @return false if no data loss occurred.
+     */
     public boolean isDeficient() {
         return false;
     }
     
+    /**
+     * Returns all participants in this pull request.
+     * @return a Set of Participant.
+     */
     public Set<Participant> getParticipants() {
         return participants;
     }
     
+    /**
+     * Returns the participant with the login name in this pull request.
+     * @param  a participant's login name 
+     * @return a Participant.
+     */
     public Participant getParticipant(String name) {
         return participants.stream().filter(c -> c.getName().equals(name)).findFirst().orElse(null);
     }
     
+    /**
+     * Returns conversation in this pull request.
+     * @return a Conversation.
+     */
     public Conversation getConversation() {
         return conversation;
     }
     
+    /**
+     * Returns all commits in this pull request.
+     * @return a List of Commit.
+     */
     public List<Commit> getCommits() {
         return commits;
     }
     
+    /**
+     * Returns the commit having the sha in this pull request.
+     * @param  a commit's full sha 
+     * @return a Commit.
+     */
     public Commit getCommit(String commitSha) {
         return commits.stream().filter(c -> c.getSha().equals(commitSha)).findFirst().orElse(null);
     }
     
+    /**
+     * Returns description in this pull request.
+     * @return a Description.
+     */
     public Description getDescription() {
         return description;
     }
     
+    /**
+     * Returns html description in this pull request.
+     * @return a HTMLDescription.
+     */
     public HTMLDescription getHtmlDescription() {
         return htmlDescription;
     }
     
+    /**
+     * Returns FilesChanged in this pull request.
+     * @return a FilesChanged.
+     */
     public FilesChanged getFilesChanged() {
         return filesChanged;
     }
     
+    /**
+     * Returns added labels in this pull request.
+     * @return a Set of Label.
+     */
     public Set<Label> getAddedLabels() {
         return addedLabels;
     }
     
+    /**
+     * Returns deleted labels in this pull request.
+     * @return a Set of Label.
+     */
     public Set<Label> getRemovedLabels() {
         return removedLabels;
     }
     
+    /**
+     * Returns finally added labels in this pull request.
+     * @return a Set of Label.
+     */
     public Set<Label> getFinalLabels() {
         return finalLabels;
     }

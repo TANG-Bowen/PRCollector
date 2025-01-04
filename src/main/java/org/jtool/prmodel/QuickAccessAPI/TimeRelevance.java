@@ -12,10 +12,20 @@ import org.jtool.prmodel.ReviewEvent;
 
 public class TimeRelevance {
     
+	/**
+     * Returns time between created date to closed date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long lifetime_ms(PullRequest pullRequest) {
         return pullRequest.getEndDate().from(pullRequest.getCreateDate());
     }
     
+    /**
+     * Returns time between created date to merged date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long mergetime_ms(PullRequest pullRequest) {
         if (pullRequest.isMerged() && !pullRequest.isStandardMerged()) {
             for (IssueEvent event: pullRequest.getConversation().getIssueEvents()) {
@@ -29,6 +39,11 @@ public class TimeRelevance {
         return 0;
     }
     
+    /**
+     * Returns time between created date to the first issue event date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long firstIssueEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(IssueEvent.class.getName())) {
@@ -39,6 +54,11 @@ public class TimeRelevance {
         return 0;
     }
     
+    /**
+     * Returns time between created date to the first review event date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long firstReviewEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(ReviewEvent.class.getName())) {
@@ -49,6 +69,11 @@ public class TimeRelevance {
         return 0;
     }
     
+    /**
+     * Returns time between created date to the first issue comment date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long firstIssueCommentResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(IssueComment.class.getName())) {
@@ -59,6 +84,11 @@ public class TimeRelevance {
         return 0;
     }
     
+    /**
+     * Returns time between created date to the first review comment date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long firstReviewCommentResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
             if (action.getActionType().equals(ReviewComment.class.getName())) {
@@ -69,6 +99,11 @@ public class TimeRelevance {
         return 0;
     }
     
+    /**
+     * Returns time between created date to the final CI result updated date of a pull request.
+     * @param pullRequest a pull-request
+     * @return a time in ms 
+     */
     public static long totalCILatency_ms(PullRequest pullRequest) {
         int commitSize = pullRequest.getCommits().size();
         if (commitSize > 0) {

@@ -57,18 +57,34 @@ public class ProjectChange extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns name of this ProjectChange.
+     * @return a name String
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Returns path of this ProjectChange.
+     * @return a path String
+     */
     public String getPath() {
         return path;
     }
     
+    /**
+     * Returns CodeChange contains this ProjectChange.
+     * @return a CodeChange
+     */
     public CodeChange getCodeChange() {
         return codeChange;
     }
     
+    /**
+     * Returns FileChanges in  this ProjectChange.
+     * @return a Set of FileChanges
+     */
     public Set<FileChange> getFileChanges() {
         return fileChanges;
     }

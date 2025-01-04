@@ -31,11 +31,19 @@ public class FilesChanged extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * If at least one java file in this FilesChange.
+     * @return true if java file element in the Set of DiffFile
+     */
     public boolean hasJavaFile() {
         return hasJavaFile;
     }
     
-    public List<DiffFile> getDiffFiles() {
+    /**
+     * Returns DiffFiles inside.
+     * @return a Set of DiffFiles
+     */
+    public Set<DiffFile> getDiffFiles() {
         return diffFiles;
     }
 }
