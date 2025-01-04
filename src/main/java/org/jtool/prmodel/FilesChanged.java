@@ -43,7 +43,7 @@ public class FilesChanged extends PRElement {
      * Returns DiffFiles inside.
      * @return a Set of DiffFiles
      */
-    public Set<DiffFile> getDiffFiles() {
+    public List<DiffFile> getDiffFiles() {
         return diffFiles;
     }
 }
