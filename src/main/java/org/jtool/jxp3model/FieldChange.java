@@ -46,22 +46,42 @@ public class FieldChange extends CommonChange {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns accessing methods in this FieldChange in pre files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getAccessingMethodsBefore() {
         return accessingMethodsBefore;
     }
     
+    /**
+     * Returns accessing methods in this FieldChange in post files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getAccessingMethodsAfter() {
         return accessingMethodsAfter;
     }
     
+    /**
+     * Returns called methods in this FieldChange in pre files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getCalledMethodsBefore() {
         return calledMethodsBefore;
     }
     
+    /**
+     * Returns called methods in this FieldChange in post files.
+     * @return a Set of CodeElements
+     */
     public Set<CodeElement> getCalledMethodsAfter() {
         return calledMethodsAfter;
     }
     
+    /**
+     * Returns ClassChange which contains this FieldChange.
+     * @return a ClassChange
+     */
     public ClassChange getClassChange() {
         return classChange;
     }

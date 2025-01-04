@@ -56,22 +56,42 @@ public class CodeChange extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * If there is at least one java file in the CodeChange.
+     * @return true if has at least one java file
+     */
     public boolean hasJavaFile() {
         return hasJavaFile;
     }
     
+    /**
+     * Returns the commit which this CodeChange belongs.
+     * @return the commit
+     */
     public Commit getCommit() {
         return commit;
     }
     
+    /**
+     * Returns ProjectChanges in this CodeChange.
+     * @return a Set of ProjectChanges
+     */
     public Set<ProjectChange> getProjectChanges() {
         return projectChanges;
     }
     
+    /**
+     * Returns FileChanges in this CodeChange.
+     * @return a Set of FileChanges
+     */
     public Set<FileChange> getFileChanges() {
         return fileChanges;
     }
     
+    /**
+     * Returns DiffFiles in this CodeChange.
+     * @return a List of DiffFiles
+     */
     public List<DiffFile> getDiffFiles() {
         return diffFiles;
     }

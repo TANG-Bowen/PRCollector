@@ -30,11 +30,18 @@ public class Description extends PRElement {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
+    /**
+     * Returns body of description.
+     * @return description body String
+     */
     public String getBody() {
         return body;
     }
     
+    /**
+     * Returns markdown document inside.
+     * @return a MarkdownDoc 
+     */
     public MarkdownDoc getMarkdownDoc() {
         return markdownDoc;
     }

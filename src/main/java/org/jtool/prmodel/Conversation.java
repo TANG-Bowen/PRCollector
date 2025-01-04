@@ -36,27 +36,50 @@ public class Conversation extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns IssueEvents inside.
+     * @return a LinkedHashSet of IssueEvents
+     */
     public LinkedHashSet<IssueEvent> getIssueEvents() {
         return issueEvents;
     }
     
-    
+    /**
+     * Returns IssueComments inside.
+     * @return a LinkedHashSet of IssueComments
+     */
     public LinkedHashSet<IssueComment> getIssueComments() {
         return issuecomments;
     }
     
+    /**
+     * Returns ReviewEvents inside.
+     * @return a LinkedHashSet of ReviewEvents
+     */
     public LinkedHashSet<ReviewEvent> getReviewEvents() {
         return reviewEvents;
     }
     
+    /**
+     * Returns ReviewComments inside.
+     * @return a LinkedHashSet of ReviewComments
+     */
     public LinkedHashSet<ReviewComment> getReviewComments() {
         return reviewComments;
     }
     
+    /**
+     * Returns CodeReviews inside.
+     * @return a LinkedHashSet of CodeReviews
+     */
     public LinkedHashSet<CodeReviewSnippet> getCodeReviews() {
         return codeReviews;
     }
     
+    /**
+     * Returns Timeline inside.
+     * @return a LinkedHashSet of Actions
+     */
     public LinkedHashSet<Action> getTimeLine() {
         return timeLine;
     }

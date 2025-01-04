@@ -13,10 +13,21 @@ import org.jtool.prmodel.PullRequest;
 
 public class CodeChangeRelevance {
     
+	/**
+     * Returns changed classes in a pull-request.
+     * @param pullRequest a pull-request
+     * @return a List of ClassChanges
+     */
     public static List<ClassChange> changedClasses(PullRequest pullRequest) {
         return changedClasses(pullRequest.getCommits());
     }
     
+    /**
+     * Returns changed classes in a commit having the sha number in a pull-request.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return a List of ClassChanges
+     */
     public static List<ClassChange> changedClassesByCommit(PullRequest pullRequest, String commitSha) {
         List<Commit> commits = new ArrayList<>();
         Commit commit = pullRequest.getCommit(commitSha);
@@ -28,6 +39,12 @@ public class CodeChangeRelevance {
         return changedClasses(commits);
     }
     
+    /**
+     * Returns changed classes with a committer in a pull request.
+     * @param pullRequest a pull-request
+     * @param committer the Participant who as a committer
+     * @return a List of ClassChanges
+     */
     public static List<ClassChange> changedClassesByCommiter(PullRequest pullRequest, Participant committer) {
         List<Commit> commits = new ArrayList<>();
         for (Commit commit : commits) {
@@ -50,14 +67,31 @@ public class CodeChangeRelevance {
         return classes;
     }
     
+    /**
+     * Returns changed methods in a pull-request.
+     * @param pullRequest a pull-request
+     * @return a List of MethodChanges
+     */
     public static List<MethodChange> changedMethods(PullRequest pullRequest) {
         return changedMethods(changedClasses(pullRequest));
     }
     
+    /**
+     * Returns changed methods in a commit having the sha number in a pull-request.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return a List of MethodChanges
+     */
     public static List<MethodChange> changedMethodsByCommit(PullRequest pullRequest, String commitSha) {
         return changedMethods(changedClassesByCommit(pullRequest, commitSha));
     }
     
+    /**
+     * Returns changed methods with a committer in a pull request.
+     * @param pullRequest a pull-request
+     * @param committer the Participant who as a committer
+     * @return a List of MethodChanges
+     */
     public static List<MethodChange> changedMethodsByCommiter(PullRequest pullRequest, Participant committer) {
         return changedMethods(changedClassesByCommiter(pullRequest, committer));
     }
@@ -72,14 +106,31 @@ public class CodeChangeRelevance {
         return methods;
     }
     
+    /**
+     * Returns changed fields in a pull-request.
+     * @param pullRequest a pull-request
+     * @return a List of FieldChanges
+     */
     public static List<FieldChange> changedFields(PullRequest pullRequest) {
         return changedFields(changedClasses(pullRequest));
     }
     
+    /**
+     * Returns changed fields in a commit having the sha number in a pull-request.
+     * @param pullRequest a pull-request
+     * @param commitSha the sha number of a commit
+     * @return a List of FieldChanges
+     */
     public static List<FieldChange> changeddFieldsByCommit(PullRequest pullRequest, String commitSha) {
         return changedFields(changedClassesByCommit(pullRequest, commitSha));
     }
     
+    /**
+     * Returns changed fields with a committer in a pull request.
+     * @param pullRequest a pull-request
+     * @param committer the Participant who as a committer
+     * @return a List of FieldChanges
+     */
     public static List<FieldChange> changedFieldsByCommiter(PullRequest pullRequest, Participant committer) {
         return changedFields(changedClassesByCommiter(pullRequest, committer));
     }

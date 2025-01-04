@@ -49,34 +49,66 @@ public class Participant extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns GitHub user id.
+     * @return id Long
+     */
     public long getUserId() {
         return userId;
     }
     
+    /**
+     * Returns GitHub user login name.
+     * @return login name String
+     */
     public String getLogin() {
         return login;
     }
     
+    /**
+     * Returns GitHub user name.
+     * @return name String
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Returns GitHub user location.
+     * @return location String
+     */
     public String getLocation() {
         return location;
     }
     
+    /**
+     * Returns user's role in the pull request.
+     * @return role String
+     */
     public String getRole() {
         return role;
     }
     
+    /**
+     * Returns a GitHub user's followers.
+     * @return a List of GitHub user's login name Strings
+     */
     public List<String> getFollowers() {
         return followers;
     }
     
+    /**
+     * Returns GitHub users who are following this GitHub user.
+     * @return a List of GitHub user's login name Strings
+     */
     public List<String> getFollows() {
         return follows;
     }
     
+    /**
+     * Returns a GitHub user's record for actions in this PR.
+     * @return a Set of action Strings
+     */
     public Set<String> getActionRecord() {
         return actionRecord;
     }

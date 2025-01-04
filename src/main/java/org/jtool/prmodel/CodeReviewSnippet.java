@@ -39,14 +39,26 @@ public class CodeReviewSnippet extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns diffHunk in this CodeReviewSnippet .
+     * @return the diffHunk String
+     */
     public String getDiffHunk() {
         return diffHunk;
     }
     
+    /**
+     * Returns conversation.
+     * @return the Conversation
+     */
     public Conversation getConversation() {
         return conversation;
     }
     
+    /**
+     * Returns relative review comments.
+     * @return a List of ReviewComments
+     */
     public List<ReviewComment> getReviewComments() {
         return reviewComments;
     }

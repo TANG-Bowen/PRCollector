@@ -27,6 +27,10 @@ public class IssueComment extends Action {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns markdown document in this IssueComment.
+     * @return the MarkdownDoc
+     */
     public MarkdownDoc getMarkdownDoc() {
         return markdownDoc;
     }

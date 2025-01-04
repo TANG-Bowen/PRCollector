@@ -36,19 +36,34 @@ public class Label extends PRElement {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
+    /**
+     * Returns label name.
+     * @return name String
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Returns label color code.
+     * @return color code String
+     */
     public String getColor() {
         return color;
     }
     
+    /**
+     * Returns label description body.
+     * @return description String
+     */
     public String getDescription() {
         return description;
     }
     
+    /**
+     * Returns add color issue event.
+     * @return the IssueEvent
+     */
     public IssueEvent getIssueEvent() {
         return issueEvent;
     }

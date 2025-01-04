@@ -57,54 +57,106 @@ public class MarkdownDoc extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns heading strings in this markdown document.
+     * @return a List of MarkdownDocContents for heading Strings
+     */
     public List<MarkdownDocContent> getHeadingStrings() {
         return headingStrings;
     }
     
+    /**
+     * Returns bold strings in this markdown document.
+     * @return a List of MarkdownDocContents for bold Strings
+     */
     public List<MarkdownDocContent> getBoldStrings() {
         return boldStrings;
     }
     
+    /**
+     * Returns italic strings in this markdown document.
+     * @return a List of MarkdownDocContents for italic Strings
+     */
     public List<MarkdownDocContent> getItalicStrings() {
         return italicStrings;
     }
     
+    /**
+     * Returns quote strings in this markdown document.
+     * @return a List of MarkdownDocContents for quote Strings
+     */
     public List<MarkdownDocContent> getQuoteStrings() {
         return quoteStrings;
     }
     
+    /**
+     * Returns link strings in this markdown document.
+     * @return a List of MarkdownDocContents for link Strings
+     */
     public List<MarkdownDocContent> getLinkStrings() {
         return linkStrings;
     }
     
+    /**
+     * Returns code strings in this markdown document.
+     * @return a List of MarkdownDocContents for code Strings
+     */
     public List<MarkdownDocContent> getCodeStrings() {
         return codeStrings;
     }
     
+    /**
+     * Returns code block strings in this markdown document.
+     * @return a List of MarkdownDocContents for code block Strings
+     */
     public List<MarkdownDocContent> getCodeBlockStrings() {
         return codeBlockStrings;
     }
     
+    /**
+     * Returns text strings in this markdown document.
+     * @return a List of MarkdownDocContents for text Strings
+     */
     public List<MarkdownDocContent> getTextStrings() {
         return textStrings;
     }
     
+    /**
+     * Returns mention strings in this markdown document.
+     * @return a List of MarkdownDocContents for mention Strings
+     */
     public List<MarkdownDocContent> getMentionStrings() {
         return mentionStrings;
     }
     
+    /**
+     * Returns text link strings in this markdown document.
+     * @return a List of MarkdownDocContents for text link Strings
+     */
     public List<MarkdownDocContent> getTextLinkStrings() {
         return textLinkStrings;
     }
     
+    /**
+     * Returns pull link strings in this markdown document.
+     * @return a List of MarkdownDocContents for pull link Strings
+     */
     public List<MarkdownDocContent> getPullLinkStrings() {
         return pullLinkStrings;
     }
     
+    /**
+     * Returns issue link strings in this markdown document.
+     * @return a List of MarkdownDocContents for issue link Strings
+     */
     public List<MarkdownDocContent> getIssueLinkStrings() {
         return issueLinkStrings;
     }
     
+    /**
+     * Returns html comment strings in this markdown document.
+     * @return a List of MarkdownDocContents for html comment Strings
+     */
     public List<MarkdownDocContent> getHtmlComments() {
         return htmlComments;
     }

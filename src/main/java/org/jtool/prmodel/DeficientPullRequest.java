@@ -65,11 +65,19 @@ public class DeficientPullRequest extends PullRequest {
      * API
      --------------------------------------*/
     
+    /**
+     * If the PR model is deficient.
+     * @return true for deficient judgment
+     */
     @Override
     public boolean isDeficient() {
         return true;
     }
     
+    /**
+     * If the instance leading to nonCategorized deficient case.
+     * @return false if any retrievable flag is false
+     */
     public boolean nonCategorized() {
         return participantRetrievable &&
                issueEventRetrievable &&
@@ -80,6 +88,10 @@ public class DeficientPullRequest extends PullRequest {
                sourceCodeRetrievable;
     }
     
+    /**
+     * Returns exception information.
+     * @return exception output String
+     */
     public String getExceptionOutput() {
         return exceptionOutput;
     }

@@ -1,4 +1,3 @@
-
 package org.jtool.jxp3model;
 
 import java.util.Set;
@@ -77,37 +76,74 @@ public class FileChange extends PRElement {
      * API
      --------------------------------------*/
     
+    /**
+     * Returns change type of this FileChange.
+     * @return a changType String
+     */
     public String getChangeType() {
         return changeType;
     }
     
+    /**
+     * Returns name of this FileChange.
+     * @return a name String
+     */
     public String getName() {
         return name;
     }
+    
+    /**
+     * Returns absolute path of this FileChange.
+     * @return a path String
+     */
     public String getPath() {
         return path;
     }
     
+    /**
+     * Returns source code of this FileChange in the pre file.
+     * @return a source code String
+     */
     public String getSourceCodeBefore() {
         return sourceCodeBefore;
     }
     
+    /**
+     * Returns source code of this FileChange in the post file.
+     * @return a source code String
+     */
     public String getSourceCodeAfter() {
         return sourceCodeAfter;
     }
     
+    /**
+     * Returns if this FileChange relates to tests.
+     * @return true if relation to test exists
+     */
     public boolean isTest() {
         return isTest;
     }
     
+    /**
+     * Returns CodeChange relates this FileChange.
+     * @return a CodeChange
+     */
     public CodeChange getCodeChange() {
         return codeChange;
     }
     
+    /**
+     * Returns ProjectChange relates this FileChange.
+     * @return a ProjectChange
+     */
     public ProjectChange getProjectChange() {
         return projectChange;
     }
     
+    /**
+     * Returns ClassChange in this FileChange.
+     * @return a ClassChange
+     */
     public Set<ClassChange> getClassChanges() {
         return classChanges;
     }

@@ -37,23 +37,42 @@ public class Action extends PRElement {
     /* ------------------------------------
      * API
      --------------------------------------*/
-    
+    /**
+     * Returns the create date of a action.
+     * @return the date instance of PRModelDate
+     */ 
     public PRModelDate getDate() {
         return date;
     }
     
+    /**
+     * Returns the body of a action edited by the actor.
+     * @return the body
+     */
     public String getBody() {
         return body;
     }
     
+    /**
+     * Returns the conversation covers this action.
+     * @return the conversation
+     */ 
     public Conversation getConversation() {
         return conversation;
     }
     
+    /**
+     * Returns the actor of this action.
+     * @return the actor
+     */
     public Participant getParticipant() {
         return participant;
     }
     
+    /**
+     * Returns the type of this action.
+     * @return the type
+     */
     public String getActionType() {
         return this.getClass().getName();
     }
