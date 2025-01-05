@@ -1,9 +1,7 @@
 package org.jtool.prmodel;
 
-import java.util.Set;
-import java.util.HashSet;
-
-import org.jtool.jxp3model.FileChange;
+import java.util.List;
+import java.util.ArrayList;
 
 public class FilesChanged extends PRElement {
     
@@ -13,29 +11,11 @@ public class FilesChanged extends PRElement {
     
     /* -------- Attributes -------- */
     
-    private Set<DiffFile> diffFiles = new HashSet<>();
-    private Set<FileChange> fileChanges = new HashSet<>();
+    private List<DiffFile> diffFiles = new ArrayList<>();
     
     public FilesChanged(PullRequest pullRequest, boolean hasJavaFile) {
         super(pullRequest);
         this.hasJavaFile = hasJavaFile;
-    }
-    
-    public void collect() {
-        for (Commit commit : pullRequest.getTragetCommits()) {
-            for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
-                if (!diffFiles.contains(diffFile)) {
-                    diffFiles.add(diffFile);
-                }
-            }
-        }
-        for (Commit commit : pullRequest.getTragetCommits()) {
-            for (FileChange fileChange : commit.getCodeChange().getFileChanges()) {
-                if (!fileChanges.contains(fileChange)) {
-                    fileChanges.add(fileChange);
-                }
-            }
-        }
     }
     
     public void print() {
@@ -43,10 +23,8 @@ public class FilesChanged extends PRElement {
         System.out.println();
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "hasJavaFile : " + hasJavaFile);
-        diffFiles.forEach(e->e.print());
-        System.out.println(prefix + "diffFiles(size) : "+diffFiles.size());
-        fileChanges.forEach(e->e.print());
-        System.out.println(prefix + "fileChanges(size) : "+fileChanges.size());
+        diffFiles.forEach(e -> e.print());
+        System.out.println(prefix + "diffFiles(size) : " + diffFiles.size());
     }
     
     /* ------------------------------------
@@ -65,15 +43,7 @@ public class FilesChanged extends PRElement {
      * Returns DiffFiles inside.
      * @return a Set of DiffFiles
      */
-    public Set<DiffFile> getDiffFiles() {
+    public List<DiffFile> getDiffFiles() {
         return diffFiles;
-    }
-    
-    /**
-     * Returns FileChanges inside.
-     * @return a Set of FileChanges
-     */
-    public Set<FileChange> getFileChanges() {
-        return fileChanges;
     }
 }

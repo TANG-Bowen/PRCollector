@@ -1,13 +1,11 @@
 package org.jtool.prmodel.builder;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHContent;
@@ -16,72 +14,112 @@ import org.kohsuke.github.GHPullRequestCommitDetail;
 import org.kohsuke.github.GHPullRequestFileDetail;
 import org.kohsuke.github.GHRepository;
 
+import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Commit;
 import org.jtool.prmodel.DiffFile;
-
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.FilesChanged;
 import org.jtool.prmodel.PRElement;
+import org.jtool.prmodel.PRModelBundle;
 import org.jtool.jxp3model.FileChange;
 
 public class FilesChangedBuilder {
     
     private final PullRequest pullRequest;
+    private final File pullRequestDir;
+    
     private final GHPullRequest ghPullRequest;
     private final GHRepository repository;
     
-    FilesChangedBuilder(PullRequest pullRequest, GHPullRequest ghPullRequest, GHRepository repository) {
+    FilesChangedBuilder(PullRequest pullRequest, File pullRequestDir,
+            GHPullRequest ghPullRequest, GHRepository repository) {
         this.pullRequest = pullRequest;
         this.ghPullRequest = ghPullRequest;
         this.repository = repository;
+        
+        this.pullRequestDir = pullRequestDir;
     }
     
     void build() {
-        List<GHFile> ghChangedFiles;
-        try {
-            ghChangedFiles = collectGHChangedFiles();
-        } catch (IOException e) {
+        Commit firstCommit;
+        Commit lastCommit;
+        if (pullRequest.getCommits().size() > 1) {
+            List<Commit> commits = pullRequest.getTragetCommits();
+            firstCommit = commits.get(0);
+            lastCommit = commits.get(commits.size() - 1);
+        } else if (pullRequest.getCommits().size() == 1) {
+            firstCommit = pullRequest.getCommits().get(0);
+            lastCommit = firstCommit;
+        } else {
             return;
         }
         
-        if (pullRequest.getCommits().size() > 1) {
-            List<Commit> commits = pullRequest.getTragetCommits();
+        boolean hasJavaFile = firstCommit.getCodeChange().hasJavaFile() || lastCommit.getCodeChange().hasJavaFile();
+        
+        FilesChanged filesChanged = new FilesChanged(pullRequest, hasJavaFile);
+        pullRequest.setFilesChanged(filesChanged);
+        
+        String dirNameBefore = PRElement.BEFORE + "_" + firstCommit.getShortSha();
+        String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore;
+        String dirNameAfter = PRElement.AFTER + "_" + lastCommit.getShortSha();
+        String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
+        
+        File dirBefore = PRModelBundle.getDir(pathBefore);
+        File dirAfter = PRModelBundle.getDir(pathAfter);
+        
+        try {
+            CodeChange codeChange = new CodeChange(pullRequest);
+            commandGitDiff(codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
+            List<GHFile> ghChangedFiles = collectGHChangedFiles();
             
-            boolean hasJavaFile = commits.stream().anyMatch(c -> c.getCodeChange().hasJavaFile());
-            
-            FilesChanged filesChanged = new FilesChanged(pullRequest, hasJavaFile);
-            pullRequest.setFilesChanged(filesChanged);
-            
-            for (Commit commit : commits) {
-                for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
-                    if (isIn(diffFile, ghChangedFiles)) {
-                        filesChanged.getDiffFiles().add(diffFile);
+            for (DiffFile diffFile : codeChange.getDiffFiles()) {
+                if (isIn(diffFile, ghChangedFiles)) {
+                    filesChanged.getDiffFiles().add(diffFile);
+                    if (diffFile.isJavaFile()) {
+                        diffFile.setTest(isTest(firstCommit, diffFile) || isTest(lastCommit, diffFile));
                     }
                 }
-                
-                for (FileChange fileChange : commit.getCodeChange().getFileChanges()) {
-                    if (isIn(fileChange, ghChangedFiles) && !filesChanged.getFileChanges().contains(fileChange)) {
-                        filesChanged.getFileChanges().add(fileChange);
+            }
+            
+        } catch (CommitMissingException | IOException e) {
+            /* empty */
+        }
+    }
+    
+    private boolean isTest(Commit commit, DiffFile diffFile) {
+        CodeChange codeChange = commit.getCodeChange();
+        for (DiffFile df : codeChange.getDiffFiles()) {
+            if (df.getPath().equals(diffFile.getPath())) {
+                return df.isTest();
+            }
+        }
+        return false;
+    }
+    
+    private void commandGitDiff(CodeChange codeChange, String basePathBefore, String basePathAfter)
+            throws CommitMissingException, IOException {
+        String workingDir = pullRequestDir.getAbsolutePath();
+        
+        String C_cd_working = "cd " + workingDir;
+        String C_gitDiff = "git diff " + basePathBefore + " " + basePathAfter;
+        
+        String diffCommand =
+                C_cd_working + " ; " +
+                C_gitDiff;
+        
+        String diffOutput = DiffBuilder.executeDiff(diffCommand);
+        DiffBuilder.buildDiffFiles(pullRequest, codeChange, diffOutput, basePathBefore, basePathAfter);
+        
+        for (DiffFile diffFile : codeChange.getDiffFiles()) {
+            if (diffFile.isJavaFile()) {
+                for (FileChange fileChange : codeChange.getFileChanges()) {
+                    if (diffFile.getChangeType() == fileChange.getChangeType()) {
+                        if (fileChange.getPath().contains(diffFile.getPath())) {
+                            diffFile.setTest(fileChange.isTest());
+                        }
                     }
                 }
             }
-            
-            removeReplicatedDiffFiles(filesChanged);
-            
-        } else if (pullRequest.getCommits().size() == 1) {
-            Commit commit = pullRequest.getCommits().get(0);
-            
-            FilesChanged filesChangedInfo = new FilesChanged(pullRequest, commit.getCodeChange().hasJavaFile());
-            pullRequest.setFilesChanged(filesChangedInfo);
-            
-            for (DiffFile diffFile : commit.getCodeChange().getDiffFiles()) {
-                filesChangedInfo.getDiffFiles().add(diffFile);
-            }
-            for (FileChange fileChange : commit.getCodeChange().getFileChanges()) {
-                filesChangedInfo.getFileChanges().add(fileChange);
-            }
-            
-            removeReplicatedDiffFiles(filesChangedInfo);
         }
     }
     
@@ -137,73 +175,10 @@ public class FilesChangedBuilder {
                 if (ghFile.path.equals(diffFile.getPath()) &&
                         ghFile.content.contains(diffFile.getBodyDel())) {
                     return true;
-                }   
-            }
-        }
-        return false;
-    }
-    
-    private boolean isIn(FileChange fileChange, List<GHFile> ghChangedFiles) {
-        if (fileChange.getChangeType() == PRElement.ADD || fileChange.getChangeType() == PRElement.REVISE) {
-            String sourceCode  = fileChange.getSourceCodeAfter().replaceAll("\n", "");
-            for (GHFile ghFile : ghChangedFiles) {
-                if (fileChange.getPath().contains(ghFile.path) && ghFile.content.equals(sourceCode)) {
-                    return true;
-                }
-            }
-        } else if (fileChange.getChangeType() == PRElement.DELETE) {
-            String sourceCode = fileChange.getSourceCodeBefore().replaceAll("\n", "");
-            for (GHFile ghFile : ghChangedFiles) {
-                if (fileChange.getPath().contains(ghFile.path) && ghFile.content.equals(sourceCode)) {
-                    return true;
                 }
             }
         }
         return false;
-    }
-    
-    private void removeReplicatedDiffFiles(FilesChanged filesChangedInfo) {
-        if (filesChangedInfo.getDiffFiles().isEmpty()) {
-            return;
-        }
-        
-        Set<DiffFile> filesBefore = filesChangedInfo.getDiffFiles().stream()
-                .filter(f -> f.getChangeType() == PRElement.ADD || f.getChangeType() == PRElement.REVISE)
-                .collect(Collectors.toSet());
-        
-        Set<DiffFile> removedFiles = new HashSet<>();
-        List<DiffFile> filesAfter = new ArrayList<>(filesBefore);
-        for (DiffFile fileBefore : filesBefore) {
-            for (DiffFile fileAfter : filesAfter) {
-                if (fileBefore.getBodyAdd().contains(fileAfter.getBodyAdd()) &&
-                   !fileBefore.getBodyAdd().equals(fileAfter.getBodyAdd())) {
-                    
-                    String[] addBefore = fileBefore.getBodyAdd().split(" ");
-                    int lenBefore = addBefore.length;
-                    String[] addAfter = fileAfter.getBodyAdd().split(" ");
-                    int lenAfter = addAfter.length;
-                    
-                    if (lenAfter > lenBefore) {
-                        for (DiffFile diffFile : filesChangedInfo.getDiffFiles()) {
-                            if (diffFile.getPath().equals(fileBefore.getPath()) &&
-                                diffFile.getChangeType() == fileBefore.getChangeType() &&
-                                diffFile.getBodyAll().equals(fileBefore.getBodyAll())) {
-                                removedFiles.add(diffFile);
-                            }
-                        }
-                    } else if (lenAfter < lenBefore) {
-                        for (DiffFile diffFile : filesChangedInfo.getDiffFiles()) {
-                            if (diffFile.getPath().equals(fileAfter.getPath()) &&
-                                diffFile.getChangeType() == fileAfter.getChangeType() &&
-                                diffFile.getBodyAll().equals(fileAfter.getBodyAll())) {
-                                removedFiles.add(diffFile);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        filesChangedInfo.getDiffFiles().removeAll(removedFiles);
     }
     
     private class GHFile {

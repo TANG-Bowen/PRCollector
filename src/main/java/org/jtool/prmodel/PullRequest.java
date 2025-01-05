@@ -209,6 +209,15 @@ public class PullRequest extends PRElement {
     }
     
     /**
+     * Returns pull request's number.
+     * @return the number
+     */
+    public int getNumber() {
+        String number = id.split("#")[1];
+        return Integer.parseInt(number);
+    }
+    
+    /**
      * Returns pull request's title.
      * @return title String
      */

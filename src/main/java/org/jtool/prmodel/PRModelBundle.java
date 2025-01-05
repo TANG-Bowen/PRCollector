@@ -65,11 +65,11 @@ public class PRModelBundle {
     
     public PRModel build() {
         PRModel prmodel = new PRModel();
-            if (pullRequestNumber >= 0) {
-                buildSingle(prmodel, pullRequestNumber);
-            } else {
-                build(prmodel);
-            }
+        if (pullRequestNumber >= 0) {
+            buildSingle(prmodel, pullRequestNumber);
+        } else {
+            build(prmodel);
+        }
        
         return prmodel;
     }
