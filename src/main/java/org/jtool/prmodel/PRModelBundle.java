@@ -2,9 +2,14 @@ package org.jtool.prmodel;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHPullRequest;
@@ -20,159 +25,63 @@ import org.jtool.prmodel.builder.PRModelBuilder;
 
 public class PRModelBundle {
     
-    private final String ghToken;
-    private final String repositoryName;
-    private final String rootSrcPath;
+    private final String psnToken;
+    private final String repoName;
+    private final String rootPath;
     
-    private final int pullRequestNumber;
+    private final int[] pullRequestNumbers;
+    
+    private int changedFilesMin = 0;
+    private int changedFilesMax = Integer.MAX_VALUE;
+    private int commitsMin = 0;
+    private int commitsMax = Integer.MAX_VALUE;
+    
+    private boolean deleteSourceFile = false;
+    private boolean writeErrorLog = false;
+    
+    private File repoDir;
     
     private GitHub github = null;
     private GHRepository repository;
     //private GHPullRequestQueryBuilder prQuery;
     private GHPullRequestSearchBuilder prSearch;
     
-    private int changedFilesMin = 0;
-    private int changedFilesMax = Integer.MAX_VALUE;
-    private int commitMin = 0;
-    private int commitMax = Integer.MAX_VALUE;
-    
-    private List<String> bannedLabels = new ArrayList<>();
-    
-    private boolean writeErrorLog = false;
-    
-    private boolean writeFile = false;
-    private boolean deleteSourceFile = false;
-    
-    public PRModelBundle(String ghToken, String repositoryName, String rootSrcPath, int pullRequestNumber) {
-        this.ghToken = ghToken;
-        this.repositoryName = repositoryName;
-        this.rootSrcPath = rootSrcPath;
-        this.pullRequestNumber = pullRequestNumber;
+    public PRModelBundle(String psnToken, String repoName, String rootPath, int[] pullRequestNumbers) {
+        this.psnToken = psnToken;
+        this.repoName = repoName;
+        this.rootPath = rootPath;
+        this.pullRequestNumbers = pullRequestNumbers.clone();
         
         try {
-            this.github = GitHub.connectUsingOAuth(ghToken);
-            this.repository = this.github.getRepository(repositoryName);
+            this.github = GitHub.connectUsingOAuth(psnToken);
+            this.repository = this.github.getRepository(repoName);
             //this.prQuery = this.repository.queryPullRequests();
             this.prSearch = this.repository.searchPullRequests();
         } catch (IOException e) {
-            /* empty */
+            System.out.println("Please check the repository name in GitHub: " + repoName);
         }
     }
     
-    public PRModelBundle(String ghToken, String repositoryName, String rootSrcPath) {
-        this(ghToken, repositoryName, rootSrcPath, -1);
+    public PRModelBundle(String psnToken, String repoName, String rootPath, int pullRequestNumber) {
+        this(psnToken, repoName, rootPath, new int[]{ pullRequestNumber });
+    }
+    
+    public PRModelBundle(String psnToken, String repoName, String rootPath) {
+        this(psnToken, repoName, rootPath, new int[0]);
     }
     
     public PRModel build() {
         PRModel prmodel = new PRModel();
-        if (pullRequestNumber >= 0) {
-            buildSingle(prmodel, pullRequestNumber);
+        if (pullRequestNumbers.length > 0) {
+            build(prmodel, pullRequestNumbers);
         } else {
             build(prmodel);
         }
-       
         return prmodel;
     }
     
     private String getPullRequestPath(int pullRequestNumber) {
-        String rootPath = rootSrcPath + File.separator + "PRCollector";
-        File rootDir = getDir(rootPath);
-        String repoPath = rootDir.getAbsolutePath() + File.separator + repository.getName();
-        File repositoryDir = getDir(repoPath);
-        String prPath = repositoryDir.getAbsolutePath() + File.separator + pullRequestNumber;
-        return prPath;
-    }
-    
-    private boolean alreadyBuilt(String path) {
-        File file = new File(path);
-        return file.exists();
-    }
-    
-    private void build(PRModel prmodel) {
-        PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
-        for (GHPullRequest ghPullRequest : ghPullRequests) {
-            String pullRequestPath = getPullRequestPath(ghPullRequest.getNumber());
-            if (!alreadyBuilt(pullRequestPath)) {
-                File pullRequestDir = getDir(pullRequestPath);
-                PRModelBuilder builder = new PRModelBuilder(this, ghToken, ghPullRequest.getNumber(), pullRequestDir);
-                boolean result = builder.build();
-                if (result) {
-                    PullRequest pullRequest = builder.getPullRequest();
-                    if (pullRequest != null) {
-                        prmodel.addPullRequest(pullRequest);
-                        writePRModelToFile(pullRequest, pullRequestDir);
-                    }
-                } else {
-                    JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(), false);
-                    System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
-                    
-                    DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
-                    if (pullRequest != null) {
-                        prmodel.addDeficientPullRequest(pullRequest);
-                        writeDataLossToFile(pullRequest, pullRequestDir);
-                    }
-                }
-                builder = null;
-            } else {
-                System.out.println("Already built : " + repository.getName() + "  ---  " + ghPullRequest.getNumber());
-            }
-        }
-    }
-    
-    private void buildSingle(PRModel prmodel, int pullRequestNumber) {
-        String pullRequestPath = getPullRequestPath(pullRequestNumber);
-        if (!alreadyBuilt(pullRequestPath)) {
-            File pullRequestDir = getDir(pullRequestPath);
-            PRModelBuilder builder = new PRModelBuilder(this, ghToken, pullRequestNumber, pullRequestDir);
-            
-            boolean result = builder.build();
-            if (result) {
-                PullRequest pullRequest = builder.getPullRequest();
-                if (pullRequest != null) {
-                    prmodel.addPullRequest(pullRequest);
-                    writePRModelToFile(pullRequest, pullRequestDir);
-                }
-            } else {
-                JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(),false);
-                System.out.println("Delete files after error log : " + pullRequestDir.getAbsolutePath()); 
-                
-                DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
-                if (pullRequest != null) {
-                    prmodel.addDeficientPullRequest(pullRequest);
-                    writeDataLossToFile(pullRequest, pullRequestDir);
-                }
-            }
-            builder = null;
-        } else {
-            System.out.println("Already built : " + repository.getName() + "  ---  " + pullRequestNumber);
-        }
-    }
-    
-    private void writePRModelToFile(PullRequest pullRequest, File pullRequestDir) {
-        String jsonPath = pullRequestDir + File.separator
-                        + pullRequest.getRepositoryName() + "_" + pullRequest.getId() + "_str.json";
-        JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
-        
-        if (writeFile) {
-            jfwriter.writePRModel();
-            
-            if (deleteSourceFile) {
-                JsonFileWriter.deleteGitSourceFile(pullRequest, pullRequestDir);
-            }
-        } else {
-            if (deleteSourceFile) {
-                JsonFileWriter.deleteGitSourceFile(pullRequest, pullRequestDir);
-                System.out.println("delete source files after error logs");
-            }
-            JsonFileWriter.deleteFiles(pullRequestDir.getAbsolutePath(), true);
-            System.out.println("delete retained source files under the pr dir ");
-        }
-    }
-    
-    private void writeDataLossToFile(DeficientPullRequest pullRequest, File pullRequestDir) {
-        String jsonPath = pullRequestDir + File.separator + pullRequest.getRepositoryName() + "_" + pullRequest.getId()+"_loss.json";
-        JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
-        jfwriter.writePRModelWithDataLoss();
+        return repoDir.getPath() + File.separator + pullRequestNumber;
     }
     
     public static File getDir(String path) {
@@ -191,6 +100,128 @@ public class PRModelBundle {
         return "";
     }
     
+    private boolean alreadyBuilt(String path) {
+        File file = new File(path);
+        return file.exists();
+    }
+    
+    private void build(PRModel prmodel, int[] pullRequestNumbers) {
+        System.out.println("PRCollector start");
+        
+        String datasetPath = rootPath + File.separator + "PRCollector";
+        File datasetDir = getDir(datasetPath);
+        String repoPath = datasetDir.getAbsolutePath() + File.separator + repository.getName();
+        repoDir = getDir(repoPath);
+        
+        for (int index = 0; index < pullRequestNumbers.length; index++) {
+            int number = pullRequestNumbers[index];
+            String prPath = getPullRequestPath(number);
+            if (!alreadyBuilt(prPath)) {
+                File prDir = getDir(prPath);
+                
+                PRModelBuilder builder = new PRModelBuilder(this, psnToken, repoName, number, prDir);
+                boolean result = builder.build();
+                
+                if (result) {
+                    PullRequest pullRequest = builder.getPullRequest();
+                    if (pullRequest != null) {
+                        prmodel.addPullRequest(pullRequest);
+                        
+                        writePRModelToFile(pullRequest, prDir);
+                    }
+                } else {
+                    DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
+                    if (pullRequest != null) {
+                        prmodel.addDeficientPullRequest(pullRequest);
+                        
+                        writeDataLossToFile(pullRequest, prDir);
+                    }
+                }
+                builder = null;
+            } else {
+                System.out.println("Already built : " + repository.getName() + "  ---  " + number);
+            }
+        }
+    }
+    
+    private void build(PRModel prmodel) {
+        try {
+            PagedIterable<GHPullRequest> ghPullRequests = prSearch.list();
+            int[] numbers = new int[ghPullRequests.toList().size()];
+            int index = 0;
+            for (GHPullRequest ghPullRequest : ghPullRequests) {
+                numbers[index] = ghPullRequest.getNumber();
+                index++;
+            }
+            build(prmodel, numbers);
+        } catch (IOException e) {
+            System.out.println("Not ontained pull request numbers");
+        }
+    }
+    
+    private void writePRModelToFile(PullRequest pullRequest, File pullRequestDir) {
+        String jsonPath = pullRequestDir + File.separator
+                        + pullRequest.getRepositoryName() + "_" + pullRequest.getId() + "_str.json";
+        JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
+        
+        jfwriter.writePRModel();
+        deleteGitSourceFile(pullRequest, pullRequestDir);
+    }
+    
+    private void writeDataLossToFile(DeficientPullRequest pullRequest, File pullRequestDir) {
+        String jsonPath = pullRequestDir + File.separator
+                        + pullRequest.getRepositoryName() + "_" + pullRequest.getId() + "_loss.json";
+        JsonFileWriter jfwriter = new JsonFileWriter(pullRequest, jsonPath);
+        
+        jfwriter.writePRModelWithDataLoss();
+        deleteGitSourceFile(pullRequest, pullRequestDir);
+    }
+    
+    private void deleteGitSourceFile(PullRequest pullRequest, File pullRequestDir) {
+        if (!deleteSourceFile) {
+            return;
+        }
+        
+        for (Commit commit : pullRequest.getTargetCommits()) {
+            String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
+            String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore; 
+            String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
+            String pathAfter = pullRequestDir.getAbsolutePath() + File.separator + dirNameAfter;
+            
+            try {
+                deleteDirectory(pathBefore);
+                deleteDirectory(pathAfter);
+            } catch (IOException e) {
+                System.out.println("Not found directory to be deleted! " + pullRequestDir);
+            }
+        }
+    }
+    
+    private void deleteDirectory(String path) throws IOException {
+        Path dir = Paths.get(path);
+        if (Files.exists(dir)) {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                
+                @Override
+                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+                
+                @Override
+                 public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+    
     /**
      * Set upper limit number and lower limit number of changed files.
      */
@@ -203,22 +234,8 @@ public class PRModelBundle {
      * Set upper limit number and lower limit number of commits.
      */
     public void downloadCommitNum(int min , int max) {
-        this.commitMin = min;
-        this.commitMax = max;
-    }
-    
-    /**
-     * Set ban label.
-     */
-    public void setBannedLabels(List<String> labels) {
-        bannedLabels = labels;
-    }
-    
-    /**
-     * Set write file flag.
-     */
-    public void writeFile(boolean bool) {
-        this.writeFile = bool;
+        this.commitsMin = min;
+        this.commitsMax = max;
     }
     
     /**
@@ -236,11 +253,11 @@ public class PRModelBundle {
     }
     
     public String getRepositoryName() {
-        return repositoryName;
+        return repoName;
     }
     
-    public String getRootSrcPath() {
-        return rootSrcPath;
+    public String getRootPath() {
+        return rootPath;
     }
     
     public int getDownloadChangedFilesNumMin() {
@@ -252,35 +269,23 @@ public class PRModelBundle {
     }
     
     public int getDownloadCommitsNumMin() {
-        return commitMin;
+        return commitsMin;
     }
     
     public int getDownloadCommitsNumMax() {
-        return commitMax;
-    }
-    
-    public List<String> getBannedLabels() {
-        return bannedLabels;
+        return commitsMax;
     }
     
     public boolean writeErrorLog() {
         return writeErrorLog;
     }
     
-    public boolean writeFile() {
-        return writeFile;
-    }
-    
-    public boolean deleteSourceFile() {
-        return deleteSourceFile;
-    }
-    
     /**
-     * Set search pull request by assigned user's login name.
+     * Set search pull requests by the assigned user's login name.
      */
     public void searchByAssignedUser(String userName) {
         try {
-            GHUser assignee = this.github.getUser(userName);
+            GHUser assignee = github.getUser(userName);
             prSearch.assigned(assignee);
         } catch (IOException e) {
             System.err.println("Invalid user name: " + userName);
@@ -288,7 +293,7 @@ public class PRModelBundle {
     }
     
     /**
-     * Set search pull request by assigned user's login name.
+     * Set search pull requests by the author's login name.
      */
     public void searchByAuthor(String userName) {
         try {
@@ -300,7 +305,7 @@ public class PRModelBundle {
     }
     
     /**
-     * Set search pull request by name of merge branch.
+     * Set search pull requests by the name of merge branch.
      */
     public void searchByBaseBranch(String branchName) {
         try {
@@ -399,7 +404,7 @@ public class PRModelBundle {
     /**
      * Set search pull request by labels.
      */
-    public void searchByInLabels(ArrayList<String> labels) {
+    public void searchByInLabels(List<String> labels) {
         prSearch.inLabels(labels);
     }
     
