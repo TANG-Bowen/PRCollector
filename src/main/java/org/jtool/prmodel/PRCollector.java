@@ -29,9 +29,6 @@ public class PRCollector {
             
             prmodel.getPullRequests().forEach(pr -> pr.print());
             prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
-            
-            prmodel.getPullRequests().forEach(pr -> pr.print());
-            prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
         }
     }
     

@@ -23,7 +23,7 @@ public class ChangeSummary extends PRElement {
     }
     
     public void print() {
-        String prefix = "FilesChangedInfo ";
+        String prefix = "ChangeSummary ";
         System.out.println();
         System.out.println(prefix + super.toString());
         System.out.println(prefix + "hasJavaFile : " + hasJavaFile);
