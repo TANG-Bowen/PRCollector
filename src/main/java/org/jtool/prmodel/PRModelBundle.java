@@ -142,6 +142,8 @@ public class PRModelBundle {
                 System.out.println("Already built : " + repository.getName() + "  ---  " + number);
             }
         }
+        
+        System.out.println("Finish");
     }
     
     private void build(PRModel prmodel) {
