@@ -45,7 +45,7 @@ public class PullRequest extends PRElement {
     protected List<Commit> commits = new ArrayList<>();
     protected Description description;
     protected HTMLDescription htmlDescription;
-    protected FilesChanged filesChanged;
+    protected ChangeSummary changeSummary;
     
     protected Set<Label> addedLabels = new HashSet<>();
     protected Set<Label> removedLabels = new HashSet<>();
@@ -125,8 +125,8 @@ public class PullRequest extends PRElement {
         this.htmlDescription = description;
     }
     
-    public void setFilesChanged(FilesChanged filesChanged) {
-        this.filesChanged = filesChanged;
+    public void setChangeSummary(ChangeSummary changeSummary) {
+        this.changeSummary = changeSummary;
     }
     
     public void print() {
@@ -138,7 +138,7 @@ public class PullRequest extends PRElement {
         conversation.print();
         commits.forEach(e -> e.print());
         
-        filesChanged.print();
+        changeSummary.print();
         
         addedLabels.forEach(e -> e.print());
         removedLabels.forEach(e -> e.print());
@@ -452,11 +452,11 @@ public class PullRequest extends PRElement {
     }
     
     /**
-     * Returns FilesChanged in this pull request.
-     * @return a FilesChanged.
+     * Returns ChangeSummary in this pull request.
+     * @return a ChangeSummary.
      */
-    public FilesChanged getFilesChanged() {
-        return filesChanged;
+    public ChangeSummary getFilesChanged() {
+        return changeSummary;
     }
     
     /**
