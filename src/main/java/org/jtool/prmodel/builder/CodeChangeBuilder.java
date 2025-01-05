@@ -57,7 +57,7 @@ public class CodeChangeBuilder {
     }
     
     public void build() {
-        for (Commit commit : pullRequest.getTragetCommits()) {
+        for (Commit commit : pullRequest.getTargetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore;
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
@@ -188,7 +188,7 @@ public class CodeChangeBuilder {
             for (DiffFile diffFile : codeChange.getDiffFiles()) {
                 if (diffFile.getChangeType() == PRElement.DELETE && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesBefore);
-                    if (jfile != null && !this.inBuiltFiles(jfile, projectChange)) {
+                    if (jfile != null && !inBuiltFiles(jfile, projectChange)) {
                         FileChange fileChange = createFileDeleted(codeChange, jfile);
                         projectChange.getFileChanges().add(fileChange);
                         
@@ -199,7 +199,7 @@ public class CodeChangeBuilder {
                     }
                 } else if (diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesAfter);
-                    if (jfile != null && !this.inBuiltFiles(jfile, projectChange)) {
+                    if (jfile != null && !inBuiltFiles(jfile, projectChange)) {
                         FileChange fileChange = createFileAdded(codeChange, jfile);
                         projectChange.getFileChanges().add(fileChange);
                         
@@ -212,7 +212,8 @@ public class CodeChangeBuilder {
                     JavaFile jfileBefore = getJavaFile(diffFile.getPath(), jfilesBefore);
                     JavaFile jfileAfter = getJavaFile(diffFile.getPath(), jfilesAfter);
                     
-                    if (jfileBefore != null && jfileAfter != null && !this.inBuiltFiles(jfileBefore, projectChange) && !this.inBuiltFiles(jfileAfter, projectChange)) {
+                    if (jfileBefore != null && jfileAfter != null &&
+                            !inBuiltFiles(jfileBefore, projectChange) && !inBuiltFiles(jfileAfter, projectChange)) {
                         FileChange fileChange = createFileChanged(codeChange, jfileBefore, jfileAfter);
                         projectChange.getFileChanges().add(fileChange);
                         

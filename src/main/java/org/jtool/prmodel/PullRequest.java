@@ -176,7 +176,7 @@ public class PullRequest extends PRElement {
         
     }
     
-    public List<Commit> getTragetCommits() {
+    public List<Commit> getTargetCommits() {
         return commits.stream()
                       .filter(c -> !c.getType().equals("merge") && !c.getType().equals("inital"))
                       .collect(Collectors.toList());
