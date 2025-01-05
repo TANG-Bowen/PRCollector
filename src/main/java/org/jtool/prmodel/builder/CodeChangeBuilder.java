@@ -193,9 +193,6 @@ public class CodeChangeBuilder {
                         projectChange.getFileChanges().add(fileChange);
                         
                         fileChange.setTest(containsTestMethod(jfile));
-                    } else {
-                        System.out.println("JavaFile Before : " + jfile.getPath());
-                        System.out.println("JavaFile After : null");
                     }
                 } else if (diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesAfter);
@@ -204,9 +201,6 @@ public class CodeChangeBuilder {
                         projectChange.getFileChanges().add(fileChange);
                         
                         fileChange.setTest(containsTestMethod(jfile));
-                    } else {
-                        System.out.println("JavaFile Before : null");
-                        System.out.println("JavaFile After : " + jfile.getPath());
                     }
                 } else if (diffFile.getChangeType() == PRElement.REVISE && diffFile.isJavaFile()) {
                     JavaFile jfileBefore = getJavaFile(diffFile.getPath(), jfilesBefore);
@@ -218,12 +212,6 @@ public class CodeChangeBuilder {
                         projectChange.getFileChanges().add(fileChange);
                         
                         fileChange.setTest(containsTestMethod(jfileBefore) || containsTestMethod(jfileAfter));
-                    } else if (jfileBefore != null && jfileAfter == null) {
-                        System.out.println("JavaFile Before : " + jfileBefore.getPath());
-                        System.out.println("JavaFile After : null");
-                    } else if (jfileBefore == null && jfileAfter != null) {
-                        System.out.println("JavaFile Before : null");
-                        System.out.println("JavaFile After : " + jfileAfter.getPath());
                     }
                 }
             }
