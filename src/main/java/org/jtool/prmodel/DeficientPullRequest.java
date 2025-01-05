@@ -46,7 +46,7 @@ public class DeficientPullRequest extends PullRequest {
         this.commits = pr.commits;
         this.description = pr.description;
         this.htmlDescription = pr.htmlDescription;
-        this.filesChanged = pr.filesChanged;
+        this.changeSummary = pr.changeSummary;
         
         this.addedLabels = pr.addedLabels;
         this.removedLabels = pr.removedLabels;

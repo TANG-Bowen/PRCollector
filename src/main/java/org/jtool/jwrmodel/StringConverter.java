@@ -25,7 +25,7 @@ import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
-import org.jtool.prmodel.FilesChanged;
+import org.jtool.prmodel.ChangeSummary;
 import org.jtool.prmodel.Label;
 import org.jtool.jxp3model.ProjectChange;
 import org.jtool.jxp3model.FileChange;
@@ -77,7 +77,7 @@ public class StringConverter {
         str_pr.htmlDescription = buildHTMLDescription(pullRequest.getHtmlDescription());
         str_pr.conversation = buildConversation(pullRequest.getConversation());
         str_pr.commits = buildCommits(pullRequest.getCommits());
-        str_pr.filesChanged = buildAllFilesChanged(pullRequest.getFilesChanged());
+        str_pr.changeSummary = buildChangeSummary(pullRequest.getFilesChanged());
         str_pr.addedLabels = buildLabels(pullRequest.getAddedLabels());
         str_pr.removedLabels = buildLabels(pullRequest.getRemovedLabels());
         str_pr.finalLabels = buildLabels(pullRequest.getFinalLabels());
@@ -125,7 +125,7 @@ public class StringConverter {
         str_pr.htmlDescription = buildHTMLDescription(pullRequest.getHtmlDescription());
         str_pr.conversation = buildConversation(pullRequest.getConversation());
         str_pr.commits = buildCommits(pullRequest.getCommits());
-        str_pr.filesChanged = buildAllFilesChanged(pullRequest.getFilesChanged());
+        str_pr.changeSummary = buildChangeSummary(pullRequest.getFilesChanged());
         str_pr.addedLabels = buildLabels(pullRequest.getAddedLabels());
         str_pr.removedLabels = buildLabels(pullRequest.getRemovedLabels());
         str_pr.finalLabels = buildLabels(pullRequest.getFinalLabels());
@@ -536,20 +536,19 @@ public class StringConverter {
         return str_statuses;
     }
     
-    private Str_FilesChanged buildAllFilesChanged(FilesChanged filesChanged) {
-        Str_FilesChanged str_info = new Str_FilesChanged();
-        if (filesChanged != null) {
-            str_info.prmodelId = filesChanged.getPRModelId();
+    private Str_ChangeSummary buildChangeSummary(ChangeSummary changeSummary) {
+        Str_ChangeSummary str_summary = new Str_ChangeSummary();
+        if (changeSummary != null) {
+            str_summary.prmodelId = changeSummary.getPRModelId();
             
-            str_info.hasJavaFile = filesChanged.hasJavaFile();
+            str_summary.hasJavaFile = changeSummary.hasJavaFile();
             
-            str_info.diffFiles = buildDiffFiles(filesChanged.getDiffFiles());
-            Set<FileChange> fileChanges = new HashSet<>(filesChanged.getFileChanges());
-            Set<Str_FileChange> str_fileChangesSet= buildFileChange(fileChanges);
-            List<Str_FileChange> str_fileChangeList = new ArrayList<>(str_fileChangesSet);
-            str_info.fileChanges = str_fileChangeList;
+            str_summary.diffFiles = buildDiffFiles(changeSummary.getDiffFiles());
+            
+            Set<FileChange> fileChanges = new HashSet<>(changeSummary.getFileChanges());
+            str_summary.fileChanges = new ArrayList<>(buildFileChange(fileChanges));
         }
-        return str_info;
+        return str_summary;
     }
     
     private Set<Str_Label> buildLabels(Set<Label> labels) {

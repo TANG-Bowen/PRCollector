@@ -41,7 +41,7 @@ public class Str_PullRequest {
     Str_HTMLDescription htmlDescription;
     Str_Conversation conversation;
     List<Str_Commit> commits;   
-    Str_FilesChanged filesChanged;
+    Str_ChangeSummary changeSummary;
     Set<Str_Label> addedLabels;
     Set<Str_Label> removedLabels;
     Set<Str_Label> finalLabels;

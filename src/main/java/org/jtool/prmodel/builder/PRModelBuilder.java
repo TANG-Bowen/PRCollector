@@ -140,7 +140,7 @@ public class PRModelBuilder {
             
             diffBuilder.setTestForDiffFiles();
             
-            FilesChangedBuilder filesChangedBuilder = new FilesChangedBuilder(
+            ChangeSummaryBuilder filesChangedBuilder = new ChangeSummaryBuilder(
                     pullRequest, pullRequestDir, ghPullRequest, repository);
             filesChangedBuilder.build();
             System.out.println("Built FilesChanged element");

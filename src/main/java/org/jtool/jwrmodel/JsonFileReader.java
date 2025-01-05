@@ -35,7 +35,7 @@ import org.jtool.prmodel.CIStatus;
 import org.jtool.prmodel.CodeChange;
 import org.jtool.prmodel.Description;
 import org.jtool.prmodel.HTMLDescription;
-import org.jtool.prmodel.FilesChanged;
+import org.jtool.prmodel.ChangeSummary;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PRModelDate;
 import org.jtool.jxp3model.CodeElement;
@@ -199,8 +199,8 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        FilesChanged fileChanged = loadFilesChanged(pullRequest, str_pr.filesChanged);
-        pullRequest.setFilesChanged(fileChanged);
+        ChangeSummary fileChanged = loadChangeSummary(pullRequest, str_pr.changeSummary);
+        pullRequest.setChangeSummary(fileChanged);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
         pullRequest.getAddedLabels().addAll(addedLabels);
@@ -249,8 +249,8 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        FilesChanged fileChanged = loadFilesChanged(pullRequest, str_pr.filesChanged);
-        pullRequest.setFilesChanged(fileChanged);
+        ChangeSummary changeSummary = loadChangeSummary(pullRequest, str_pr.changeSummary);
+        pullRequest.setChangeSummary(changeSummary);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
         pullRequest.getAddedLabels().addAll(addedLabels);
@@ -742,18 +742,18 @@ public class JsonFileReader {
         return ciStaruses;
     }
     
-    private FilesChanged loadFilesChanged(PullRequest pullRequest, Str_FilesChanged str_changed) {
-        FilesChanged filesChanged = new FilesChanged(pullRequest, str_changed.hasJavaFile);
-        filesChanged.setPrmodelId(str_changed.prmodelId);
+    private ChangeSummary loadChangeSummary(PullRequest pullRequest, Str_ChangeSummary str_summary) {
+        ChangeSummary changeSummary = new ChangeSummary(pullRequest, str_summary.hasJavaFile);
+        changeSummary.setPrmodelId(str_summary.prmodelId);
         
-        filesChanged.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_changed.diffFiles));
+        changeSummary.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_summary.diffFiles));
         CodeChange codeChange = null;
         ProjectChange projectChange=null;
-        Set<Str_FileChange> str_fileChanges = new HashSet<>(str_changed.fileChanges);
+        Set<Str_FileChange> str_fileChanges = new HashSet<>(str_summary.fileChanges);
         List<FileChange> fileChangesList = new ArrayList<>(loadFileChange(pullRequest, codeChange, projectChange,str_fileChanges));
-        filesChanged.getFileChanges().addAll(fileChangesList);
+        changeSummary.getFileChanges().addAll(fileChangesList);
         
-        return filesChanged;
+        return changeSummary;
     }
     
     private Set<Label> loadLabels(PullRequest pullRequest, Set<Str_Label> str_lbs) {

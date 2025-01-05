@@ -6,7 +6,7 @@ import org.jtool.jxp3model.FileChange;
 
 import java.util.ArrayList;
 
-public class FilesChanged extends PRElement {
+public class ChangeSummary extends PRElement {
     
     /* -------- Attributes -------- */
     
@@ -17,7 +17,7 @@ public class FilesChanged extends PRElement {
     private List<DiffFile> diffFiles = new ArrayList<>();
     private List<FileChange> fileChanges = new ArrayList<>();
     
-    public FilesChanged(PullRequest pullRequest, boolean hasJavaFile) {
+    public ChangeSummary(PullRequest pullRequest, boolean hasJavaFile) {
         super(pullRequest);
         this.hasJavaFile = hasJavaFile;
     }

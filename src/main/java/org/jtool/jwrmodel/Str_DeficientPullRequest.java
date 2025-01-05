@@ -40,8 +40,8 @@ public class Str_DeficientPullRequest {
     Str_Description description;
     Str_HTMLDescription htmlDescription;
     Str_Conversation conversation;
-    List<Str_Commit> commits;   
-    Str_FilesChanged filesChanged;
+    List<Str_Commit> commits;
+    Str_ChangeSummary changeSummary;
     Set<Str_Label> addedLabels;
     Set<Str_Label> removedLabels;
     Set<Str_Label> finalLabels;
