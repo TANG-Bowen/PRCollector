@@ -8,4 +8,5 @@ public class Str_FilesChanged {
     
     boolean hasJavaFile;
     List<Str_DiffFile> diffFiles;
+    List<Str_FileChange> fileChanges;
 }

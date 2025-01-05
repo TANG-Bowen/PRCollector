@@ -427,14 +427,6 @@ public class StringConverter {
            str_cl.sourceCodeAfter = cchange.getSourceCodeAfter();
            str_cl.isTest = cchange.isTest();
            
-//           str_cl.afferentClassesBeforeIndices = cchange.getAfferentClassesBefore().stream()
-//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
-//           str_cl.afferentClassesAfterIndices = cchange.getAfferentClassesAfter().stream()
-//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
-//           str_cl.efferentClassesBeforeIndices = cchange.getEfferentClassesBefore().stream()
-//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
-//           str_cl.efferentClassesAfterIndices = cchange.getEfferentClassesAfter().stream()
-//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
            str_cl.afferentClassesBefore = buildClassElement(cchange.getAfferentClassesBefore());
            str_cl.afferentClassesAfter = buildClassElement(cchange.getAfferentClassesAfter());
            str_cl.efferentClassesBefore = buildClassElement(cchange.getEfferentClassesBefore());
@@ -478,14 +470,6 @@ public class StringConverter {
             str_fd.sourceCodeAfter = fchange.getSourceCodeAfter();
             str_fd.isTest = fchange.isTest();
             
-//            str_fd.callingMethodsBeforeIndices = fchange.getCallingMethodsBefore().stream()
-//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
-//            str_fd.callingMethodsAfterIndices = fchange.getCallingMethodsAfter().stream()
-//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
-//            str_fd.calledMethodsBeforeIndices = fchange.getCalledMethodsBefore().stream()
-//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
-//            str_fd.calledMethodsAfterIndices = fchange.getCalledMethodsAfter().stream()
-//                                                      .map(e -> e.getIndex()).collect(Collectors.toSet());
             str_fd.AccessingMethodsBefore = buildMethodElement(fchange.getAccessingMethodsBefore());
             str_fd.AccessingMethodsAfter = buildMethodElement(fchange.getAccessingMethodsAfter());
             str_fd.calledMethodsBefore = buildMethodElement(fchange.getCalledMethodsBefore());
@@ -510,14 +494,6 @@ public class StringConverter {
             str_md.sourceCodeAfter = mchange.getSourceCodeAfter();
             str_md.isTest = mchange.isTest();
             
-//            str_md.callingMethodsBeforeIndices = mchange.getCallingMethodsBefore().stream()
-//                                                        .map(e -> e.getIndex()).collect(Collectors.toSet());
-//            str_md.callingMethodsAfterIndices = mchange.getCallingMethodsAfter().stream()
-//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
-//            str_md.calledMethodsBeforeIndices = mchange.getCalledMethodsBefore().stream()
-//                                                       .map(e -> e.getIndex()).collect(Collectors.toSet());
-//            str_md.calledMethodsAfterIndices = mchange.getCalledMethodsAfter().stream()
-//                                                      .map(e -> e.getIndex()).collect(Collectors.toSet());
             str_md.callingMethodsBefore = buildMethodElement(mchange.getCallingMethodsBefore());
             str_md.callingMethodsAfter = buildMethodElement(mchange.getCallingMethodsAfter());
             str_md.calledMethodsBefore = buildMethodElement(mchange.getCalledMethodsBefore());
@@ -568,6 +544,10 @@ public class StringConverter {
             str_info.hasJavaFile = filesChanged.hasJavaFile();
             
             str_info.diffFiles = buildDiffFiles(filesChanged.getDiffFiles());
+            Set<FileChange> fileChanges = new HashSet<>(filesChanged.getFileChanges());
+            Set<Str_FileChange> str_fileChangesSet= buildFileChange(fileChanges);
+            List<Str_FileChange> str_fileChangeList = new ArrayList<>(str_fileChangesSet);
+            str_info.fileChanges = str_fileChangeList;
         }
         return str_info;
     }

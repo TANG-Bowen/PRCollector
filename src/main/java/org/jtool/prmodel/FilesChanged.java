@@ -1,6 +1,9 @@
 package org.jtool.prmodel;
 
 import java.util.List;
+
+import org.jtool.jxp3model.FileChange;
+
 import java.util.ArrayList;
 
 public class FilesChanged extends PRElement {
@@ -12,6 +15,7 @@ public class FilesChanged extends PRElement {
     /* -------- Attributes -------- */
     
     private List<DiffFile> diffFiles = new ArrayList<>();
+    private List<FileChange> fileChanges = new ArrayList<>();
     
     public FilesChanged(PullRequest pullRequest, boolean hasJavaFile) {
         super(pullRequest);
@@ -25,6 +29,8 @@ public class FilesChanged extends PRElement {
         System.out.println(prefix + "hasJavaFile : " + hasJavaFile);
         diffFiles.forEach(e -> e.print());
         System.out.println(prefix + "diffFiles(size) : " + diffFiles.size());
+        fileChanges.forEach(e->e.print());
+        System.out.println(prefix + "fileChanges(size) : " + fileChanges.size());
     }
     
     /* ------------------------------------
@@ -41,9 +47,18 @@ public class FilesChanged extends PRElement {
     
     /**
      * Returns DiffFiles inside.
-     * @return a Set of DiffFiles
+     * @return a List of DiffFiles
      */
     public List<DiffFile> getDiffFiles() {
         return diffFiles;
     }
+    
+    /**
+     * Returns FileChanges inside.
+     * @return a List of FileChanges
+     */
+    public List<FileChange> getFileChanges(){
+    	return fileChanges;
+    }
+    
 }

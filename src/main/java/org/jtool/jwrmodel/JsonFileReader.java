@@ -747,6 +747,12 @@ public class JsonFileReader {
         filesChanged.setPrmodelId(str_changed.prmodelId);
         
         filesChanged.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_changed.diffFiles));
+        CodeChange codeChange = null;
+        ProjectChange projectChange=null;
+        Set<Str_FileChange> str_fileChanges = new HashSet<>(str_changed.fileChanges);
+        List<FileChange> fileChangesList = new ArrayList<>(loadFileChange(pullRequest, codeChange, projectChange,str_fileChanges));
+        filesChanged.getFileChanges().addAll(fileChangesList);
+        
         return filesChanged;
     }
     

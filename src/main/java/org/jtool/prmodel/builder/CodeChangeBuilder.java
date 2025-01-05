@@ -78,7 +78,7 @@ public class CodeChangeBuilder {
         }
     }
     
-    private void buildProjectChanges(CodeChange codeChange, String basePathBefore, String basePathAfter) {
+    public void buildProjectChanges(CodeChange codeChange, String basePathBefore, String basePathAfter) {
         for (DiffFile diffFile : codeChange.getDiffFiles()) {
             String projectName = "";
             String projectPath = "";
@@ -600,7 +600,7 @@ public class CodeChangeBuilder {
         return "";
     }
     
-    private void setReferenceRelation(CodeChange codeChange) {
+    public void setReferenceRelation(CodeChange codeChange) {
         for (FileChange fileChange : codeChange.getFileChanges()) {
             for (ClassChange classChange : fileChange.getClassChanges()) {
                 JavaClass jclassBefore = classMapBefore.get(classChange);
@@ -723,7 +723,7 @@ public class CodeChangeBuilder {
         return elems;
     }
     
-    private void setTestForClasses(CodeChange codeChange) {
+    public void setTestForClasses(CodeChange codeChange) {
         for (FileChange fileChange : codeChange.getFileChanges()) {
             for (ClassChange classChange : fileChange.getClassChanges()) {
                 boolean isTest = classChange.getMethodChanges().stream().anyMatch(m -> m.isTest());
