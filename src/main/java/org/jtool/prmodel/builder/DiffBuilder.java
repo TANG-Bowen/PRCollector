@@ -30,7 +30,7 @@ public class DiffBuilder {
     }
     
     void build() {
-        for (Commit commit : pullRequest.getTragetCommits()) {
+        for (Commit commit : pullRequest.getTargetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore;
             String dirNameAfter = PRElement.AFTER + "_" + commit.getShortSha();
@@ -110,7 +110,7 @@ public class DiffBuilder {
     }
     
     void setTestForDiffFiles() {
-        for (Commit commit : pullRequest.getTragetCommits()) {
+        for (Commit commit : pullRequest.getTargetCommits()) {
             CodeChange codeChange = commit.getCodeChange();
             for (DiffFile diffFile : codeChange.getDiffFiles()) {
                 if (diffFile.isJavaFile()) {

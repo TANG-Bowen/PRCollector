@@ -44,7 +44,7 @@ public class FilesChangedBuilder {
         Commit firstCommit;
         Commit lastCommit;
         if (pullRequest.getCommits().size() > 1) {
-            List<Commit> commits = pullRequest.getTragetCommits();
+            List<Commit> commits = pullRequest.getTargetCommits();
             firstCommit = commits.get(0);
             lastCommit = commits.get(commits.size() - 1);
         } else if (pullRequest.getCommits().size() == 1) {

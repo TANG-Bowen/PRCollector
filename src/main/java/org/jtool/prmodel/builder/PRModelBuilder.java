@@ -13,7 +13,6 @@ import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 
 import org.jtool.prmodel.DeficientPullRequest;
-import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.PRModelBundle;
 
@@ -21,38 +20,36 @@ public class PRModelBuilder {
     
     public static final String UNKNOWN_SYMBOL = "!";
     
-    private final String repositoryName;
-    private final String rootSrcPath;
-    
-    private final String ghToken;
-    private final int pullRequestNumber;
-    private File pullRequestDir;
+    private final String psnToken;
+    private final String repoName;
     
     private final int changedFilesMin;
     private final int changedFilesMax;
     private final int commitMin;
     private final int commitMax;
-    private final List<String> bannedLabels;
     
     private final boolean writeErrorLog;
+    
+    private final int pullRequestNumber;
+    private final File pullRequestDir;
     
     private PullRequest pullRequest = null;
     private DeficientPullRequest deficientPullRequest = null;
     
-    public PRModelBuilder(PRModelBundle bundle, String ghToken, int pullRequestNumber, File pullRequestDir) {
-        this.repositoryName = bundle.getRepositoryName();
-        this.rootSrcPath = bundle.getRootSrcPath();
-        this.ghToken = ghToken;
+    public PRModelBuilder(PRModelBundle bundle, String psnToken, String repoName,
+            int pullRequestNumber, File pullRequestDir) {
+        this.psnToken = psnToken;
+        this.repoName = repoName;
+        
+        this.changedFilesMin = bundle.getDownloadChangedFilesNumMin();
+        this.changedFilesMax = bundle.getDownloadChangedFilesNumMax();
+        this.commitMin = bundle.getDownloadCommitsNumMin();
+        this.commitMax = bundle.getDownloadCommitsNumMax();
+        
+        this.writeErrorLog = bundle.writeErrorLog();
+        
         this.pullRequestNumber = pullRequestNumber;
         this.pullRequestDir = pullRequestDir;
-        
-        changedFilesMin = bundle.getDownloadChangedFilesNumMin();
-        changedFilesMax = bundle.getDownloadChangedFilesNumMax();
-        commitMin = bundle.getDownloadCommitsNumMin();
-        commitMax = bundle.getDownloadCommitsNumMax();
-        bannedLabels = bundle.getBannedLabels();
-        
-        writeErrorLog = bundle.writeErrorLog();
     }
     
     public PullRequest getPullRequest() {
@@ -69,8 +66,8 @@ public class PRModelBuilder {
         GHPullRequest ghPullRequest = null;
         
         try {
-            github = new GitHubBuilder().withOAuthToken(ghToken).build();
-            repository = github.getRepository(repositoryName);
+            github = new GitHubBuilder().withOAuthToken(psnToken).build();
+            repository = github.getRepository(repoName);
             ghPullRequest = repository.getPullRequest(pullRequestNumber);
         } catch (IOException e) {
             return false;
@@ -131,28 +128,25 @@ public class PRModelBuilder {
         System.out.println("Built Commit elements");
         
         if (pullRequest.isSourceCodeRetrievable()) {
-            boolean noBannedLabel = checkBannedLabels(pullRequest);
-            if (noBannedLabel) {
-                DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
-                diffBuilder.build();
-                exceptions.addAll(diffBuilder.getExceptions());
-                System.out.println("Built Diff element");
-                
-                CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
-                        pullRequest, pullRequestDir);
-                codeChangetBuilder.build();
-                System.out.println("Built CodeChange elements");
-                
-                diffBuilder.setTestForDiffFiles();
-                
-                FilesChangedBuilder filesChangedBuilder = new FilesChangedBuilder(
-                        pullRequest, pullRequestDir, ghPullRequest, repository);
-                filesChangedBuilder.build();
-                System.out.println("Built FilesChanged element");
-            }
+            DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
+            diffBuilder.build();
+            exceptions.addAll(diffBuilder.getExceptions());
+            System.out.println("Built Diff element");
+            
+            CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
+                    pullRequest, pullRequestDir);
+            codeChangetBuilder.build();
+            System.out.println("Built CodeChange elements");
+            
+            diffBuilder.setTestForDiffFiles();
+            
+            FilesChangedBuilder filesChangedBuilder = new FilesChangedBuilder(
+                    pullRequest, pullRequestDir, ghPullRequest, repository);
+            filesChangedBuilder.build();
+            System.out.println("Built FilesChanged element");
         }
         
-        recordException(exceptions, repository, ghPullRequest);
+        recordExceptions(exceptions, repository, ghPullRequest);
         
         if (exceptions.isEmpty()) {
             deficientPullRequest = null;
@@ -174,30 +168,17 @@ public class PRModelBuilder {
         return commitMin <= commitSize && commitSize <= commitMax;
     }
     
-    private boolean checkBannedLabels(PullRequest pullRequest) {
-        for (String bannedlabel : bannedLabels) {
-            for (Label label : pullRequest.getFinalLabels()) {
-                if (bannedlabel.equals(label.getName())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    
-    private void recordException(List<Exception> exceptions, GHRepository repository, GHPullRequest ghPullRequest) {
+    private void recordExceptions(List<Exception> exceptions, GHRepository repository, GHPullRequest ghPullRequest) {
         if (writeErrorLog) {
-            String filePath = rootSrcPath + File.separator + "PRCollector" +
-                    File.separator + repository.getName() + File.separator + "error.txt";
-            File file = new File(filePath);
+            File file = new File(repoName + File.separator + "error.txt");
             System.out.println("Write log to " + file.getAbsolutePath());
             
             try (PrintWriter writer = new PrintWriter(new FileWriter(file, true))) {
-                for (Exception ex : exceptions) {
-                    writer.write(ex.getMessage());
-                    ex.printStackTrace(writer);
+                for (Exception e : exceptions) {
+                    writer.write(e.getMessage());
+                    e.printStackTrace(writer);
                     writer.println("------------------------------------------------------" +
-                            repository.getName() + " : " + ghPullRequest.getNumber());
+                            repository.getName() + " : " + pullRequestNumber);
                     writer.flush();
                 }
             } catch (IOException e) {
@@ -205,17 +186,16 @@ public class PRModelBuilder {
             }
             System.out.println("Wrote error log");
         } else {
-            for (Exception ex : exceptions) {
-                System.err.println(ex.getMessage());
-                //ex.printStackTrace();
+            for (Exception e : exceptions) {
+                System.err.println(e.getMessage());
             }
         }
     }
     
     private String getExceptionString(List<Exception> exceptions) {
         StringBuilder buf = new StringBuilder();
-        for (Exception ex : exceptions) {
-            buf.append(ex.getMessage());
+        for (Exception e : exceptions) {
+            buf.append(e.getMessage());
         }
         return buf.toString();
     }
