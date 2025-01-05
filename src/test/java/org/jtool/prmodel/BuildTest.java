@@ -37,7 +37,7 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
         
@@ -116,7 +116,7 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
         
@@ -133,7 +133,7 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
         
@@ -149,7 +149,7 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
         
