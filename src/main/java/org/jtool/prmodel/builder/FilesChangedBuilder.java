@@ -83,15 +83,13 @@ public class FilesChangedBuilder {
             
             CodeChangeBuilder codeChangeBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
             codeChangeBuilder.buildProjectChanges(codeChange, pathBefore, pathAfter);
-            codeChange.setFileChanges();           
+            codeChange.setFileChanges();
             codeChangeBuilder.setReferenceRelation(codeChange);
             codeChangeBuilder.setTestForClasses(codeChange);
             
             for(FileChange fileChange : codeChange.getFileChanges()) {
-            	filesChanged.getFileChanges().add(fileChange);
+                filesChanged.getFileChanges().add(fileChange);
             }
-            	
-            
         } catch (CommitMissingException | IOException e) {
             /* empty */
         }
@@ -120,18 +118,6 @@ public class FilesChangedBuilder {
         
         String diffOutput = DiffBuilder.executeDiff(diffCommand);
         DiffBuilder.buildDiffFiles(pullRequest, codeChange, diffOutput, basePathBefore, basePathAfter);
-        
-//        for (DiffFile diffFile : codeChange.getDiffFiles()) {
-//            if (diffFile.isJavaFile()) {
-//                for (FileChange fileChange : codeChange.getFileChanges()) {
-//                    if (diffFile.getChangeType() == fileChange.getChangeType()) {
-//                        if (fileChange.getPath().contains(diffFile.getPath())) {
-//                            diffFile.setTest(fileChange.isTest());
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
     
     private List<GHFile> collectGHChangedFiles() throws IOException {
