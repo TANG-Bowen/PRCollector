@@ -49,7 +49,7 @@ public class CommitBuilder {
                     Participant commiter = pBuilder.checkAndCreateParticipant(ghCommit.getAuthor(), "Commiter");
                     commit.setCommiter(commiter);
                 } catch (IOException e) {
-                    pullRequest.setIssueCommentRetrievable(false);
+                    pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
                     
                     Participant commiter = pBuilder.createUnknownParticipant("Commiter");

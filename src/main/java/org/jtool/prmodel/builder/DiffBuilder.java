@@ -331,12 +331,12 @@ public class DiffBuilder {
     private static String getCode(String absolutePath) {
         File file = new File(absolutePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            String code = "";
+            String line="";
+            StringBuilder code = new StringBuilder();
             while ((line = reader.readLine()) != null) {
-                code += line;
+                code.append(line);
             }
-            return code;
+            return code.toString();
         } catch (Exception e) {
             return "";
         }

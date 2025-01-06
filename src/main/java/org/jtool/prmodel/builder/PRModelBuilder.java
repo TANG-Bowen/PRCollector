@@ -32,7 +32,7 @@ public class PRModelBuilder {
     
     private final int pullRequestNumber;
     private final File pullRequestDir;
-    
+    private final File repositoryDir;
     private PullRequest pullRequest = null;
     private DeficientPullRequest deficientPullRequest = null;
     
@@ -50,6 +50,7 @@ public class PRModelBuilder {
         
         this.pullRequestNumber = pullRequestNumber;
         this.pullRequestDir = pullRequestDir;
+        this.repositoryDir = bundle.getRepoDir();
     }
     
     public PullRequest getPullRequest() {
@@ -127,24 +128,24 @@ public class PRModelBuilder {
         exceptions.addAll(commitBuilder.getExceptions());
         System.out.println("Built Commit elements");
         
-        if (pullRequest.isSourceCodeRetrievable()) {
-            DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
-            diffBuilder.build();
-            exceptions.addAll(diffBuilder.getExceptions());
-            System.out.println("Built Diff element");
-            
-            CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
-                    pullRequest, pullRequestDir);
-            codeChangetBuilder.build();
-            System.out.println("Built CodeChange elements");
-            
-            diffBuilder.setTestForDiffFiles();
-            
-            ChangeSummaryBuilder filesChangedBuilder = new ChangeSummaryBuilder(
-                    pullRequest, pullRequestDir, ghPullRequest, repository);
-            filesChangedBuilder.build();
-            System.out.println("Built FilesChanged element");
-        }
+		if (pullRequest.isSourceCodeRetrievable()) {
+			DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
+			diffBuilder.build();
+			exceptions.addAll(diffBuilder.getExceptions());
+			System.out.println("Built Diff element");
+			if (pullRequest.isCommitRetrievable()) {
+				CodeChangeBuilder codeChangeBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
+				codeChangeBuilder.build();
+				System.out.println("Built CodeChange elements");
+
+				diffBuilder.setTestForDiffFiles();
+
+				ChangeSummaryBuilder filesChangedBuilder = new ChangeSummaryBuilder(pullRequest, pullRequestDir,
+						ghPullRequest, repository);
+				filesChangedBuilder.build();
+				System.out.println("Built ChangeSummary element");
+			}
+		}
         
         recordExceptions(exceptions, repository, ghPullRequest);
         
@@ -170,7 +171,8 @@ public class PRModelBuilder {
     
     private void recordExceptions(List<Exception> exceptions, GHRepository repository, GHPullRequest ghPullRequest) {
         if (writeErrorLog) {
-            File file = new File(repoName + File.separator + "error.txt");
+        	String logPath =this.repositoryDir + File.separator + "error.txt";
+            File file = new File(logPath);
             System.out.println("Write log to " + file.getAbsolutePath());
             
             try (PrintWriter writer = new PrintWriter(new FileWriter(file, true))) {
@@ -182,7 +184,7 @@ public class PRModelBuilder {
                     writer.flush();
                 }
             } catch (IOException e) {
-                System.err.println("Failed to write log");
+                System.err.println("Failed to write log"+e);
             }
             System.out.println("Wrote error log");
         } else {

@@ -46,7 +46,8 @@ public class ChangeSummaryBuilder {
         if (pullRequest.getCommits().size() > 1) {
             List<Commit> commits = pullRequest.getTargetCommits();
             firstCommit = commits.get(0);
-            lastCommit = commits.get(commits.size() - 1);
+            lastCommit = commits.get(commits.size()-1);
+            	
         } else if (pullRequest.getCommits().size() == 1) {
             firstCommit = pullRequest.getCommits().get(0);
             lastCommit = firstCommit;
@@ -71,7 +72,6 @@ public class ChangeSummaryBuilder {
             CodeChange codeChange = new CodeChange(pullRequest);
             commandGitDiff(codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
             List<GHFile> ghChangedFiles = collectGHChangedFiles();
-            
             for (DiffFile diffFile : codeChange.getDiffFiles()) {
                 if (isIn(diffFile, ghChangedFiles)) {
                     changeSummary.getDiffFiles().add(diffFile);
@@ -128,7 +128,7 @@ public class ChangeSummaryBuilder {
                 GHContent content = repository.getFileContent(gfFileDetail.getFilename(),
                         ghPullRequest.getHead().getSha());
                 
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(content.read(), "UTF-8"))) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(content.read()))) {
                     String line = "";
                     StringBuilder text = new StringBuilder();
                     while ((line = reader.readLine()) != null) {
@@ -164,10 +164,9 @@ public class ChangeSummaryBuilder {
     private boolean isIn(DiffFile diffFile, List<GHFile> ghChangedFiles) {
         for (GHFile ghFile : ghChangedFiles) {
             if (diffFile.getChangeType() == PRElement.ADD || diffFile.getChangeType() == PRElement.REVISE) {
-                if (ghFile.path.equals(diffFile.getPath()) &&
-                        ghFile.content.equals(diffFile.getSourceCodeAfter())) {
-                    return true;
-                }
+				if (ghFile.path.equals(diffFile.getPath())) {
+					return true;
+				}
             } else if (diffFile.getChangeType() == PRElement.DELETE) {
                 if (ghFile.path.equals(diffFile.getPath()) &&
                         ghFile.content.contains(diffFile.getBodyDel())) {

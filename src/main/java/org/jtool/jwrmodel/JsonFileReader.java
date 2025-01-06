@@ -199,8 +199,8 @@ public class JsonFileReader {
         List<Commit> commits = loadCommits(pullRequest, str_pr.commits);
         pullRequest.getCommits().addAll(commits);
         
-        ChangeSummary fileChanged = loadChangeSummary(pullRequest, str_pr.changeSummary);
-        pullRequest.setChangeSummary(fileChanged);
+        ChangeSummary changeSummary = loadChangeSummary(pullRequest, str_pr.changeSummary);
+        pullRequest.setChangeSummary(changeSummary);
         
         Set<Label> addedLabels = loadLabels(pullRequest, str_pr.addedLabels);
         pullRequest.getAddedLabels().addAll(addedLabels);

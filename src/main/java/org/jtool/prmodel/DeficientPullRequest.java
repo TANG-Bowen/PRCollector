@@ -56,7 +56,20 @@ public class DeficientPullRequest extends PullRequest {
     @Override
     public void print() {
         String prefix = "DeficientPullRequest ";
-        printPRBase(prefix);
+        printPRBase(prefix);        
+        description.print();
+        htmlDescription.print();
+        participants.forEach(e -> e.print());
+        conversation.print();
+        commits.forEach(e -> e.print());
+        
+        if (changeSummary != null) {
+            changeSummary.print();
+        }
+        
+        addedLabels.forEach(e -> e.print());
+        removedLabels.forEach(e -> e.print());
+        finalLabels.forEach(e -> e.print());
         System.out.println();
         System.out.println("exceptionOutput : " + this.exceptionOutput);
     }

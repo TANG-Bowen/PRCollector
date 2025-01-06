@@ -278,7 +278,12 @@ public class PRModelBundle {
         return commitsMax;
     }
     
-    public boolean writeErrorLog() {
+    
+    public File getRepoDir() {
+		return repoDir;
+	}
+
+	public boolean writeErrorLog() {
         return writeErrorLog;
     }
     
