@@ -37,11 +37,9 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
-        
-        System.out.println("Finish");
         
         prmodel.getPullRequests().forEach(pr -> pr.print());
         prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
@@ -62,11 +60,6 @@ public class BuildTest {
         
         prmodel.getPullRequests().forEach(pr -> pr.print());
         prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
-        
-        System.out.println("Finish");
-        
-        prmodel.getPullRequests().forEach(pr -> pr.print());
-        prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
     }
     
     private static void test2(String ghToken, String filePath) {
@@ -78,11 +71,6 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         
         PRModel prmodel = bundle.build();
-        
-        prmodel.getPullRequests().forEach(pr -> pr.print());
-        prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
-        
-        System.out.println("Finish");
         
         prmodel.getPullRequests().forEach(pr -> pr.print());
         prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
@@ -103,11 +91,6 @@ public class BuildTest {
         
         prmodel.getPullRequests().forEach(pr -> pr.print());
         prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
-        
-        System.out.println("Finish");
-        
-        prmodel.getPullRequests().forEach(pr -> pr.print());
-        prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
     }
     
     private static void testSingle1(String ghToken, String filePath) {
@@ -116,11 +99,9 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
-        
-        System.out.println("Finish");
         
         prmodel.getPullRequests().forEach(pr -> pr.print());
         prmodel.getDeficientPullRequests().forEach(pr -> pr.print());
@@ -133,7 +114,7 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
         
@@ -149,11 +130,9 @@ public class BuildTest {
         bundle.deleteSourceFile(true);
         bundle.downloadChangedFileNum(0, 40);
         bundle.downloadCommitNum(0, 20);
-        bundle.setWriteErrorLog(true);
+        bundle.writeErrorLog(true);
         
         PRModel prmodel = bundle.build();
-        
-        System.out.println("Finish");
         
         prmodel.getPullRequests().forEach(pr -> pr.print());
         prmodel.getDeficientPullRequests().forEach(pr -> pr.print());

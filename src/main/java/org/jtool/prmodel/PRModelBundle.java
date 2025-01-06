@@ -142,6 +142,8 @@ public class PRModelBundle {
                 System.out.println("Already built : " + repository.getName() + "  ---  " + number);
             }
         }
+        
+        System.out.println("Finish");
     }
     
     private void build(PRModel prmodel) {
@@ -248,7 +250,7 @@ public class PRModelBundle {
     /**
      * Set write error log file flag.
      */
-    public void setWriteErrorLog(boolean bool) {
+    public void writeErrorLog(boolean bool) {
         this.writeErrorLog = bool;
     }
     
@@ -392,7 +394,7 @@ public class PRModelBundle {
     /**
      * Set search pull request by head branch name.
      */
-    public void searchByHeadBranch(String branchName){
+    public void searchByHeadBranch(String branchName) {
         try {
             GHBranch branch = repository.getBranch(branchName);
             this.prSearch.head(branch);
@@ -446,7 +448,7 @@ public class PRModelBundle {
     /**
      * Set search pull request by mentioning a user name.
      */
-    public void searchByMentions(String userName){
+    public void searchByMentions(String userName) {
         try {
             GHUser mentionUser = this.github.getUser(userName);
             prSearch.mentions(mentionUser);

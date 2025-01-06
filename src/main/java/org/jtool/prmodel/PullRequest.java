@@ -138,7 +138,9 @@ public class PullRequest extends PRElement {
         conversation.print();
         commits.forEach(e -> e.print());
         
-        changeSummary.print();
+        if (changeSummary != null) {
+            changeSummary.print();
+        }
         
         addedLabels.forEach(e -> e.print());
         removedLabels.forEach(e -> e.print());
