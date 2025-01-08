@@ -43,20 +43,22 @@ public class ChangeSummaryBuilder {
     void build() {
         Commit firstCommit;
         Commit lastCommit;
-        if (pullRequest.getCommits().size() > 1) {
+        if (pullRequest.getTargetCommits().size() > 1) {
             List<Commit> commits = pullRequest.getTargetCommits();
             firstCommit = commits.get(0);
             lastCommit = commits.get(commits.size()-1);
             	
-        } else if (pullRequest.getCommits().size() == 1) {
-            firstCommit = pullRequest.getCommits().get(0);
+        } else if (pullRequest.getTargetCommits().size() == 1) {
+            firstCommit = pullRequest.getTargetCommits().get(0);
             lastCommit = firstCommit;
         } else {
             return;
         }
         
-        boolean hasJavaFile = firstCommit.getCodeChange().hasJavaFile() || lastCommit.getCodeChange().hasJavaFile();
-        
+        boolean hasJavaFile = false;
+		if (firstCommit.getCodeChange() != null && lastCommit.getCodeChange() != null) {
+			hasJavaFile = firstCommit.getCodeChange().hasJavaFile() || lastCommit.getCodeChange().hasJavaFile();
+		}
         ChangeSummary changeSummary = new ChangeSummary(pullRequest, hasJavaFile);
         pullRequest.setChangeSummary(changeSummary);
         
@@ -168,8 +170,7 @@ public class ChangeSummaryBuilder {
 					return true;
 				}
             } else if (diffFile.getChangeType() == PRElement.DELETE) {
-                if (ghFile.path.equals(diffFile.getPath()) &&
-                        ghFile.content.contains(diffFile.getBodyDel())) {
+                if (ghFile.path.equals(diffFile.getPath())) {
                     return true;
                 }
             }

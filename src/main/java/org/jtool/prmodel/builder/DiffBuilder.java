@@ -30,6 +30,31 @@ public class DiffBuilder {
     }
     
     void build() {
+    	
+    	String workingPath = pullRequestDir.getAbsolutePath();
+        String basePath = pullRequestDir.getAbsolutePath() + File.separator + "BaseSource";
+        File dirBase = PRModelBundle.getDir(basePath);
+        
+        String C_cd_working = "cd " + workingPath;
+        String C_cd_base = "cd " + basePath;
+        String C_gitClone_base = "git clone " + pullRequest.getHeadRepositorySrcDLUrl() + " " + basePath; 
+        String C_gitCheckoutBranch = "git checkout " + pullRequest.getHeadBranch();
+        
+        String cloneCommand = 
+        		C_cd_working + " ; " +
+                C_gitClone_base + " ; " +
+        		C_cd_base + " ; " + 
+        		C_gitCheckoutBranch + " ; ";
+    	
+        try {
+			downloadSourceCode(cloneCommand);
+			System.out.println("Download Ok!");
+		} catch (CommitMissingException | IOException e) {
+			pullRequest.setCommitRetrievable(false);
+            exceptions.add(e);
+		}
+        
+        
         for (Commit commit : pullRequest.getTargetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore;
@@ -44,7 +69,7 @@ public class DiffBuilder {
             commit.setCodeChange(codeChange);
             
             try {
-                build(commit, codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
+                build(commit, codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath(), dirBase.getAbsolutePath());
                 
                 boolean hasJavaFile = codeChange.getDiffFiles().stream().anyMatch(f -> f.isJavaFile());
                 codeChange.hasJavaFile(hasJavaFile);
@@ -55,58 +80,40 @@ public class DiffBuilder {
         }
     }
     
-    void build(Commit commit, CodeChange codeChange, String basePathBefore, String basePathAfter)
+    void build(Commit commit, CodeChange codeChange, String commitPathBefore, String commitPathAfter, String basePath)
             throws CommitMissingException, IOException {
-        String workingDir = pullRequestDir.getAbsolutePath();
         
-        String C_cd_working = "cd " + workingDir;
-        String C_cd_before  = "cd " + basePathBefore;
-        String C_cd_after   = "cd " + basePathAfter;
+        String C_cd_before  = "cd " + commitPathBefore;
+        String C_cd_after   = "cd " + commitPathAfter;
         
-        String C_gitClone_before = "git clone " + pullRequest.getHeadRepositorySrcDLUrl() + " " + basePathBefore;
-        String C_gitClone_after  = "git clone " + pullRequest.getHeadRepositorySrcDLUrl() + " " + basePathAfter;
+        String C_gitCopy_before = "cp -R " + basePath + File.separator + "." + " " + commitPathBefore + File.separator;
+        String C_gitCopy_after  = "cp -R " + basePath + File.separator + "." + " " + commitPathAfter + File.separator;
         
-        String C_gitCheckoutBranch = "git checkout " + pullRequest.getHeadBranch();
+       
         String C_gitCheckoutCommit = "git checkout " + commit.getSha();
         
         String C_gitCheckoutPreviousCommit      = "git checkout " + "HEAD~" + " --";
-        //String C_gitCheckoutPreviousMergeCommit = "git checkout " + "HEAD~1^2 --";
+       
+        String C_gitDiff = "git diff " + commitPathBefore + " " + commitPathAfter;
         
-        String C_gitDiff = "git diff " + basePathBefore + " " + basePathAfter;
-        
-        String cloneCommand =
-                C_cd_working        + " ; " +
-                C_gitClone_after    + " ; " +
-                C_cd_after          + " ; " +
-                C_gitCheckoutBranch + " ; " +
-                C_gitCheckoutCommit + " ; " +
-                C_cd_working        + " ; " +
-                C_gitClone_before   + " ; " +
-                C_cd_before         + " ; " +
-                C_gitCheckoutBranch + " ; " +
-                C_gitCheckoutCommit + " ; " +
-                C_gitCheckoutPreviousCommit;
+        String copyCommand = 
+        		C_gitCopy_before + " ; " +
+        		C_gitCopy_after + " ; " ;
         
         String checkCommitCommand =
-                C_cd_working        + " ; " +
                 C_cd_after          + " ; " +
                 C_gitCheckoutCommit + " ; " +
-                C_cd_working        + " ; " +
                 C_cd_before         + " ; " +
                 C_gitCheckoutCommit + " ; " +
                 C_gitCheckoutPreviousCommit;
         
-        String diffCommand =
-                C_cd_working + " ; " +
-                C_gitDiff;
-        
-        downloadSourceCode(cloneCommand);
-        System.out.println("Download Ok!");
-        
+        String diffCommand = C_gitDiff;
+              
+        copySourceCode(copyCommand);
         checkCommit(checkCommitCommand);
         
         String diffOutput = executeDiff(diffCommand);
-        buildDiffFiles(pullRequest, codeChange, diffOutput, basePathBefore, basePathAfter);
+        buildDiffFiles(pullRequest, codeChange, diffOutput, commitPathBefore, commitPathAfter);
     }
     
     void setTestForDiffFiles() {
@@ -152,6 +159,29 @@ public class DiffBuilder {
             }
         }
     }
+    
+	static void copySourceCode(String command) throws CommitMissingException, IOException {
+		ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
+
+		BufferedReader reader = null;
+		try {
+			processBuilder.inheritIO();
+			Process process = processBuilder.start();
+			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+
+			while ((line = reader.readLine()) != null) {
+				System.out.println("      " + line + "****************");
+			}
+			process.waitFor();
+		} catch (Exception e) {
+			throw new CommitMissingException("Copy error");
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
     
     static void checkCommit(String commandChangeToCommit) throws CommitMissingException, IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", commandChangeToCommit);

@@ -184,6 +184,13 @@ public class PRModelBundle {
             return;
         }
         
+        String pathBase = pullRequestDir.getAbsolutePath() + File.separator +"BaseSource";
+        try {
+			deleteDirectory(pathBase);
+		} catch (IOException e) {
+			System.out.println("Not found base code directory to be deleted! " + pullRequestDir);
+		}
+        
         for (Commit commit : pullRequest.getTargetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
             String pathBefore = pullRequestDir.getAbsolutePath() + File.separator + dirNameBefore; 

@@ -75,6 +75,16 @@ public class CodeChangeBuilder {
                 setTestForClasses(codeChange);
             }
             existingProjects.clear();
+            classMapBefore.clear();
+            classMapAfter.clear();
+            fieldMapBefore.clear();
+            fieldMapAfter.clear();
+            methodMapBefore.clear();
+            methodMapAfter.clear();
+            classElemMapBefore.clear();
+            classElemMapAfter.clear();
+            methodElemMapBefore.clear();
+            methodElemMapAfter.clear();
         }
     }
     

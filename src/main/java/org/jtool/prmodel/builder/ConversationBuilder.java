@@ -106,23 +106,29 @@ public class ConversationBuilder {
         }
     }
     
-    private void buildReviewEvent(Conversation conversation) {
-        for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
-            try {
-                PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
-                String body = ghReview.getBody();
-                
-                ReviewEvent review = new ReviewEvent(pullRequest, date, body);
-                conversation.getReviewEvents().add(review);
-                
-                review.setConversation(conversation);
-                review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
-            } catch (IOException e) {
-                pullRequest.setReviewEventRetrievable(false);
-                exceptions.add(e);
-            }
-        }
-    }
+	private void buildReviewEvent(Conversation conversation) {
+
+		try {
+			for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
+				try {
+					PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
+					String body = ghReview.getBody();
+
+					ReviewEvent review = new ReviewEvent(pullRequest, date, body);
+					conversation.getReviewEvents().add(review);
+
+					review.setConversation(conversation);
+					review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
+				} catch (IOException e) {
+					pullRequest.setReviewEventRetrievable(false);
+					exceptions.add(e);
+				}
+			}
+		} catch (Exception e) {
+			pullRequest.setReviewEventRetrievable(false);
+			exceptions.add(e);
+		}
+	}
     
     private void buildReviewComment(Conversation conversation) {
         try {
