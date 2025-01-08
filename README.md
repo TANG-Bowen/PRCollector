@@ -36,7 +36,6 @@ A collection mission can be described as follows:
     bundle.searchByIsClosed();
     bundle.downloadChangedFileNum(0 , 40);//set upper limit and lower limit for the number of changed files
     bundle.downloadCommitNum(0 , 20);//set upper limit and lower limit for the number of commits
-    bundle.writeFile(true);//set whether output Json files or not
     bundle.deleteSrcFile(true);//set whether delete the source files after the collection or not
     bundle.build();
 ```
