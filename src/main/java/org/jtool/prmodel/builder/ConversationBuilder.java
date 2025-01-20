@@ -72,12 +72,16 @@ public class ConversationBuilder {
                 conversation.getIssueEvents().add(event);
                 
                 event.setConversation(conversation);
+                if(getParticipant(ghEvent.getActor().getLogin())!=null) {
                 event.setParticipant(getParticipant(ghEvent.getActor().getLogin()));
+                }else {
+                	event.setParticipant(getParticipant(PRModelBuilder.UNKNOWN_SYMBOL));	
+                }
                 
                 long ghId = ghEvent.getId();
                 eventMap.put(ghId, event);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setIssueEventRetrievable(false);
             exceptions.add(e);
         }
@@ -94,13 +98,17 @@ public class ConversationBuilder {
                     conversation.getIssueComments().add(comment);
                     
                     comment.setConversation(conversation);
+                    if(getParticipant(ghComment.getUser().getLogin())!=null) {
                     comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
-                } catch (IOException e) {
+                    }else {
+                    	comment.setParticipant(getParticipant(PRModelBuilder.UNKNOWN_SYMBOL));
+                    }
+                } catch (Exception e) {
                     pullRequest.setIssueCommentRetrievable(false);
                     exceptions.add(e);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setIssueCommentRetrievable(false);
             exceptions.add(e);
         }
@@ -118,8 +126,12 @@ public class ConversationBuilder {
 					conversation.getReviewEvents().add(review);
 
 					review.setConversation(conversation);
+					if(getParticipant(ghReview.getUser().getLogin())!=null) {
 					review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
-				} catch (IOException e) {
+					}else {
+						review.setParticipant(getParticipant(PRModelBuilder.UNKNOWN_SYMBOL));
+					}
+				} catch (Exception e) {
 					pullRequest.setReviewEventRetrievable(false);
 					exceptions.add(e);
 				}
@@ -141,13 +153,17 @@ public class ConversationBuilder {
                     conversation.getReviewComments().add(comment);
                     
                     comment.setConversation(conversation);
+                    if(getParticipant(ghComment.getUser().getLogin())!=null) {
                     comment.setParticipant(getParticipant(ghComment.getUser().getLogin()));
-                } catch (IOException e) {
+                    }else {
+                    	comment.setParticipant(getParticipant(PRModelBuilder.UNKNOWN_SYMBOL));
+                    }
+                } catch (Exception e) {
                     pullRequest.setReviewCommentRetrievable(false);
                     exceptions.add(e);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setReviewCommentRetrievable(false);
             exceptions.add(e);
         }

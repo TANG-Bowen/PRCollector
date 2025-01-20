@@ -116,6 +116,7 @@ public class PRModelBuilder {
         
         MarkdownDocBuilder markdownDocBuilder = new MarkdownDocBuilder(pullRequest, github);
         markdownDocBuilder.build();
+        exceptions.addAll(markdownDocBuilder.getExceptions());
         System.out.println("Built MarkdownDoc element");
         
         LabelBuilder labelBuilder = new LabelBuilder(pullRequest, ghPullRequest, repository);
@@ -140,9 +141,10 @@ public class PRModelBuilder {
 
 				diffBuilder.setTestForDiffFiles();
 
-				ChangeSummaryBuilder filesChangedBuilder = new ChangeSummaryBuilder(pullRequest, pullRequestDir,
+				ChangeSummaryBuilder changeSummaryBuilder = new ChangeSummaryBuilder(pullRequest, pullRequestDir,
 						ghPullRequest, repository);
-				filesChangedBuilder.build();
+				changeSummaryBuilder.build();
+				exceptions.addAll(changeSummaryBuilder.getExceptions());
 				System.out.println("Built ChangeSummary element");
 			}
 		}

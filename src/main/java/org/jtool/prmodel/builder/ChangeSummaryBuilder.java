@@ -25,6 +25,7 @@ import org.jtool.jxp3model.FileChange;
 
 public class ChangeSummaryBuilder {
     
+	private List<Exception> exceptions = new ArrayList<>();
     private final PullRequest pullRequest;
     private final File pullRequestDir;
     
@@ -92,8 +93,8 @@ public class ChangeSummaryBuilder {
             for(FileChange fileChange : codeChange.getFileChanges()) {
                 changeSummary.getFileChanges().add(fileChange);
             }
-        } catch (CommitMissingException | IOException e) {
-            /* empty */
+        } catch (Exception e) {
+        	this.exceptions.add(e);
         }
     }
     
@@ -122,7 +123,7 @@ public class ChangeSummaryBuilder {
         DiffBuilder.buildDiffFiles(pullRequest, codeChange, diffOutput, basePathBefore, basePathAfter);
     }
     
-    private List<GHFile> collectGHChangedFiles() throws IOException {
+    private List<GHFile> collectGHChangedFiles() throws Exception {
         List<GHFile> ghChangedFiles = new ArrayList<>();
         
         for (GHPullRequestFileDetail gfFileDetail : ghPullRequest.listFiles().toList()) {
@@ -139,8 +140,8 @@ public class ChangeSummaryBuilder {
                     
                     GHFile ghFile = new GHFile(content.getPath(), text.toString());
                     ghChangedFiles.add(ghFile);
-                } catch (IOException e) {
-                    /* empty */
+                } catch (Exception e) {
+                	this.exceptions.add(e);
                 }
             } else if (gfFileDetail.getStatus().equals("removed")) {
                 for (GHPullRequestCommitDetail ghCommitDetail : ghPullRequest.listCommits()) {
@@ -176,6 +177,10 @@ public class ChangeSummaryBuilder {
             }
         }
         return false;
+    }
+    
+    List<Exception> getExceptions() {
+        return exceptions;
     }
     
     private class GHFile {

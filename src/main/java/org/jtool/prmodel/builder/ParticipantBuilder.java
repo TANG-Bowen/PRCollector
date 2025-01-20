@@ -36,7 +36,7 @@ public class ParticipantBuilder {
             GHUser author = ghPullRequest.getUser();
             Participant participant = createParticipant(author, "Author");
             participant.getActionRecord().add("Creation");
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
             
@@ -50,7 +50,7 @@ public class ParticipantBuilder {
                     GHUser reviewer = comment.getUser();
                     Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                     participant.getActionRecord().add("Comment");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
                     
@@ -58,7 +58,7 @@ public class ParticipantBuilder {
                     participant.getActionRecord().add("Comment");
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
             
@@ -72,20 +72,20 @@ public class ParticipantBuilder {
                     GHUser reviewer = comment.getUser();
                     Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                     participant.getActionRecord().add("ReviewComment");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
                     
                     Participant participant = checkAndCreateUnknownParticipant("Reviewer");
-                    participant.getActionRecord().add("Comment");
+                    participant.getActionRecord().add("ReviewComment");
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
             
             Participant participant = checkAndCreateUnknownParticipant("Reviewer");
-            participant.getActionRecord().add("Comment");
+            participant.getActionRecord().add("ReviewComment");
         }
         
         try {
@@ -94,25 +94,25 @@ public class ParticipantBuilder {
                 Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
                 participant.getActionRecord().add("Event");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             pullRequest.setParticipantRetrievable(false);
             exceptions.add(e);
             
             Participant participant = checkAndCreateUnknownParticipant("Reviewer");
-            participant.getActionRecord().add("Comment");
+            participant.getActionRecord().add("Event");
         }
         
         for (GHPullRequestReview review : ghPullRequest.listReviews()) {
             try {
                 GHUser reviewer = review.getUser();
                 Participant participant = checkAndCreateParticipant(reviewer, "Reviewer");
-                participant.getActionRecord().add("Review");
-            } catch (IOException e) {
+                participant.getActionRecord().add("ReviewEvent");
+            } catch (Exception e) {
                 pullRequest.setParticipantRetrievable(false);
                 exceptions.add(e);
                 
-                Participant participant = createUnknownParticipant("Reviewer");
-                participant.getActionRecord().add("Comment");
+                Participant participant = checkAndCreateUnknownParticipant("Reviewer");
+                participant.getActionRecord().add("ReviewEvent");
             }
         }
         
@@ -125,19 +125,19 @@ public class ParticipantBuilder {
                     GHUser commiter = ghCommit.getAuthor();
                     Participant participant = checkAndCreateParticipant(commiter, "Author");
                     participant.getActionRecord().add("Commit");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     pullRequest.setParticipantRetrievable(false);
                     exceptions.add(e);
                     
                     Participant participant = checkAndCreateUnknownParticipant("Author");
-                    participant.getActionRecord().add("Comment");
+                    participant.getActionRecord().add("Commit");
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 pullRequest.setParticipantRetrievable(false);
                 exceptions.add(e);
                 
                 Participant participant = checkAndCreateUnknownParticipant("Author");
-                participant.getActionRecord().add("Comment");
+                participant.getActionRecord().add("Commit");
             }
         }
     }

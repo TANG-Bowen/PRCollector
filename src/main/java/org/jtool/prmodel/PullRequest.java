@@ -457,7 +457,7 @@ public class PullRequest extends PRElement {
      * Returns ChangeSummary in this pull request.
      * @return a ChangeSummary.
      */
-    public ChangeSummary getFilesChanged() {
+    public ChangeSummary getChangeSummary() {
         return changeSummary;
     }
     
