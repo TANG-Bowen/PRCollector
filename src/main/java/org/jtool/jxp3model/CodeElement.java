@@ -16,7 +16,6 @@ public class CodeElement extends PRElement {
         this.sourceCode = sourceCode;
     }
     
-    
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof CodeElement) ? equals((CodeElement)obj) : false;

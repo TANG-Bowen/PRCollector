@@ -724,7 +724,7 @@ public class CodeChangeBuilder {
         Set<CodeElement> elems = new HashSet<>();
         for(JavaMethod jmethod : methods)
         {
-            CodeElement codeElem = new CodeElement(pullRequest,stage,jmethod.getQualifiedName().fqn(), jmethod.getSource());
+            CodeElement codeElem = new CodeElement(pullRequest, stage, jmethod.getQualifiedName().fqn(), jmethod.getSource());
             
             elems.add(codeElem);
         }

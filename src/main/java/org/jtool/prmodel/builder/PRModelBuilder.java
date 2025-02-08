@@ -129,6 +129,7 @@ public class PRModelBuilder {
         exceptions.addAll(commitBuilder.getExceptions());
         System.out.println("Built Commit elements");
         
+<<<<<<< Upstream, based on origin/main
 		if (pullRequest.isSourceCodeRetrievable()) {
 			DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
 			diffBuilder.build();
@@ -148,6 +149,26 @@ public class PRModelBuilder {
 				System.out.println("Built ChangeSummary element");
 			}
 		}
+=======
+        if (pullRequest.isSourceCodeRetrievable()) {
+            DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
+            diffBuilder.build();
+            exceptions.addAll(diffBuilder.getExceptions());
+            System.out.println("Built Diff element");
+            
+            CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
+                    pullRequest, pullRequestDir);
+            codeChangetBuilder.build();
+            System.out.println("Built CodeChange elements");
+            
+            diffBuilder.setTestForDiffFiles();
+            
+            ChangeSummaryBuilder changeSummaryBuilder = new ChangeSummaryBuilder(
+                    pullRequest, pullRequestDir, ghPullRequest, repository);
+            changeSummaryBuilder.build();
+            System.out.println("Built FilesChanged element");
+        }
+>>>>>>> 2159047 changes
         
         recordExceptions(exceptions, repository, ghPullRequest);
         
