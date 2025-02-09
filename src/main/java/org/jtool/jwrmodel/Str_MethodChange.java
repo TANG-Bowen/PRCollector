@@ -20,11 +20,6 @@ public class Str_MethodChange {
     String sourceCodeAfter;
     boolean isTest;
     
-    Set<String> callingMethodsBeforeIndices;
-    Set<String> callingMethodsAfterIndices;
-    Set<String> calledMethodsBeforeIndices;
-    Set<String> calledMethodsAfterIndices;
-    
     Set<Str_CodeElement> callingMethodsBefore;
     Set<Str_CodeElement> callingMethodsAfter;
     Set<Str_CodeElement> calledMethodsBefore;

@@ -303,7 +303,6 @@ public class JsonFileReader {
         
         doc.getPullLinkStrings().addAll(str_md.pullLinkStrings);
         doc.getIssueLinkStrings().addAll(str_md.issueLinkStrings);
-        doc.getTextLinkStrings().addAll(str_md.textLinkStrings);
         
         doc.getHtmlComments().addAll(str_md.htmlComments);
         
@@ -681,8 +680,8 @@ public class JsonFileReader {
     
     private void setReferenceRelation(PullRequest pullRequest, FieldChange fieldChange) {
         Str_FieldChange str_fd = fieldMap.get(fieldChange);
-        fieldChange.getAccessingMethodsBefore().addAll(loadFieldElements(pullRequest,str_fd.AccessingMethodsBefore));
-        fieldChange.getAccessingMethodsAfter().addAll(loadFieldElements(pullRequest, str_fd.AccessingMethodsAfter));
+        fieldChange.getAccessingMethodsBefore().addAll(loadFieldElements(pullRequest,str_fd.accessingMethodsBefore));
+        fieldChange.getAccessingMethodsAfter().addAll(loadFieldElements(pullRequest, str_fd.accessingMethodsAfter));
         fieldChange.getCalledMethodsBefore().addAll(loadFieldElements(pullRequest, str_fd.calledMethodsBefore));
         fieldChange.getCalledMethodsAfter().addAll(loadFieldElements(pullRequest,str_fd.calledMethodsAfter));
     }

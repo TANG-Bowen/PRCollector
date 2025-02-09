@@ -186,7 +186,6 @@ public class StringConverter {
         
         str_md.pullLinkStrings = markdownDoc.getPullLinkStrings();
         str_md.issueLinkStrings = markdownDoc.getIssueLinkStrings();
-        str_md.textLinkStrings = markdownDoc.getTextLinkStrings();
         
         str_md.htmlComments = markdownDoc.getHtmlComments();
         return str_md;
@@ -484,8 +483,8 @@ public class StringConverter {
             str_fd.sourceCodeAfter = fchange.getSourceCodeAfter();
             str_fd.isTest = fchange.isTest();
             
-            str_fd.AccessingMethodsBefore = buildMethodElement(fchange.getAccessingMethodsBefore());
-            str_fd.AccessingMethodsAfter = buildMethodElement(fchange.getAccessingMethodsAfter());
+            str_fd.accessingMethodsBefore = buildMethodElement(fchange.getAccessingMethodsBefore());
+            str_fd.accessingMethodsAfter = buildMethodElement(fchange.getAccessingMethodsAfter());
             str_fd.calledMethodsBefore = buildMethodElement(fchange.getCalledMethodsBefore());
             str_fd.calledMethodsAfter = buildMethodElement(fchange.getCalledMethodsAfter());
         }
