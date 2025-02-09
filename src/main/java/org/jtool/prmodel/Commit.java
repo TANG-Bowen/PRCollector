@@ -1,8 +1,14 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Commit extends PRElement {
     

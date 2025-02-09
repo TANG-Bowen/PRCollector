@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.jxp3model;
 
 import org.jtool.prmodel.PRElement;
@@ -10,7 +16,7 @@ public class CodeElement extends PRElement {
     private final String sourceCode;
     
     public CodeElement(PullRequest pullrequest, String stage, String qualifiedName, String sourceCode) {
-    	super (pullrequest);
+        super (pullrequest);
         this.stage = stage;
         this.qualifiedName = qualifiedName;
         this.sourceCode = sourceCode;

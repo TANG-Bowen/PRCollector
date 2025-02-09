@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.QuickAccessAPI;
 
 import java.util.List;
@@ -7,7 +13,7 @@ import org.jtool.prmodel.PullRequest;
 
 public class DescriptionRelevance {
     
-	/**
+    /**
      * Returns the number of total words in a pull-request's title.
      * @param pullRequest a pull-request
      * @return the number of the words in the title

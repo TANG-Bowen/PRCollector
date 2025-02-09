@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel;
 
 public class ReviewEvent extends Action {
@@ -27,7 +33,7 @@ public class ReviewEvent extends Action {
      * API
      --------------------------------------*/
     /**
-     * Returns markdown document in this review event.
+     * Returns Markdown document in this review event.
      * @return a MarkdownDoc.
      */
     public MarkdownDoc getMarkdownDoc() {

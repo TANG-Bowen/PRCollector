@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.QuickAccessAPI;
 
 import java.util.List;
@@ -9,7 +15,7 @@ import org.jtool.prmodel.PullRequest;
 
 public class ParticipantRelevance {
     
-	/**
+    /**
      * Returns number of participants in a pull request.
      * @param pullRequest a pull-request
      * @param participant the Participant who as a actor

@@ -1,10 +1,15 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.jtool.jxp3model.FileChange;
-
-import java.util.ArrayList;
 
 public class ChangeSummary extends PRElement {
     

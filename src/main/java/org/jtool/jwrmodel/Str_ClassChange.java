@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.jwrmodel;
 
 import java.util.Set;
@@ -13,11 +19,6 @@ public class Str_ClassChange {
     String sourceCodeBefore;
     String sourceCodeAfter;
     boolean isTest;
-    
-//    Set<String> afferentClassesBeforeIndices;
-//    Set<String> afferentClassesAfterIndices;
-//    Set<String> efferentClassesBeforeIndices;
-//    Set<String> efferentClassesAfterIndices;
     
     Set<Str_CodeElement> afferentClassesBefore;
     Set<Str_CodeElement> afferentClassesAfter;

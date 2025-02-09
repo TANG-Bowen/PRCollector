@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel;
 
 import java.util.ArrayList;
@@ -58,7 +64,7 @@ public class MarkdownDoc extends PRElement {
      --------------------------------------*/
     
     /**
-     * Returns heading strings in this markdown document.
+     * Returns heading strings in this Markdown document.
      * @return a List of MarkdownDocContents for heading Strings
      */
     public List<MarkdownDocContent> getHeadingStrings() {
@@ -66,7 +72,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns bold strings in this markdown document.
+     * Returns bold strings in this Markdown document.
      * @return a List of MarkdownDocContents for bold Strings
      */
     public List<MarkdownDocContent> getBoldStrings() {
@@ -74,7 +80,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns italic strings in this markdown document.
+     * Returns italic strings in this Markdown document.
      * @return a List of MarkdownDocContents for italic Strings
      */
     public List<MarkdownDocContent> getItalicStrings() {
@@ -82,7 +88,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns quote strings in this markdown document.
+     * Returns quote strings in this Markdown document.
      * @return a List of MarkdownDocContents for quote Strings
      */
     public List<MarkdownDocContent> getQuoteStrings() {
@@ -90,7 +96,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns link strings in this markdown document.
+     * Returns link strings in this Markdown document.
      * @return a List of MarkdownDocContents for link Strings
      */
     public List<MarkdownDocContent> getLinkStrings() {
@@ -98,7 +104,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns code strings in this markdown document.
+     * Returns code strings in this Markdown document.
      * @return a List of MarkdownDocContents for code Strings
      */
     public List<MarkdownDocContent> getCodeStrings() {
@@ -106,7 +112,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns code block strings in this markdown document.
+     * Returns code block strings in this Markdown document.
      * @return a List of MarkdownDocContents for code block Strings
      */
     public List<MarkdownDocContent> getCodeBlockStrings() {
@@ -114,7 +120,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns text strings in this markdown document.
+     * Returns text strings in this Markdown document.
      * @return a List of MarkdownDocContents for text Strings
      */
     public List<MarkdownDocContent> getTextStrings() {
@@ -122,7 +128,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns mention strings in this markdown document.
+     * Returns mention strings in this Markdown document.
      * @return a List of MarkdownDocContents for mention Strings
      */
     public List<MarkdownDocContent> getMentionStrings() {
@@ -130,7 +136,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns text link strings in this markdown document.
+     * Returns text link strings in this Markdown document.
      * @return a List of MarkdownDocContents for text link Strings
      */
     public List<MarkdownDocContent> getTextLinkStrings() {
@@ -138,7 +144,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns pull link strings in this markdown document.
+     * Returns pull link strings in this Markdown document.
      * @return a List of MarkdownDocContents for pull link Strings
      */
     public List<MarkdownDocContent> getPullLinkStrings() {
@@ -146,7 +152,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns issue link strings in this markdown document.
+     * Returns issue link strings in this Markdown document.
      * @return a List of MarkdownDocContents for issue link Strings
      */
     public List<MarkdownDocContent> getIssueLinkStrings() {
@@ -154,7 +160,7 @@ public class MarkdownDoc extends PRElement {
     }
     
     /**
-     * Returns html comment strings in this markdown document.
+     * Returns html comment strings in this Markdown document.
      * @return a List of MarkdownDocContents for html comment Strings
      */
     public List<MarkdownDocContent> getHtmlComments() {

@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.QuickAccessAPI;
 
 import java.io.File;
@@ -116,19 +122,19 @@ public class CommitRelevance {
      * @return the number of the churns
      */
     public static int numSrcDeleteChurns(PullRequest pullRequest, String commitSha) {
-    	int churns = 0;
-    	Commit commit = pullRequest.getCommit(commitSha);
-    	if(commit == null) {
-    		return 0;
-    	}
-    	for(DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
-    		for(DiffLine dline : dfile.getDiffLines()) {
-    			if(dline.getChangeType().equals(PRElement.DELETE)) {
-    				churns++;
-    			}
-    		}
-    	}
-    	return churns;
+        int churns = 0;
+        Commit commit = pullRequest.getCommit(commitSha);
+        if(commit == null) {
+            return 0;
+        }
+        for(DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
+            for(DiffLine dline : dfile.getDiffLines()) {
+                if(dline.getChangeType().equals(PRElement.DELETE)) {
+                    churns++;
+                }
+            }
+        }
+        return churns;
     }
     
     /**

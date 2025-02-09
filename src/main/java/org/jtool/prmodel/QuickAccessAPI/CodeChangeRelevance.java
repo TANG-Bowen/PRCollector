@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.QuickAccessAPI;
 
 import java.util.ArrayList;
@@ -13,7 +19,7 @@ import org.jtool.prmodel.PullRequest;
 
 public class CodeChangeRelevance {
     
-	/**
+    /**
      * Returns changed classes in a pull-request.
      * @param pullRequest a pull-request
      * @return a List of ClassChanges

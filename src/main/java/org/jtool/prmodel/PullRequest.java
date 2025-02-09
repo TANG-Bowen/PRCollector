@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel;
 
 import java.util.List;
@@ -174,8 +180,6 @@ public class PullRequest extends PRElement {
         System.out.println(prefix + "commitRetrievable : " + commitRetrievable);
         
         System.out.println(prefix + "headRepositorySrcDLUrl : " + headRepositorySrcDLUrl);
-        
-        
     }
     
     public List<Commit> getTargetCommits() {

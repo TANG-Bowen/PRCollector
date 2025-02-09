@@ -1,7 +1,13 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.QuickAccessAPI;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.jtool.prmodel.IssueComment;
 import org.jtool.prmodel.IssueEvent;
@@ -12,7 +18,7 @@ import org.jtool.prmodel.ReviewEvent;
 
 public class ConversationRelevance {
     
-	/**
+    /**
      * Returns the number of issue comments in a pull-request's conversation.
      * @param pullRequest a pull-request
      * @return the number of the IssueComments

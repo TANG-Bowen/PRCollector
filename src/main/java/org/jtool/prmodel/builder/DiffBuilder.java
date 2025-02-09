@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.builder;
 
 import java.io.BufferedReader;
@@ -30,8 +36,7 @@ public class DiffBuilder {
     }
     
     void build() {
-    	
-    	String workingPath = pullRequestDir.getAbsolutePath();
+        String workingPath = pullRequestDir.getAbsolutePath();
         String basePath = pullRequestDir.getAbsolutePath() + File.separator + "BaseSource";
         File dirBase = PRModelBundle.getDir(basePath);
         
@@ -41,19 +46,18 @@ public class DiffBuilder {
         String C_gitCheckoutBranch = "git checkout " + pullRequest.getHeadBranch();
         
         String cloneCommand = 
-        		C_cd_working + " ; " +
+                C_cd_working + " ; " +
                 C_gitClone_base + " ; " +
-        		C_cd_base + " ; " + 
-        		C_gitCheckoutBranch + " ; ";
-    	
-        try {
-			downloadSourceCode(cloneCommand);
-			System.out.println("Download Ok!");
-		} catch (CommitMissingException | IOException e) {
-			pullRequest.setCommitRetrievable(false);
-            exceptions.add(e);
-		}
+                C_cd_base + " ; " + 
+                C_gitCheckoutBranch + " ; ";
         
+        try {
+            downloadSourceCode(cloneCommand);
+            System.out.println("Download Ok!");
+        } catch (CommitMissingException | IOException e) {
+            pullRequest.setCommitRetrievable(false);
+            exceptions.add(e);
+        }
         
         for (Commit commit : pullRequest.getTargetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
@@ -69,7 +73,8 @@ public class DiffBuilder {
             commit.setCodeChange(codeChange);
             
             try {
-                build(commit, codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath(), dirBase.getAbsolutePath());
+                build(commit, codeChange,
+                        dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath(), dirBase.getAbsolutePath());
                 
                 boolean hasJavaFile = codeChange.getDiffFiles().stream().anyMatch(f -> f.isJavaFile());
                 codeChange.hasJavaFile(hasJavaFile);
@@ -80,25 +85,27 @@ public class DiffBuilder {
         }
     }
     
-    void build(Commit commit, CodeChange codeChange, String commitPathBefore, String commitPathAfter, String basePath)
+    void build(Commit commit, CodeChange codeChange,
+            String commitPathBefore, String commitPathAfter, String basePath)
             throws CommitMissingException, IOException {
         
         String C_cd_before  = "cd " + commitPathBefore;
         String C_cd_after   = "cd " + commitPathAfter;
         
-        String C_gitCopy_before = "cp -R " + basePath + File.separator + "." + " " + commitPathBefore + File.separator;
-        String C_gitCopy_after  = "cp -R " + basePath + File.separator + "." + " " + commitPathAfter + File.separator;
+        String C_gitCopy_before = "cp -R " +
+                basePath + File.separator + "." + " " + commitPathBefore + File.separator;
+        String C_gitCopy_after  = "cp -R " +
+                basePath + File.separator + "." + " " + commitPathAfter + File.separator;
         
-       
         String C_gitCheckoutCommit = "git checkout " + commit.getSha();
         
         String C_gitCheckoutPreviousCommit      = "git checkout " + "HEAD~" + " --";
-       
+        
         String C_gitDiff = "git diff " + commitPathBefore + " " + commitPathAfter;
         
         String copyCommand = 
-        		C_gitCopy_before + " ; " +
-        		C_gitCopy_after + " ; " ;
+                C_gitCopy_before + " ; " +
+                C_gitCopy_after + " ; " ;
         
         String checkCommitCommand =
                 C_cd_after          + " ; " +
@@ -108,7 +115,7 @@ public class DiffBuilder {
                 C_gitCheckoutPreviousCommit;
         
         String diffCommand = C_gitDiff;
-              
+        
         copySourceCode(copyCommand);
         checkCommit(checkCommitCommand);
         
@@ -160,28 +167,28 @@ public class DiffBuilder {
         }
     }
     
-	static void copySourceCode(String command) throws CommitMissingException, IOException {
-		ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
-
-		BufferedReader reader = null;
-		try {
-			processBuilder.inheritIO();
-			Process process = processBuilder.start();
-			reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line;
-
-			while ((line = reader.readLine()) != null) {
-				System.out.println("      " + line + "****************");
-			}
-			process.waitFor();
-		} catch (Exception e) {
-			throw new CommitMissingException("Copy error");
-		} finally {
-			if (reader != null) {
-				reader.close();
-			}
-		}
-	}
+    static void copySourceCode(String command) throws CommitMissingException, IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
+        
+        BufferedReader reader = null;
+        try {
+            processBuilder.inheritIO();
+            Process process = processBuilder.start();
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            
+            while ((line = reader.readLine()) != null) {
+                System.out.println("      " + line + "****************");
+            }
+            process.waitFor();
+        } catch (Exception e) {
+            throw new CommitMissingException("Copy error");
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
     
     static void checkCommit(String commandChangeToCommit) throws CommitMissingException, IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", commandChangeToCommit);

@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.builder;
 
 import java.io.IOException;
@@ -114,33 +120,32 @@ public class ConversationBuilder {
         }
     }
     
-	private void buildReviewEvent(Conversation conversation) {
-
-		try {
-			for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
-				try {
-					PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
-					String body = ghReview.getBody();
-
-					ReviewEvent review = new ReviewEvent(pullRequest, date, body);
-					conversation.getReviewEvents().add(review);
-
-					review.setConversation(conversation);
-					if(getParticipant(ghReview.getUser().getLogin())!=null) {
-					review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
-					}else {
-						review.setParticipant(getParticipant(PRModelBuilder.UNKNOWN_SYMBOL));
-					}
-				} catch (Exception e) {
-					pullRequest.setReviewEventRetrievable(false);
-					exceptions.add(e);
-				}
-			}
-		} catch (Exception e) {
-			pullRequest.setReviewEventRetrievable(false);
-			exceptions.add(e);
-		}
-	}
+    private void buildReviewEvent(Conversation conversation) {
+        try {
+            for (GHPullRequestReview ghReview : ghPullRequest.listReviews()) {
+                try {
+                    PRModelDate date = new PRModelDate(ghReview.getCreatedAt());
+                    String body = ghReview.getBody();
+                    
+                    ReviewEvent review = new ReviewEvent(pullRequest, date, body);
+                    conversation.getReviewEvents().add(review);
+                    
+                    review.setConversation(conversation);
+                    if(getParticipant(ghReview.getUser().getLogin())!=null) {
+                    review.setParticipant(getParticipant(ghReview.getUser().getLogin()));
+                    }else {
+                        review.setParticipant(getParticipant(PRModelBuilder.UNKNOWN_SYMBOL));
+                    }
+                } catch (Exception e) {
+                    pullRequest.setReviewEventRetrievable(false);
+                    exceptions.add(e);
+                }
+            }
+        } catch (Exception e) {
+            pullRequest.setReviewEventRetrievable(false);
+            exceptions.add(e);
+        }
+    }
     
     private void buildReviewComment(Conversation conversation) {
         try {
