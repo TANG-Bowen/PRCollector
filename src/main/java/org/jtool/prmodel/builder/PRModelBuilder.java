@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.builder;
 
 import java.io.File;
@@ -129,25 +135,24 @@ public class PRModelBuilder {
         exceptions.addAll(commitBuilder.getExceptions());
         System.out.println("Built Commit elements");
         
-		if (pullRequest.isSourceCodeRetrievable()) {
-			DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
-			diffBuilder.build();
-			exceptions.addAll(diffBuilder.getExceptions());
-			System.out.println("Built Diff element");
-			if (pullRequest.isCommitRetrievable()) {
-				CodeChangeBuilder codeChangeBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
-				codeChangeBuilder.build();
-				System.out.println("Built CodeChange elements");
-
-				diffBuilder.setTestForDiffFiles();
-
-				ChangeSummaryBuilder changeSummaryBuilder = new ChangeSummaryBuilder(pullRequest, pullRequestDir,
-						ghPullRequest, repository);
-				changeSummaryBuilder.build();
-				exceptions.addAll(changeSummaryBuilder.getExceptions());
-				System.out.println("Built ChangeSummary element");
-			}
-		}
+        if (pullRequest.isSourceCodeRetrievable()) {
+            DiffBuilder diffBuilder = new DiffBuilder(pullRequest, pullRequestDir);
+            diffBuilder.build();
+            exceptions.addAll(diffBuilder.getExceptions());
+            System.out.println("Built Diff element");
+            
+            CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
+                    pullRequest, pullRequestDir);
+            codeChangetBuilder.build();
+            System.out.println("Built CodeChange elements");
+            
+            diffBuilder.setTestForDiffFiles();
+            
+            ChangeSummaryBuilder changeSummaryBuilder = new ChangeSummaryBuilder(
+                    pullRequest, pullRequestDir, ghPullRequest, repository);
+            changeSummaryBuilder.build();
+            System.out.println("Built FilesChanged element");
+        }
         
         recordExceptions(exceptions, repository, ghPullRequest);
         

@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.QuickAccessAPI;
 
 import org.jtool.prmodel.CIStatus;
@@ -12,7 +18,7 @@ import org.jtool.prmodel.ReviewEvent;
 
 public class TimeRelevance {
     
-	/**
+    /**
      * Returns time between created date to closed date of a pull request.
      * @param pullRequest a pull-request
      * @return a time in ms 

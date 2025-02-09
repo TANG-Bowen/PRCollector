@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.jwrmodel;
 
 import java.util.Set;
@@ -13,11 +19,6 @@ public class Str_MethodChange {
     String sourceCodeBefore;
     String sourceCodeAfter;
     boolean isTest;
-    
-    Set<String> callingMethodsBeforeIndices;
-    Set<String> callingMethodsAfterIndices;
-    Set<String> calledMethodsBeforeIndices;
-    Set<String> calledMethodsAfterIndices;
     
     Set<Str_CodeElement> callingMethodsBefore;
     Set<Str_CodeElement> callingMethodsAfter;

@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.builder;
 
 import java.io.File;
@@ -176,30 +182,29 @@ public class CodeChangeBuilder {
     private void buildFileChanges(CodeChange codeChange, ProjectChange projectChange, String changeType,
             JavaProject projectBefore, JavaProject projectAfter) {
         if (changeType == PRElement.DELETE) {
-        	Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
-        	for(DiffFile diffFile : codeChange.getDiffFiles()) {
-        		if(diffFile.getChangeType() == PRElement.DELETE && diffFile.isJavaFile()) {
-        			JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesBefore);
-        			if(jfile!=null && !inBuiltFiles(jfile,projectChange)) {
-        				FileChange fileChange = createFileDeleted(codeChange, jfile);
-                        projectChange.getFileChanges().add(fileChange);                       
+            Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
+            for(DiffFile diffFile : codeChange.getDiffFiles()) {
+                if(diffFile.getChangeType() == PRElement.DELETE && diffFile.isJavaFile()) {
+                    JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesBefore);
+                    if(jfile!=null && !inBuiltFiles(jfile,projectChange)) {
+                        FileChange fileChange = createFileDeleted(codeChange, jfile);
+                        projectChange.getFileChanges().add(fileChange);
                         fileChange.setTest(containsTestMethod(jfile));
-        			}
-        		}
-        	}  
+                    }
+                }
+            }  
         } else if (changeType == PRElement.ADD) {
-        	Set<JavaFile> jfilesAfter = new HashSet<>(projectAfter.getFiles());
-        	for(DiffFile diffFile : codeChange.getDiffFiles()) {
-        		if(diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
-        			JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesAfter);
-        			if(jfile!=null && !inBuiltFiles(jfile,projectChange)) {
-        				FileChange fileChange = createFileDeleted(codeChange, jfile);
-                        projectChange.getFileChanges().add(fileChange);                       
+            Set<JavaFile> jfilesAfter = new HashSet<>(projectAfter.getFiles());
+            for(DiffFile diffFile : codeChange.getDiffFiles()) {
+                if(diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
+                    JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesAfter);
+                    if(jfile!=null && !inBuiltFiles(jfile,projectChange)) {
+                        FileChange fileChange = createFileDeleted(codeChange, jfile);
+                        projectChange.getFileChanges().add(fileChange);
                         fileChange.setTest(containsTestMethod(jfile));
-        			}
-        		}
-        	} 
-           
+                    }
+                }
+            }
         } else if (changeType == PRElement.REVISE) {
             Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
             Set<JavaFile> jfilesAfter = new HashSet<>(projectAfter.getFiles());
@@ -724,7 +729,7 @@ public class CodeChangeBuilder {
         Set<CodeElement> elems = new HashSet<>();
         for(JavaMethod jmethod : methods)
         {
-            CodeElement codeElem = new CodeElement(pullRequest,stage,jmethod.getQualifiedName().fqn(), jmethod.getSource());
+            CodeElement codeElem = new CodeElement(pullRequest, stage, jmethod.getQualifiedName().fqn(), jmethod.getSource());
             
             elems.add(codeElem);
         }

@@ -1,6 +1,11 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.builder;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -31,7 +36,7 @@ import org.jtool.prmodel.ReviewEvent;
 
 public class MarkdownDocBuilder {
     
-	private List<Exception> exceptions = new ArrayList<>();
+    private List<Exception> exceptions = new ArrayList<>();
     private final PullRequest pullRequest;
     private final GitHub github;
     
@@ -163,27 +168,27 @@ public class MarkdownDocBuilder {
     }
     
     private void buildMentionUsersInEachDoc(MarkdownDoc doc) {
-		try {
-			for (String user : pullRequest.getHtmlDescription().getMentionUsers()) {
-				for (MarkdownDocContent content : doc.getTextStrings()) {
-					if (content.getText().contains(user)) {
-						String[] words = user.split("@");
-						String name = words[words.length - 1];
-						try {
-							github.getUser(name); // Check the name
-
-							MarkdownDocContent nameContent = new MarkdownDocContent(name, content.getStartOffset(),
-									content.getEndOffset(), content.getNodeStartOffset(), content.getNodeEndOffset());
-							doc.getMentionStrings().add(nameContent);
-						} catch (Exception e) {
-							this.exceptions.add(e);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			this.exceptions.add(e);
-		}
+        try {
+            for (String user : pullRequest.getHtmlDescription().getMentionUsers()) {
+                for (MarkdownDocContent content : doc.getTextStrings()) {
+                    if (content.getText().contains(user)) {
+                        String[] words = user.split("@");
+                        String name = words[words.length - 1];
+                        try {
+                            github.getUser(name); // Check the name
+                            
+                            MarkdownDocContent nameContent = new MarkdownDocContent(name, content.getStartOffset(),
+                                    content.getEndOffset(), content.getNodeStartOffset(), content.getNodeEndOffset());
+                            doc.getMentionStrings().add(nameContent);
+                        } catch (Exception e) {
+                            this.exceptions.add(e);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            this.exceptions.add(e);
+        }
     }
     
     private void buildIssueLinksAndPullLinks(String text, MarkdownDoc doc) {

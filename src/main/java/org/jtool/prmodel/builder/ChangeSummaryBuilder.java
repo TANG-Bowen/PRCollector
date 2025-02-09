@@ -1,3 +1,9 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel.builder;
 
 import java.io.BufferedReader;
@@ -57,9 +63,9 @@ public class ChangeSummaryBuilder {
         }
         
         boolean hasJavaFile = false;
-		if (firstCommit.getCodeChange() != null && lastCommit.getCodeChange() != null) {
-			hasJavaFile = firstCommit.getCodeChange().hasJavaFile() || lastCommit.getCodeChange().hasJavaFile();
-		}
+        if (firstCommit.getCodeChange() != null && lastCommit.getCodeChange() != null) {
+            hasJavaFile = firstCommit.getCodeChange().hasJavaFile() || lastCommit.getCodeChange().hasJavaFile();
+        }
         ChangeSummary changeSummary = new ChangeSummary(pullRequest, hasJavaFile);
         pullRequest.setChangeSummary(changeSummary);
         
@@ -74,9 +80,9 @@ public class ChangeSummaryBuilder {
         try {
             CodeChange codeChange = new CodeChange(pullRequest);
             commandGitDiff(codeChange, dirBefore.getAbsolutePath(), dirAfter.getAbsolutePath());
-            List<GHFile> ghChangedFiles = collectGHChangedFiles();
+            List<String> ghChangedFilePaths = collectGHChangedFiles();
             for (DiffFile diffFile : codeChange.getDiffFiles()) {
-                if (isIn(diffFile, ghChangedFiles)) {
+                if (isIn(diffFile, ghChangedFilePaths)) {
                     changeSummary.getDiffFiles().add(diffFile);
                     if (diffFile.isJavaFile()) {
                         diffFile.setTest(isTest(firstCommit, diffFile) || isTest(lastCommit, diffFile));
@@ -123,8 +129,8 @@ public class ChangeSummaryBuilder {
         DiffBuilder.buildDiffFiles(pullRequest, codeChange, diffOutput, basePathBefore, basePathAfter);
     }
     
-    private List<GHFile> collectGHChangedFiles() throws Exception {
-        List<GHFile> ghChangedFiles = new ArrayList<>();
+    private List<String> collectGHChangedFiles() throws Exception {
+        List<String> ghChangedFilePaths = new ArrayList<>();
         
         for (GHPullRequestFileDetail gfFileDetail : ghPullRequest.listFiles().toList()) {
             if (!gfFileDetail.getStatus().equals("removed")) {
@@ -137,9 +143,7 @@ public class ChangeSummaryBuilder {
                     while ((line = reader.readLine()) != null) {
                         text.append(line);
                     }
-                    
-                    GHFile ghFile = new GHFile(content.getPath(), text.toString());
-                    ghChangedFiles.add(ghFile);
+                    ghChangedFilePaths.add(content.getPath());
                 } catch (Exception e) {
                 	this.exceptions.add(e);
                 }
@@ -153,25 +157,23 @@ public class ChangeSummaryBuilder {
                             if (removedContent == null) {
                                 removedContent = "";
                             }
-                            
-                            GHFile ghFile = new GHFile(removedPath, removedContent);
-                            ghChangedFiles.add(ghFile);
+                            ghChangedFilePaths.add(removedPath);
                         }
                     }
                 }
             }
         }
-        return ghChangedFiles;
+        return ghChangedFilePaths;
     }
     
-    private boolean isIn(DiffFile diffFile, List<GHFile> ghChangedFiles) {
-        for (GHFile ghFile : ghChangedFiles) {
+    private boolean isIn(DiffFile diffFile, List<String> ghChangedFilePaths) {
+        for (String path : ghChangedFilePaths) {
             if (diffFile.getChangeType() == PRElement.ADD || diffFile.getChangeType() == PRElement.REVISE) {
-				if (ghFile.path.equals(diffFile.getPath())) {
-					return true;
-				}
+                if (path.equals(diffFile.getPath())) {
+                    return true;
+                }
             } else if (diffFile.getChangeType() == PRElement.DELETE) {
-                if (ghFile.path.equals(diffFile.getPath())) {
+                if (path.equals(diffFile.getPath())) {
                     return true;
                 }
             }
@@ -181,16 +183,5 @@ public class ChangeSummaryBuilder {
     
     List<Exception> getExceptions() {
         return exceptions;
-    }
-    
-    private class GHFile {
-        
-        final String path;
-        final String content;
-        
-        GHFile(String path, String content) {
-            this.path = path;
-            this.content = content;
-        }
     }
 }

@@ -1,9 +1,15 @@
+/*
+ *  Copyright 2025
+ *  @author Tang Bowen
+ *  @author Katsuhisa Maruyama
+ */
+
 package org.jtool.prmodel;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PRModel {
     
