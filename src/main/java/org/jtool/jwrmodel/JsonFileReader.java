@@ -107,6 +107,24 @@ public class JsonFileReader {
         }
     }
     
+    public void read(int num) {
+    	File file = new File(filePath);
+        if (!file.exists()) {
+            System.out.println("File or directory does not exist : " + filePath);
+        } else {
+            List<File> files = new ArrayList<>();
+            if (file.isFile()) {
+                if (isPRJsonFromPRCollector(file) || isDataLossJsonFromPRCollector(file)) {
+                    files.add(file);
+                }
+            } else if (file.isDirectory()) {
+                File directory = new File(filePath);
+                files.addAll(listAllFiles(directory));
+            }
+            readFiles(files,num);
+        }
+    }
+    
     private boolean isPRJsonFromPRCollector(File file) {
     	String pattern ="^[\\p{L}-]+_[\\p{L}-]+#\\d+_str\\.json$";
     	return Pattern.matches(pattern, file.getName());
@@ -166,6 +184,37 @@ public class JsonFileReader {
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
+        }
+    }
+    
+    private void readFiles(List<File> files , int num) {
+    	int counter=0;
+        for (File file : files) {
+        	if(counter == num) {
+        		break;
+        	}
+        		
+            try {
+                String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
+                content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
+                Gson gson = new Gson();
+                if (isPRJsonFromPRCollector(file)) {
+                    Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
+                    PullRequest pullRequest = loadPRModel(str_pr);
+                    pullRequests.add(pullRequest);
+                    System.out.println("Loaded PR model for " + file.getPath().toString());
+                } else if (isDataLossJsonFromPRCollector(file)) {
+                    Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
+                    DeficientPullRequest deficientPullRequest = loadPRModelWithDataLoss(str_pr);
+                    deficientPullRequests.add(deficientPullRequest);
+                    System.out.println("Loaded deficient PR for " + file.getPath().toString());
+                }
+            } catch (UnsupportedEncodingException e) {
+                System.err.println(e.getMessage());
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+            counter++;
         }
     }
     
@@ -572,9 +621,9 @@ public class JsonFileReader {
             
             fileChange.getClassChanges().addAll(loadClassChange(pullRequest, codeChange,
                     fileChange, str_fl.classChanges));
-            
-            codeChange.getFileChanges().add(fileChange);
-            
+			if (codeChange != null) {
+				codeChange.getFileChanges().add(fileChange);
+			}
             fileChanges.add(fileChange);
             
             fileChangeMap.put(fileChange.getPRModelId(), fileChange);
@@ -754,10 +803,13 @@ public class JsonFileReader {
         changeSummary.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_summary.diffFiles));
         CodeChange codeChange = null;
         ProjectChange projectChange=null;
-        Set<Str_FileChange> str_fileChanges = new HashSet<>(str_summary.fileChanges);
-        List<FileChange> fileChangesList = new ArrayList<>(loadFileChange(pullRequest, codeChange, projectChange,str_fileChanges));
-        changeSummary.getFileChanges().addAll(fileChangesList);
-        
+		if (str_summary.fileChanges != null) {
+			Set<Str_FileChange> str_fileChanges = new HashSet<>(str_summary.fileChanges);
+
+			List<FileChange> fileChangesList = new ArrayList<>(
+					loadFileChange(pullRequest, codeChange, projectChange, str_fileChanges));
+			changeSummary.getFileChanges().addAll(fileChangesList);
+		}
         return changeSummary;
     }
     

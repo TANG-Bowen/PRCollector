@@ -54,10 +54,12 @@ public class StringConverter {
         str_pr.title = pullRequest.getTitle();
         str_pr.repositoryName = pullRequest.getRepositoryName();
         str_pr.state = pullRequest.getState();
-        
+        if(pullRequest.getCreateDate()!=null) {
         str_pr.createDate = pullRequest.getCreateDate().toString();
+        }
+        if(pullRequest.getEndDate()!=null) {
         str_pr.endDate = pullRequest.getEndDate().toString();
-        
+        }
         str_pr.mergeBranch = pullRequest.getMergeBranch();
         str_pr.headBranch = pullRequest.getHeadBranch();
         str_pr.pageUrl = pullRequest.getPageUrl();

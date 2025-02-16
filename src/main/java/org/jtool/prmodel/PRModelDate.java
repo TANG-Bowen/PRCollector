@@ -17,10 +17,12 @@ public class PRModelDate {
     
     private LocalDateTime localTime;
     
-    public PRModelDate(Date date) {
-        Instant instant = date.toInstant();
-        localTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-    }
+	public PRModelDate(Date date) {
+		if (date != null) {
+			Instant instant = date.toInstant();
+			localTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		}
+	}
     
     public PRModelDate(int year, int month, int day, int hour, int minute) {
         localTime = LocalDateTime.of(year, month, day, hour, minute);
@@ -35,7 +37,11 @@ public class PRModelDate {
     }
     
     public String toString(DateTimeFormatter formatter) {
+    	if(localTime!=null) {
         return localTime.format(formatter);
+    	}else {
+    		return null;
+    	}
     }
     
     public LocalDateTime getLocalTime() {

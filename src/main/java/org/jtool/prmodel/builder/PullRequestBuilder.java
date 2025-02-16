@@ -40,12 +40,12 @@ public class PullRequestBuilder {
         try {
             createDate = new PRModelDate(ghPullRequest.getCreatedAt());
         } catch (IOException e) {
-            createDate = new PRModelDate(ghPullRequest.getClosedAt());
+            createDate = null;
             exceptions.add(e);
         }
         
-        PRModelDate endDate = new PRModelDate(ghPullRequest.getClosedAt());
-        
+        PRModelDate endDate = new PRModelDate(ghPullRequest.getClosedAt());;
+      
         String mergeBranch = ghPullRequest.getBase().getRef();
         String headBranch = ghPullRequest.getHead().getRef();
         String pageUrl = ghPullRequest.getHtmlUrl().toString();

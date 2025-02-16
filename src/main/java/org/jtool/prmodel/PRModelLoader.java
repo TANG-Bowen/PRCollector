@@ -25,4 +25,14 @@ public class PRModelLoader {
         prmodel.addAllDeficientPullRequests(jsonFileReader.getDeficientPullRequests());
         return prmodel;
     }
+    
+    public PRModel load(int num) {
+        PRModel prmodel = new PRModel();
+        
+        JsonFileReader jsonFileReader = new JsonFileReader(filePath);
+        jsonFileReader.read(num);
+        prmodel.addAllPullRequests(jsonFileReader.getPullRequests());
+        prmodel.addAllDeficientPullRequests(jsonFileReader.getDeficientPullRequests());
+        return prmodel;
+    }
 }
