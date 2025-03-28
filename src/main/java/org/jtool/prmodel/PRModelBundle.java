@@ -44,6 +44,7 @@ public class PRModelBundle {
     
     private boolean deleteSourceFile = false;
     private boolean writeErrorLog = false;
+    private boolean writeOnly = false;
     
     private File repoDir;
     
@@ -131,16 +132,24 @@ public class PRModelBundle {
                 if (result) {
                     PullRequest pullRequest = builder.getPullRequest();
                     if (pullRequest != null) {
-                        prmodel.addPullRequest(pullRequest);
-                        
                         writePRModelToFile(pullRequest, prDir);
+                        
+                        if (writeOnly) {
+                            pullRequest = null;
+                        } else {
+                            prmodel.addPullRequest(pullRequest);
+                        }
                     }
                 } else {
                     DeficientPullRequest pullRequest = builder.getDeficientPullRequest();
                     if (pullRequest != null) {
-                        prmodel.addDeficientPullRequest(pullRequest);
-                        
                         writeDataLossToFile(pullRequest, prDir);
+                        
+                        if (writeOnly) {
+                            pullRequest = null;
+                        } else {
+                            prmodel.addDeficientPullRequest(pullRequest);
+                        }
                     }
                 }
                 builder = null;
@@ -192,10 +201,10 @@ public class PRModelBundle {
         
         String pathBase = pullRequestDir.getAbsolutePath() + File.separator +"BaseSource";
         try {
-			deleteDirectory(pathBase);
-		} catch (IOException e) {
-			System.out.println("Not found base code directory to be deleted! " + pullRequestDir);
-		}
+            deleteDirectory(pathBase);
+        } catch (IOException e) {
+            System.out.println("Not found base code directory to be deleted! " + pullRequestDir);
+        }
         
         for (Commit commit : pullRequest.getTargetCommits()) {
             String dirNameBefore = PRElement.BEFORE + "_" + commit.getShortSha();
@@ -239,6 +248,8 @@ public class PRModelBundle {
     
     /**
      * Set upper limit number and lower limit number of changed files.
+     * @param min the lower limit number
+     * @param max the upper limit number
      */
     public void downloadChangedFileNum(int min , int max) {
         this.changedFilesMin = min;
@@ -247,6 +258,8 @@ public class PRModelBundle {
     
     /**
      * Set upper limit number and lower limit number of commits.
+     * @param min the lower limit number
+     * @param max the upper limit number
      */
     public void downloadCommitNum(int min , int max) {
         this.commitsMin = min;
@@ -254,17 +267,27 @@ public class PRModelBundle {
     }
     
     /**
-     * Set download file flag.
+     * Set a flag whether download files will be deleted.
+     * @param bool <code>true</code> if deleting is desired, otherwise <code<false</code>
      */
     public void deleteSourceFile(boolean bool) {
         this.deleteSourceFile = bool;
     }
     
     /**
-     * Set write error log file flag.
+     * Set a flag whether an error log be written.
+     * @param bool <code>true</code> if writing is desired, otherwise <code<false</code>
      */
     public void writeErrorLog(boolean bool) {
         this.writeErrorLog = bool;
+    }
+    
+    /**
+     * Set a flag whether pull request data will not be saved to memory.
+     * @param bool <code>true</code> if not-saving is desired, otherwise <code<false</code>
+     */
+    public void writeOnly(boolean bool) {
+        this.writeOnly = bool;
     }
     
     public String getRepositoryName() {
@@ -293,11 +316,15 @@ public class PRModelBundle {
     
     
     public File getRepoDir() {
-		return repoDir;
-	}
-
-	public boolean writeErrorLog() {
+        return repoDir;
+    }
+    
+    public boolean writeErrorLog() {
         return writeErrorLog;
+    }
+    
+    public boolean writeOnly() {
+        return writeOnly;
     }
     
     /**
