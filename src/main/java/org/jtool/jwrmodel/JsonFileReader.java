@@ -44,6 +44,7 @@ import org.jtool.prmodel.HTMLDescription;
 import org.jtool.prmodel.ChangeSummary;
 import org.jtool.prmodel.Label;
 import org.jtool.prmodel.PRModelDate;
+import org.jtool.prmodel.PRModelLoader;
 import org.jtool.jxp3model.CodeElement;
 import org.jtool.jxp3model.ProjectChange;
 import org.jtool.jxp3model.FileChange;
@@ -53,6 +54,7 @@ import org.jtool.jxp3model.MethodChange;
 
 public class JsonFileReader {
     
+    private final PRModelLoader loader;
     private final String filePath;
     
     private Set<PullRequest> pullRequests = new HashSet<>();
@@ -77,7 +79,8 @@ public class JsonFileReader {
     private Map<String, CodeElement> methodElementBeforeMap = new HashMap<>();
     private Map<String, CodeElement> methodElementAfterMap = new HashMap<>();
     
-    public JsonFileReader(String filePath) {
+    public JsonFileReader(PRModelLoader loader, String filePath) {
+        this.loader = loader;
         this.filePath = filePath;
     }
     
@@ -90,11 +93,29 @@ public class JsonFileReader {
     }
     
     public void read() {
+        List<File> files = getJSONFiles();
+        readFiles(files, true);
+    }
+    
+    public void read(int num) {
+        List<File> files = getJSONFiles();
+        List<File> targetFiles = files.subList(0, num);
+        readFiles(targetFiles, true);
+    }
+    
+    public void hookedRead() {
+        List<File> files = getJSONFiles();
+        readFiles(files, false);
+    }
+    
+    public List<File> getJSONFiles() {
+        List<File> files = new ArrayList<>();
+        
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("File or directory does not exist : " + filePath);
         } else {
-            List<File> files = new ArrayList<>();
+            
             if (file.isFile()) {
                 if (isPRJsonFromPRCollector(file) || isDataLossJsonFromPRCollector(file)) {
                     files.add(file);
@@ -103,26 +124,8 @@ public class JsonFileReader {
                 File directory = new File(filePath);
                 files.addAll(listAllFiles(directory));
             }
-            readFiles(files);
         }
-    }
-    
-    public void read(int num) {
-    	File file = new File(filePath);
-        if (!file.exists()) {
-            System.out.println("File or directory does not exist : " + filePath);
-        } else {
-            List<File> files = new ArrayList<>();
-            if (file.isFile()) {
-                if (isPRJsonFromPRCollector(file) || isDataLossJsonFromPRCollector(file)) {
-                    files.add(file);
-                }
-            } else if (file.isDirectory()) {
-                File directory = new File(filePath);
-                files.addAll(listAllFiles(directory));
-            }
-            readFiles(files,num);
-        }
+        return files;
     }
     
     private boolean isPRJsonFromPRCollector(File file) {
@@ -162,7 +165,7 @@ public class JsonFileReader {
         return fileList;
     }
     
-    private void readFiles(List<File> files) {
+    private void readFiles(List<File> files, boolean saveToMemory) {
         for (File file : files) {
             try {
                 String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
@@ -171,50 +174,29 @@ public class JsonFileReader {
                 if (isPRJsonFromPRCollector(file)) {
                     Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
                     PullRequest pullRequest = loadPRModel(str_pr);
-                    pullRequests.add(pullRequest);
                     System.out.println("Loaded PR model for " + file.getPath().toString());
+                    
+                    if (saveToMemory) {
+                        pullRequests.add(pullRequest);
+                    } else {
+                        loader.actionPerformed(pullRequest);
+                    }
                 } else if (isDataLossJsonFromPRCollector(file)) {
                     Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
-                    DeficientPullRequest deficientPullRequest = loadPRModelWithDataLoss(str_pr);
-                    deficientPullRequests.add(deficientPullRequest);
+                    DeficientPullRequest pullRequest = loadPRModelWithDataLoss(str_pr);
                     System.out.println("Loaded deficient PR for " + file.getPath().toString());
+                    
+                    if (saveToMemory) {
+                        deficientPullRequests.add(pullRequest);
+                    } else {
+                        loader.actionPerformed(pullRequest);
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 System.err.println(e.getMessage());
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
-        }
-    }
-    
-    private void readFiles(List<File> files , int num) {
-    	int counter=0;
-        for (File file : files) {
-        	if(counter == num) {
-        		break;
-        	}
-        		
-            try {
-                String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
-                content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
-                Gson gson = new Gson();
-                if (isPRJsonFromPRCollector(file)) {
-                    Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
-                    PullRequest pullRequest = loadPRModel(str_pr);
-                    pullRequests.add(pullRequest);
-                    System.out.println("Loaded PR model for " + file.getPath().toString());
-                } else if (isDataLossJsonFromPRCollector(file)) {
-                    Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
-                    DeficientPullRequest deficientPullRequest = loadPRModelWithDataLoss(str_pr);
-                    deficientPullRequests.add(deficientPullRequest);
-                    System.out.println("Loaded deficient PR for " + file.getPath().toString());
-                }
-            } catch (UnsupportedEncodingException e) {
-                System.err.println(e.getMessage());
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
-            counter++;
         }
     }
     
