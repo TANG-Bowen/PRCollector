@@ -45,7 +45,7 @@ public class PullRequestBuilder {
         }
         
         PRModelDate endDate = new PRModelDate(ghPullRequest.getClosedAt());;
-      
+        
         String mergeBranch = ghPullRequest.getBase().getRef();
         String headBranch = ghPullRequest.getHead().getRef();
         String pageUrl = ghPullRequest.getHtmlUrl().toString();
