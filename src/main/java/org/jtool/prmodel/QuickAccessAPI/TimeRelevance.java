@@ -46,13 +46,13 @@ public class TimeRelevance {
     }
     
     /**
-     * Returns time between created date to the first issue event date of a pull request.
+     * Returns time between created date to the date of first issue event by reviewer of a pull request.
      * @param pullRequest a pull-request
      * @return a time in ms 
      */
     public static long firstIssueEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(IssueEvent.class.getName())) {
+            if (action.getActionType().equals(IssueEvent.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -61,13 +61,13 @@ public class TimeRelevance {
     }
     
     /**
-     * Returns time between created date to the first review event date of a pull request.
+     * Returns time between created date to the date of first review event by reviewer of a pull request.
      * @param pullRequest a pull-request
      * @return a time in ms 
      */
     public static long firstReviewEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(ReviewEvent.class.getName())) {
+            if (action.getActionType().equals(ReviewEvent.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -76,13 +76,13 @@ public class TimeRelevance {
     }
     
     /**
-     * Returns time between created date to the first issue comment date of a pull request.
+     * Returns time between created date to the date of first issue comment by reviewer of a pull request.
      * @param pullRequest a pull-request
      * @return a time in ms 
      */
     public static long firstIssueCommentResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(IssueComment.class.getName())) {
+            if (action.getActionType().equals(IssueComment.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -91,13 +91,13 @@ public class TimeRelevance {
     }
     
     /**
-     * Returns time between created date to the first review comment date of a pull request.
+     * Returns time between created date to the date of first review comment by reviewer of a pull request.
      * @param pullRequest a pull-request
      * @return a time in ms 
      */
     public static long firstReviewCommentResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(ReviewComment.class.getName())) {
+            if (action.getActionType().equals(ReviewComment.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
