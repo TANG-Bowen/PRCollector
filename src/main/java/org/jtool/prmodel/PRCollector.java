@@ -63,6 +63,7 @@ public class PRCollector {
         
         bundle.deleteSourceFile(config.deleteSrcFile);
         bundle.writeErrorLog(config.writeErrorLog);
+        bundle.writeOnly(config.writeOnly);
         
         if (config.prNumber > 0 || config.prNumbers != null) {
             return bundle;
@@ -158,6 +159,7 @@ public class PRCollector {
         
         boolean deleteSrcFile;
         boolean writeErrorLog;
+        boolean writeOnly;
         
         boolean checkEssential() {
             boolean result = psnToken != null && repoName != null && rootPath != null;

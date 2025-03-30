@@ -183,8 +183,8 @@ public class CodeChangeBuilder {
             JavaProject projectBefore, JavaProject projectAfter) {
         if (changeType == PRElement.DELETE) {
             Set<JavaFile> jfilesBefore = new HashSet<>(projectBefore.getFiles());
-            for(DiffFile diffFile : codeChange.getDiffFiles()) {
-                if(diffFile.getChangeType() == PRElement.DELETE && diffFile.isJavaFile()) {
+            for (DiffFile diffFile : codeChange.getDiffFiles()) {
+                if (diffFile.getChangeType() == PRElement.DELETE && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesBefore);
                     if(jfile!=null && !inBuiltFiles(jfile,projectChange)) {
                         FileChange fileChange = createFileDeleted(codeChange, jfile);
@@ -195,8 +195,8 @@ public class CodeChangeBuilder {
             }  
         } else if (changeType == PRElement.ADD) {
             Set<JavaFile> jfilesAfter = new HashSet<>(projectAfter.getFiles());
-            for(DiffFile diffFile : codeChange.getDiffFiles()) {
-                if(diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
+            for (DiffFile diffFile : codeChange.getDiffFiles()) {
+                if (diffFile.getChangeType() == PRElement.ADD && diffFile.isJavaFile()) {
                     JavaFile jfile = getJavaFile(diffFile.getPath(), jfilesAfter);
                     if(jfile!=null && !inBuiltFiles(jfile,projectChange)) {
                         FileChange fileChange = createFileDeleted(codeChange, jfile);
@@ -705,8 +705,7 @@ public class CodeChangeBuilder {
     
     private Set<CodeElement> getClassElements(Set<JavaClass> classes, String stage) {
         Set<CodeElement> elems = new HashSet<>();
-        for(JavaClass jclass : classes)
-        {
+        for(JavaClass jclass : classes) {
             CodeElement codeElem = new CodeElement(pullRequest, stage, jclass.getQualifiedName().fqn(), jclass.getSource());
             elems.add(codeElem);
         }
@@ -727,8 +726,7 @@ public class CodeChangeBuilder {
     
     private Set<CodeElement> getMethodElements(Set<JavaMethod> methods, String stage) {
         Set<CodeElement> elems = new HashSet<>();
-        for(JavaMethod jmethod : methods)
-        {
+        for (JavaMethod jmethod : methods) {
             CodeElement codeElem = new CodeElement(pullRequest, stage, jmethod.getQualifiedName().fqn(), jmethod.getSource());
             
             elems.add(codeElem);
