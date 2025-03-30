@@ -180,6 +180,7 @@ public class JsonFileReader {
                         pullRequests.add(pullRequest);
                     } else {
                         loader.actionPerformed(pullRequest);
+                        pullRequest = null;
                     }
                 } else if (isDataLossJsonFromPRCollector(file)) {
                     Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
@@ -190,6 +191,7 @@ public class JsonFileReader {
                         deficientPullRequests.add(pullRequest);
                     } else {
                         loader.actionPerformed(pullRequest);
+                        pullRequest = null;
                     }
                 }
             } catch (UnsupportedEncodingException e) {
