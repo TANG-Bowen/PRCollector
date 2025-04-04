@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 
@@ -125,7 +126,7 @@ public class JsonFileReader {
                 files.addAll(listAllFiles(directory));
             }
         }
-        return files;
+        return getSortedFileList(files);
     }
     
     private boolean isPRJsonFromPRCollector(File file) {
@@ -163,6 +164,13 @@ public class JsonFileReader {
             }
         }
         return fileList;
+    }
+    
+    private List<File> getSortedFileList(List<File> files) {
+        List<File> sortedList = files.stream()
+            .sorted((e1, e2) -> e1.getName().compareTo(e2.getName()))
+            .collect(Collectors.toList());
+            return sortedList;
     }
     
     private void readFiles(List<File> files, boolean saveToMemory) {
@@ -357,7 +365,9 @@ public class JsonFileReader {
         HTMLDescription htmlDescription = new HTMLDescription(pullRequest, str_dp.body);
         htmlDescription.setPrmodelId(str_dp.prmodelId);
         
-        htmlDescription.getMentionUsers().addAll(str_dp.mentionUsers);
+        if (str_dp.mentionUsers != null) {
+            htmlDescription.getMentionUsers().addAll(str_dp.mentionUsers);
+        }
         return htmlDescription;
     }
     
