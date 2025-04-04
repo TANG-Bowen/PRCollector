@@ -198,6 +198,8 @@ public class JsonFileReader {
                 System.err.println(e.getMessage());
             } catch (IOException e) {
                 System.err.println(e.getMessage());
+            } catch (OutOfMemoryError e) {
+                System.err.println(e.getMessage());
             }
         }
     }
