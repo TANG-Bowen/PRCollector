@@ -787,13 +787,13 @@ public class JsonFileReader {
         changeSummary.getDiffFiles().addAll(loadDiffFiles(pullRequest, str_summary.diffFiles));
         CodeChange codeChange = null;
         ProjectChange projectChange=null;
-		if (str_summary.fileChanges != null) {
-			Set<Str_FileChange> str_fileChanges = new HashSet<>(str_summary.fileChanges);
-
-			List<FileChange> fileChangesList = new ArrayList<>(
-					loadFileChange(pullRequest, codeChange, projectChange, str_fileChanges));
-			changeSummary.getFileChanges().addAll(fileChangesList);
-		}
+        if (str_summary.fileChanges != null) {
+            Set<Str_FileChange> str_fileChanges = new HashSet<>(str_summary.fileChanges);
+            
+            List<FileChange> fileChangesList = new ArrayList<>(
+                    loadFileChange(pullRequest, codeChange, projectChange, str_fileChanges));
+            changeSummary.getFileChanges().addAll(fileChangesList);
+        }
         return changeSummary;
     }
     
