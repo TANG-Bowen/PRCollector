@@ -64,17 +64,16 @@ public class CommitRelevance {
      * @return the number of the churns
      */
     public static int numSrcAddChurns(PullRequest pullRequest) {
-    	int churns = 0;
-    	for(DiffFile dfile : pullRequest.getChangeSummary().getDiffFiles()) {
-    		for(DiffLine dline : dfile.getDiffLines()) {
-    			if(dline.getChangeType().equals(PRElement.ADD)) {
-    				churns++;
-    			}
-    		}
-    	}
-    	return churns;
+        int churns = 0;
+        for(DiffFile dfile : pullRequest.getChangeSummary().getDiffFiles()) {
+            for(DiffLine dline : dfile.getDiffLines()) {
+                if(dline.getChangeType().equals(PRElement.ADD)) {
+                    churns++;
+                }
+            }
+        }
+        return churns;
     }
-    
     
     /**
      * Returns the number of added churns in a commit having the sha number.
@@ -83,19 +82,19 @@ public class CommitRelevance {
      * @return the number of the churns
      */
     public static int numSrcAddChurns(PullRequest pullRequest, String commitSha) {
-    	int churns = 0;
-    	Commit commit = pullRequest.getCommit(commitSha);
-    	if(commit == null) {
-    		return 0;
-    	}
-    	for(DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
-    		for(DiffLine dline : dfile.getDiffLines()) {
-    			if(dline.getChangeType().equals(PRElement.ADD)) {
-    				churns++;
-    			}
-    		}
-    	}
-    	return churns;
+        int churns = 0;
+        Commit commit = pullRequest.getCommit(commitSha);
+        if(commit == null) {
+            return 0;
+        }
+        for(DiffFile dfile : commit.getCodeChange().getDiffFiles()) {
+            for(DiffLine dline : dfile.getDiffLines()) {
+                if(dline.getChangeType().equals(PRElement.ADD)) {
+                    churns++;
+                }
+            }
+        }
+        return churns;
     }
     
     /**
@@ -104,15 +103,15 @@ public class CommitRelevance {
      * @return the number of the churns
      */
     public static int numSrcDeletedChurns(PullRequest pullRequest) {
-    	int churns = 0;
-    	for(DiffFile dfile : pullRequest.getChangeSummary().getDiffFiles()) {
-    		for(DiffLine dline : dfile.getDiffLines()) {
-    			if(dline.getChangeType().equals(PRElement.DELETE)) {
-    				churns++;
-    			}
-    		}
-    	}
-    	return churns;
+        int churns = 0;
+        for(DiffFile dfile : pullRequest.getChangeSummary().getDiffFiles()) {
+            for(DiffLine dline : dfile.getDiffLines()) {
+                if(dline.getChangeType().equals(PRElement.DELETE)) {
+                    churns++;
+                }
+            }
+        }
+        return churns;
     }
     
     /**

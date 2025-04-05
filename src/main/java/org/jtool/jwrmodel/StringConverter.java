@@ -193,16 +193,16 @@ public class StringConverter {
         return str_md;
     }
     
-	private Str_HTMLDescription buildHTMLDescription(HTMLDescription description) {
-		Str_HTMLDescription str_dp = new Str_HTMLDescription();
-		if (description != null) {
-			str_dp.prmodelId = description.getPRModelId();
-
-			str_dp.body = description.getBody();
-			str_dp.mentionUsers = description.getMentionUsers();
-		}
-		return str_dp;
-	}
+    private Str_HTMLDescription buildHTMLDescription(HTMLDescription description) {
+        Str_HTMLDescription str_dp = new Str_HTMLDescription();
+        if (description != null) {
+            str_dp.prmodelId = description.getPRModelId();
+            
+            str_dp.body = description.getBody();
+            str_dp.mentionUsers = description.getMentionUsers();
+        }
+        return str_dp;
+    }
     
     private Str_Conversation buildConversation(Conversation conversation) {
         Str_Conversation str_cv = new Str_Conversation();
@@ -233,8 +233,8 @@ public class StringConverter {
             str_ct.body = comment.getBody();
             
             str_ct.markdownDoc = buildMarkdownDoc(comment.getMarkdownDoc());
-            if(comment.getParticipant()!=null) {
-            str_ct.participantId = comment.getParticipant().getPRModelId();
+            if (comment.getParticipant()!=null) {
+                str_ct.participantId = comment.getParticipant().getPRModelId();
             }
         }
         return str_cts;
@@ -250,8 +250,8 @@ public class StringConverter {
             
             str_et.date = event.getDate().toString();
             str_et.body = event.getBody();
-            if(event.getParticipant()!=null) {
-            str_et.participantId = event.getParticipant().getPRModelId();
+            if (event.getParticipant()!=null) {
+                str_et.participantId = event.getParticipant().getPRModelId();
             }
         }
         return str_ets;
@@ -269,8 +269,8 @@ public class StringConverter {
             str_ct.body = comment.getBody();
             
             str_ct.markdownDoc = buildMarkdownDoc(comment.getMarkdownDoc());
-            if(comment.getParticipant()!=null) {
-            str_ct.participantId = comment.getParticipant().getPRModelId();
+            if (comment.getParticipant()!=null) {
+                str_ct.participantId = comment.getParticipant().getPRModelId();
             }
             str_ct.snippetId = comment.getCodeReviewSnippet().getPRModelId();
         }
@@ -289,8 +289,8 @@ public class StringConverter {
            str_rv.body = review.getBody();
            
            str_rv.markdownDoc = buildMarkdownDoc(review.getMarkdownDoc());
-           if(review.getParticipant()!=null) {
-           str_rv.participantId = review.getParticipant().getPRModelId();
+           if (review.getParticipant()!=null) {
+               str_rv.participantId = review.getParticipant().getPRModelId();
            }
        }
        return str_rvs;
@@ -577,8 +577,8 @@ public class StringConverter {
             str_lb.name = label.getName();
             str_lb.color = label.getColor();
             str_lb.description = label.getDescription();
-            if(label.getIssueEvent()!=null) {
-            str_lb.issueEventId = label.getIssueEvent().getPRModelId();
+            if (label.getIssueEvent()!=null) {
+                str_lb.issueEventId = label.getIssueEvent().getPRModelId();
             }
         }
         return str_labels;
