@@ -65,5 +65,4 @@ public class ChangeSummary extends PRElement {
     public List<FileChange> getFileChanges(){
     	return fileChanges;
     }
-    
 }
