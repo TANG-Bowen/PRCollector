@@ -52,7 +52,9 @@ public class TimeRelevance {
      */
     public static long firstIssueEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(IssueEvent.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
+            String actionType = action.getActionType();
+            if ((actionType.equals(IssueEvent.class.getName()) || actionType.equals("Event")) &&
+                    action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -67,7 +69,8 @@ public class TimeRelevance {
      */
     public static long firstReviewEventResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(ReviewEvent.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
+            String actionType = action.getActionType();
+            if (actionType.equals(ReviewEvent.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -82,7 +85,9 @@ public class TimeRelevance {
      */
     public static long firstIssueCommentResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(IssueComment.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
+            String actionType = action.getActionType();
+            if ((actionType.equals(IssueComment.class.getName()) || actionType.equals("Comment"))
+                    && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
@@ -97,7 +102,8 @@ public class TimeRelevance {
      */
     public static long firstReviewCommentResponse_ms(PullRequest pullRequest) {
         for (Action action : pullRequest.getConversation().getTimeLine()) {
-            if (action.getActionType().equals(ReviewComment.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
+            String actionType = action.getActionType();
+            if (actionType.equals(ReviewComment.class.getName()) && action.getParticipant().getRole().equals("Reviewer")) {
                 PRModelDate actionDate = action.getDate();
                 return actionDate.from(pullRequest.getCreateDate());
             }
