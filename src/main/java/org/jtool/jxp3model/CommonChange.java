@@ -133,7 +133,7 @@ public abstract class CommonChange extends PRElement {
      * Returns the qualified name of CodeElement in this CommonChange in post files.
      * @return a qualified name String
      */
-    public String getQualifiedNameAfter(){
+    public String getQualifiedNameAfter() {
         return after.getQualifiedName();
     }
     

@@ -617,9 +617,9 @@ public class JsonFileReader {
             
             fileChange.getClassChanges().addAll(loadClassChange(pullRequest, codeChange,
                     fileChange, str_fl.classChanges));
-			if (codeChange != null) {
-				codeChange.getFileChanges().add(fileChange);
-			}
+            if (codeChange != null) {
+                codeChange.getFileChanges().add(fileChange);
+            }
             fileChanges.add(fileChange);
             
             fileChangeMap.put(fileChange.getPRModelId(), fileChange);
