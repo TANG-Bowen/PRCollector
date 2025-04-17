@@ -45,6 +45,7 @@ public class PRModelBundle {
     private boolean deleteSourceFile = false;
     private boolean writeErrorLog = false;
     private boolean writeOnly = false;
+    private boolean changedCodeBuild = true;
     
     private File repoDir;
     
@@ -290,6 +291,14 @@ public class PRModelBundle {
         this.writeOnly = bool;
     }
     
+    /**
+     * Set a flag whether code element data will not be saved to json file.
+     * @param bool <code>true</code> if not-saving is desired, otherwise <code<false</code>
+     */
+    public void changedCodeBuild(boolean bool) {
+    	this.changedCodeBuild = bool;
+    }
+    
     public String getRepositoryName() {
         return repoName;
     }
@@ -325,6 +334,10 @@ public class PRModelBundle {
     
     public boolean writeOnly() {
         return writeOnly;
+    }
+    
+    public boolean changedCodeBuild() {
+    	return changedCodeBuild;
     }
     
     /**

@@ -6,6 +6,9 @@
 
 package org.jtool.prmodel;
 
+import java.io.File;
+import java.util.List;
+
 import org.jtool.jwrmodel.JsonFileReader;
 
 public class PRModelLoader {
@@ -28,15 +31,31 @@ public class PRModelLoader {
     }
     
     public PRModel load(int num) {
-        PRModel prmodel = new PRModel();
-        
+        PRModel prmodel = new PRModel();        
         JsonFileReader jsonFileReader = new JsonFileReader(this, filePath);
-        jsonFileReader.read(num);
-        
+        jsonFileReader.read(num);        
         prmodel.addAllPullRequests(jsonFileReader.getPullRequests());
         prmodel.addAllDeficientPullRequests(jsonFileReader.getDeficientPullRequests());
         return prmodel;
     }
+    
+	public PRModel load(List<File> files) {
+		PRModel prmodel = new PRModel();
+		JsonFileReader jsonFileReader = new JsonFileReader(this, filePath);
+		jsonFileReader.read(files);
+		prmodel.addAllPullRequests(jsonFileReader.getPullRequests());
+		prmodel.addAllDeficientPullRequests(jsonFileReader.getDeficientPullRequests());
+		return prmodel;
+	}
+
+	public PRModel load(File file) {
+		PRModel prmodel = new PRModel();
+		JsonFileReader jsonFileReader = new JsonFileReader(this, filePath);
+		jsonFileReader.read(file);
+		prmodel.addAllPullRequests(jsonFileReader.getPullRequests());
+		prmodel.addAllDeficientPullRequests(jsonFileReader.getDeficientPullRequests());
+		return prmodel;
+	}
     
     public void loadOnly() {
         JsonFileReader jsonFileReader = new JsonFileReader(this, filePath);

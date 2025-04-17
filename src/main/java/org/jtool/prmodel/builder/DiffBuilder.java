@@ -263,11 +263,17 @@ public class DiffBuilder {
                         String[] line = lines[j].split(" "); 
                         if (line.length == 2 && line[0].equals("---") &&
                            !line[1].equals("/dev/null") && j < plusCount) {
-                            String[] deleteLine = lines[j].split("--- a");
+                            String[] deleteLine = lines[j].split("---\\sa");
+							if (deleteLine.length == 1) {
+								deleteLine = lines[j].split("---\\s\"a");
+							}
                             absolutePathBefore = deleteLine[1];
                         } else if (line.length == 2 && line[0].equals("+++") && j < plusCount) {
                             if (!line[1].equals("/dev/null")) {
-                                String[] addLine = lines[j].split("\\+\\+\\+ b");
+								String[] addLine = lines[j].split("\\+\\+\\+\\sb");
+								if (addLine.length == 1) {
+									addLine = lines[j].split("\\+\\+\\+\\s\"b");
+								}
                                 absolutePathAfter = addLine[1];
                             }
                             plusCount = j;

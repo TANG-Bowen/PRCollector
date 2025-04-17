@@ -38,12 +38,14 @@ public class ChangeSummaryBuilder {
     private final GHPullRequest ghPullRequest;
     private final GHRepository repository;
     
+    private final boolean changedCodeBuild;
+    
     ChangeSummaryBuilder(PullRequest pullRequest, File pullRequestDir,
-            GHPullRequest ghPullRequest, GHRepository repository) {
+            GHPullRequest ghPullRequest, GHRepository repository, boolean changedCodeBuild) {
         this.pullRequest = pullRequest;
         this.ghPullRequest = ghPullRequest;
         this.repository = repository;
-        
+        this.changedCodeBuild = changedCodeBuild;
         this.pullRequestDir = pullRequestDir;
     }
     
@@ -89,16 +91,17 @@ public class ChangeSummaryBuilder {
                     }
                 }
             }
-            
-            CodeChangeBuilder codeChangeBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
-            codeChangeBuilder.buildProjectChanges(codeChange, pathBefore, pathAfter);
-            codeChange.setFileChanges();
-            codeChangeBuilder.setReferenceRelation(codeChange);
-            codeChangeBuilder.setTestForClasses(codeChange);
-            
-            for(FileChange fileChange : codeChange.getFileChanges()) {
-                changeSummary.getFileChanges().add(fileChange);
-            }
+			if (changedCodeBuild) {
+				CodeChangeBuilder codeChangeBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
+				codeChangeBuilder.buildProjectChanges(codeChange, pathBefore, pathAfter);
+				codeChange.setFileChanges();
+				codeChangeBuilder.setReferenceRelation(codeChange);
+				codeChangeBuilder.setTestForClasses(codeChange);
+
+				for (FileChange fileChange : codeChange.getFileChanges()) {
+					changeSummary.getFileChanges().add(fileChange);
+				}
+			}
         } catch (Exception e) {
         	this.exceptions.add(e);
         }

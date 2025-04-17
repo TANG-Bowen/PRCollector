@@ -35,6 +35,7 @@ public class PRModelBuilder {
     private final int commitMax;
     
     private final boolean writeErrorLog;
+    private final boolean changedCodeBuild;
     
     private final int pullRequestNumber;
     private final File pullRequestDir;
@@ -53,7 +54,7 @@ public class PRModelBuilder {
         this.commitMax = bundle.getDownloadCommitsNumMax();
         
         this.writeErrorLog = bundle.writeErrorLog();
-        
+        this.changedCodeBuild = bundle.changedCodeBuild();
         this.pullRequestNumber = pullRequestNumber;
         this.pullRequestDir = pullRequestDir;
         this.repositoryDir = bundle.getRepoDir();
@@ -140,16 +141,14 @@ public class PRModelBuilder {
             diffBuilder.build();
             exceptions.addAll(diffBuilder.getExceptions());
             System.out.println("Built Diff element");
-            
-            CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(
-                    pullRequest, pullRequestDir);
-            codeChangetBuilder.build();
-            System.out.println("Built CodeChange elements");
-            
-            diffBuilder.setTestForDiffFiles();
-            
+			if (changedCodeBuild) {
+				CodeChangeBuilder codeChangetBuilder = new CodeChangeBuilder(pullRequest, pullRequestDir);
+				codeChangetBuilder.build();
+				System.out.println("Built CodeChange elements");
+				diffBuilder.setTestForDiffFiles();
+			}
             ChangeSummaryBuilder changeSummaryBuilder = new ChangeSummaryBuilder(
-                    pullRequest, pullRequestDir, ghPullRequest, repository);
+                    pullRequest, pullRequestDir, ghPullRequest, repository, changedCodeBuild);
             changeSummaryBuilder.build();
             System.out.println("Built FilesChanged element");
         }

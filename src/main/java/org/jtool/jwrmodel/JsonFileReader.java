@@ -8,9 +8,12 @@ package org.jtool.jwrmodel;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
 
 import java.util.Map;
 import java.util.HashMap;
@@ -23,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 
 import org.jtool.prmodel.PullRequest;
 import org.jtool.prmodel.Participant;
@@ -104,6 +108,16 @@ public class JsonFileReader {
         readFiles(targetFiles, true);
     }
     
+    public void read(List<File> Files) {
+    	readFiles(Files, true);
+    }
+    
+    public void read(File file) {
+    	List<File> targetFiles = new ArrayList<>();
+    	targetFiles.add(file);
+    	readFiles(targetFiles, true);
+    }
+    
     public void hookedRead() {
         List<File> files = getJSONFiles();
         readFiles(files, false);
@@ -176,11 +190,13 @@ public class JsonFileReader {
     private void readFiles(List<File> files, boolean saveToMemory) {
         for (File file : files) {
             try {
-                String content = new String(Files.readAllBytes(Paths.get(file.getAbsolutePath())), "UTF-8");
-                content = content.replace('\u00A0', ' ').replaceAll("\\p{Zs}", " ");
+            	InputStream is = new FileInputStream(file);
+            	InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+            	JsonReader reader = new JsonReader(isr);
+
                 Gson gson = new Gson();
                 if (isPRJsonFromPRCollector(file)) {
-                    Str_PullRequest str_pr = gson.fromJson(content, Str_PullRequest.class);
+                    Str_PullRequest str_pr = gson.fromJson(reader, Str_PullRequest.class);
                     PullRequest pullRequest = loadPRModel(str_pr);
                     System.out.println("Loaded PR model for " + file.getPath().toString());
                     
@@ -191,7 +207,7 @@ public class JsonFileReader {
                         pullRequest = null;
                     }
                 } else if (isDataLossJsonFromPRCollector(file)) {
-                    Str_DeficientPullRequest str_pr = gson.fromJson(content, Str_DeficientPullRequest.class);
+                    Str_DeficientPullRequest str_pr = gson.fromJson(reader, Str_DeficientPullRequest.class);
                     DeficientPullRequest pullRequest = loadPRModelWithDataLoss(str_pr);
                     System.out.println("Loaded deficient PR for " + file.getPath().toString());
                     
@@ -202,8 +218,6 @@ public class JsonFileReader {
                         pullRequest = null;
                     }
                 }
-            } catch (UnsupportedEncodingException e) {
-                System.err.println(e.getMessage());
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             } catch (OutOfMemoryError e) {
