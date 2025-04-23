@@ -44,41 +44,26 @@ public class JsonFileWriter {
         this.strDeficientPullRequest = strBuilder.buildDeficientPullRequest(deficientPullRequest);
     }
     
-    public void writePRModel() {
-        Gson gson = new Gson();
-        
-        try(JsonWriter writer = new JsonWriter(new FileWriter(outputFile,false))){
-        	gson.toJson(strPullRequest,Str_PullRequest.class, writer);
-        	 System.out.println("Succeeded to write PR "+ pullRequest.getId() + " into a json file !");
-        }catch(IOException e) {
-        	System.err.println("Could not write " + outputFile);
-        }
-//        String jsonStr = gson.toJson(strPullRequest);
-//        
-//        try (FileWriter writer = new FileWriter(outputFile, false)) {
-//            writer.write(jsonStr);
-//            System.out.println("Succeeded to write PR "+ pullRequest.getId() + " into a json file !");
-//        } catch (IOException e) {
-//            System.err.println("Could not write " + outputFile);
-//        }
-    }
+	public void writePRModel() {
+		Gson gson = new Gson();
+
+		try (JsonWriter writer = new JsonWriter(new FileWriter(outputFile, false))) {
+			gson.toJson(strPullRequest, Str_PullRequest.class, writer);
+			System.out.println("Succeeded to write PR " + pullRequest.getId() + " into a json file !");
+		} catch (IOException e) {
+			System.err.println("Could not write " + outputFile);
+		}
+	}
     
-    public void writePRModelWithDataLoss() {
-        Gson gson = new Gson();
-        
-        try(JsonWriter writer = new JsonWriter(new FileWriter(outputFile,false))){
-        	gson.toJson(strDeficientPullRequest,Str_DeficientPullRequest.class, writer);
-        	System.out.println("Succeeded to write Deficient PR "+ deficientPullRequest.getId() + " into a json file !");
-        }catch(IOException e) {
-        	System.err.println("Could not write " + outputFile);
-        }
-//        String jsonStr = gson.toJson(strDeficientPullRequest);
-//        
-//        try(FileWriter writer = new FileWriter(outputFile, false)){
-//            writer.write(jsonStr);
-//            System.out.println("Succeeded to write Deficient PR "+ deficientPullRequest.getId() + " into a json file !");
-//        }catch(IOException e) {
-//            System.err.println("Could not write " + outputFile);
-//        }
-    }
+	public void writePRModelWithDataLoss() {
+		Gson gson = new Gson();
+
+		try (JsonWriter writer = new JsonWriter(new FileWriter(outputFile, false))) {
+			gson.toJson(strDeficientPullRequest, Str_DeficientPullRequest.class, writer);
+			System.out
+					.println("Succeeded to write Deficient PR " + deficientPullRequest.getId() + " into a json file !");
+		} catch (IOException e) {
+			System.err.println("Could not write " + outputFile);
+		}
+	}
 }
