@@ -60,8 +60,7 @@ public class JsonFileWriter {
 
 		try (JsonWriter writer = new JsonWriter(new FileWriter(outputFile, false))) {
 			gson.toJson(strDeficientPullRequest, Str_DeficientPullRequest.class, writer);
-			System.out
-					.println("Succeeded to write Deficient PR " + deficientPullRequest.getId() + " into a json file !");
+			System.out.println("Succeeded to write Deficient PR " + deficientPullRequest.getId() + " into a json file !");
 		} catch (IOException e) {
 			System.err.println("Could not write " + outputFile);
 		}
