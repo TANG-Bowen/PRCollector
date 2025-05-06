@@ -19,18 +19,39 @@ public class DescriptionRelevance {
      * @return the number of the words in the title
      */
     public static int numComplexTitle(PullRequest pullRequest) {
-        String[] words = pullRequest.getTitle().split("\\s+");
-        return words.length;
+        String title = pullRequest.getTitle();
+        String[] titleWords = title.split("\\s+");
+        return titleWords.length;
     }
     
     /**
-     * Returns the number of total words in a pull-request's description .
+     * Returns the number of total words in a pull-request's body.
+     * @param pullRequest a pull-request
+     * @return the number of the words in the description
+     */
+    public static int numComplexBody(PullRequest pullRequest) {
+        String body = pullRequest.getDescription().getBody();
+        String[] bodyWords = body.split("\\s+");
+        return bodyWords.length;
+    }
+    
+    /**
+     * Returns the number of total words in a pull-request's title and body.
      * @param pullRequest a pull-request
      * @return the number of the words in the description
      */
     public static int numComplexDescription(PullRequest pullRequest) {
-        String[] words = pullRequest.getDescription().getBody().split("\\s+");
-        return words.length;
+        String title = pullRequest.getTitle();
+        String body = pullRequest.getDescription().getBody();
+        if (title == null) {
+            title = "";
+        }
+        if (body == null) {
+            body = "";
+        }
+        String[] titleWords = title.split("\\s+");
+        String[] bodyWords = body.split("\\s+");
+        return titleWords.length + bodyWords.length;
     }
     
     /**

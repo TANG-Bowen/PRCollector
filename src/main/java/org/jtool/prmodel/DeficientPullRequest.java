@@ -62,7 +62,7 @@ public class DeficientPullRequest extends PullRequest {
     @Override
     public void print() {
         String prefix = "DeficientPullRequest ";
-        printPRBase(prefix);        
+        printPRBase(prefix);
         description.print();
         htmlDescription.print();
         participants.forEach(e -> e.print());
