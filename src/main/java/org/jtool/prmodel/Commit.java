@@ -27,7 +27,7 @@ public class Commit extends PRElement {
     private List<CIStatus> ciStatus = new ArrayList<>();
     
     public Commit(PullRequest pullRequest, String sha, String shortSha,
-            PRModelDate date, String message, String type) {
+            PRModelDate date, String type, String message) {
         super(pullRequest);
         this.sha = sha;
         this.shortSha = shortSha;
