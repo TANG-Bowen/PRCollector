@@ -279,6 +279,7 @@ public class DiffBuilder {
                             plusCount = j;
                             
                         } else if (j > plusCount) {
+			    if(lines[j].length()>0){
                             char firstC = lines[j].charAt(0);
                             if (firstC == '-') {
                                 String text = lines[j].substring(1);
@@ -291,6 +292,7 @@ public class DiffBuilder {
                                 DiffLine diffLine = new DiffLine(pr, PRElement.ADD, text);
                                 diffLines.add(diffLine);
                             }
+			    }
                         }
                     }
                     
