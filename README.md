@@ -61,3 +61,6 @@ A collection mission can be described as follows:
            System.out.println("PR " + pri.getId() + "  " + pri.getTitle() + "  Social_instance with platform : " + ParticipantRelevance.socialDistanceExists(pri));
        }     
   ```
+
+## Link
+Here is the paper for this tool that introduce detail and tests. https://ieeexplore.ieee.org/document/11142716
