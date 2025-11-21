@@ -45,7 +45,7 @@ A collection mission can be described as follows:
     String path = "/Users/yourAimPath";// the path of root directory which may be same as the set root directory of built dataset
     PRModelLoader loader = new PRModelLoader(path);
     PRModel prmodel = loader.load();
-    Set<PullRequest> prs = promodel.getPullRequests();
+    Set<PullRequest> prs = prmodel.getPullRequests();
     System.out.println("Output head: ");
     for(PullRequest pri : prs){
        System.out.println("PR :" + pri.getTitle() + "  createDate: " + pr.getCreateDate());
