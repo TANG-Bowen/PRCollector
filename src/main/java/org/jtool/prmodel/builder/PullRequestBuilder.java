@@ -66,12 +66,15 @@ public class PullRequestBuilder {
                 headRepositoryBranches = new ArrayList<>(headRepoBranches.keySet());
                 
                 sourceCodeRetrievable = headRepositoryBranches.contains(headBranch);
+                if(sourceCodeRetrievable == false) {
+                	exceptions.add(new Exception("Not found head branch"));
+                }
             } else {
                 headRepositorySrcDLUrl = PRModelBuilder.UNKNOWN_SYMBOL;
                 headRepositoryBranches = new ArrayList<>(Arrays.asList(PRModelBuilder.UNKNOWN_SYMBOL));
                 
                 sourceCodeRetrievable = false;
-                exceptions.add(new Exception("Not found repository"));
+                exceptions.add(new Exception("Not found head repository"));
             }
         } catch (IOException e) {
             repositoryBranches = new ArrayList<>();

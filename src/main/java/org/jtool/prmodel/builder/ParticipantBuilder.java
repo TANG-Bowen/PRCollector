@@ -155,10 +155,18 @@ public class ParticipantBuilder {
         
         long userId = ghUser.getId();
         String login = ghUser.getLogin();
+        if(login.equals("ghost")) {
+        	pullRequest.setParticipantRetrievable(false);
+        	exceptions.add(new Exception("Ghost user exists"));
+        }
         String name = ghUser.getName();
         String location = ghUser.getLocation();
-        List<String> followers = ghUser.getFollowers().stream().map(u -> u.getLogin()).collect(Collectors.toList());
-        List<String> follows = ghUser.getFollows().stream().map(u -> u.getLogin()).collect(Collectors.toList());
+        List<String> followers = new ArrayList<>();
+        List<String> follows = new ArrayList<>();
+        if(!login.equals("ghost")) {
+         followers.addAll(ghUser.getFollowers().stream().map(u -> u.getLogin()).collect(Collectors.toList()));
+         follows.addAll(ghUser.getFollows().stream().map(u -> u.getLogin()).collect(Collectors.toList()));
+        }
         
         Participant participant = new Participant(pullRequest,
                 userId, login, name, location, role, followers, follows);
@@ -186,7 +194,7 @@ public class ParticipantBuilder {
             throw new IOException("GHUser is null");
         }
         
-        Participant participant = existsParticipant(ghUser);
+        Participant participant = existsParticipantById(ghUser.getId());
         if (participant == null) {
             participant = createParticipant(ghUser, role);
         }
@@ -194,26 +202,25 @@ public class ParticipantBuilder {
     }
     
     Participant checkAndCreateUnknownParticipant(String role) {
-        Participant participant = existsParticipant(PRModelBuilder.UNKNOWN_SYMBOL);
+        Participant participant = existsParticipantById(-1);
         if (participant == null) {
             participant = createUnknownParticipant(role);
         }
         return participant;
     }
     
-    Participant existsParticipant(GHUser ghUser) {
-        return pullRequest.getParticipants().stream()
-                          .filter(p -> p.getLogin().equals(ghUser.getLogin()))
-                          .findFirst().orElse(null);
-    }
     
-    Participant existsParticipant(long userId) {
+    Participant existsParticipantById(long userId) {
         return pullRequest.getParticipants().stream()
                           .filter(p -> p.getUserId() == userId)
                           .findFirst().orElse(null);
     }
     
-    Participant existsParticipant(String name) {
+    Participant existsParticipantByLogin(String login) {
+    	return pullRequest.getParticipants().stream().filter(p -> p.getLogin().equals(login)).findFirst().orElse(null);
+    }
+    
+    Participant existsParticipantByName(String name) {
         return pullRequest.getParticipants().stream()
                           .filter(p -> p.getName() == name)
                           .findFirst().orElse(null);
